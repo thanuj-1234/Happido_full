@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet Payment Process</title>
+  <style>
+    /* HTML and Body for Full Screen */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%; /* Make HTML and Body take full height */
+      width: 100%;  /* Make HTML and Body take full width */
+      overflow-x: hidden; /* Prevent horizontal scrollbar */
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ECEFF1; /* Very light gray/blue background */
+      padding: 20px; /* Add padding to the body for overall page margins */
+      text-align: center; /* Keep text centered within the flow */
+    }
+
+    .container {
+      background: #FFFFFF; /* Pure white container background */
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%; /* Make container take full width within body padding */
+      box-sizing: border-box; /* Includes padding in the width calculation */
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: #f97316; /* Primary Indigo heading */
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: #333333; /* Dark gray for general text */
+      font-size: 1.1em;
+    }
+
+    strong#walletBalance {
+      color: #191a23; /* Primary Indigo for wallet balance */
+      font-size: 1.2em;
+    }
+
+    .button {
+      padding: 12px 25px;
+      background: #ea580c; /* Primary Indigo button */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 1em;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover {
+      background:  #f97316; /* Darker Indigo on hover */
+      transform: translateY(-2px);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #moneyInputSection {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #E0E0E0; /* Light gray border */
+    }
+
+    #moneyInputSection label {
+      font-size: 1em;
+      color: #333333; /* Dark gray label text */
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .currency-symbol {
+      font-size: 20px;
+      margin-right: 8px;
+      color: #666666; /* Medium gray for currency symbol */
+    }
+
+    .input-box {
+      font-size: 18px;
+      padding: 8px 10px;
+      border: 1px solid #CCCCCC; /* Lighter gray border for input */
+      border-radius: 5px;
+      text-align: left;
+      width: 150px;
+      box-sizing: border-box;
+    }
+
+    h3 {
+      color: #f97316; /* Primary Indigo heading for sections */
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    .quick-cash {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .quick-button {
+      padding: 10px 18px;
+      background: #4CAF50; /* Standard vibrant green for quick add */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 0.95em;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .quick-button:hover {
+      background: #43A047; /* Darker green on hover */
+      transform: translateY(-1px);
+    }
+
+    #paymentOptions {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #E0E0E0; /* Light gray border */
+    }
+
+    .pay-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      padding: 10px 15px;
+      border: 1px solid #E0E0E0; /* Light gray border for pay option cards */
+      border-radius: 8px;
+      background: #F8F8F8; /* Very light gray for pay option cards */
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .pay-option:hover {
+      background: #F0F0F0; /* Slightly darker on hover */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .pay-option strong {
+      flex-grow: 1;
+      text-align: left;
+      margin-left: 10px;
+      color: #333333; /* Dark gray for payment method names */
+    }
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+    }
+
+    .pay-option .button {
+      margin-top: 0;
+      padding: 8px 15px;
+      font-size: 0.9em;
+      background: #f97316; /* Primary Indigo for pay buttons */
+    }
+
+    .pay-option .button:hover {
+        background:  #f97316; /* Darker Indigo on hover */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Wallet Payment Process</h2>
+    <p>Current Balance: <strong id="walletBalance">₹0.0</strong></p>
+    
+    <button class="button" onclick="showInput()">+ Add Money</button>
+
+    <div id="moneyInputSection" class="hidden">
+      <label>Enter Amount:</label>
+      <div class="input-container">
+        <span class="currency-symbol">₹</span>
+        <input type="number" id="moneyInput" class="input-box" onkeyup="handleInputConfirmation(event)" onblur="handleInputConfirmation(event)" placeholder="Enter amount">
+      </div>
+
+      <h3>Quick Cash</h3>
+      <div class="quick-cash">
+        <button class="quick-button" onclick="quickAdd(100)">₹100</button>
+        <button class="quick-button" onclick="quickAdd(500)">₹500</button>
+        <button class="quick-button" onclick="quickAdd(1000)">₹1000</button>
+      </div>
+    </div>
+
+    <div id="paymentOptions" class="hidden">
+      <h3>Select Payment Method</h3>
+      <div class="pay-option">
+        <img src="amazonpay.png" class="icon" alt="Amazon Pay">
+        <strong>AmazonPay</strong>
+        <button class="button" onclick="verifySecureCode('AmazonPay')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="paytm.png" class="icon" alt="Paytm">
+        <strong>Paytm</strong>
+        <button class="button" onclick="verifySecureCode('Paytm')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="gpay.png" class="icon" alt="GPay">
+        <strong>GPay</strong>
+        <button class="button" onclick="verifySecureCode('GPay')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="phonepe.png" class="icon" alt="PhonePe">
+        <strong>PhonePe</strong>
+        <button class="button" onclick="verifySecureCode('PhonePe')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="credit-debit.png" class="icon" alt="Credit/Debit Card">
+        <strong>Credit/Debit Card</strong>
+        <button class="button" onclick="verifySecureCode('Card')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="netbanking.png" class="icon" alt="Net Banking">
+        <strong>Net Banking</strong>
+        <button class="button" onclick="verifySecureCode('Net Banking')">Pay</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showInput() {
+      document.getElementById("moneyInputSection").classList.remove("hidden");
+      document.getElementById("paymentOptions").classList.add("hidden");
+      document.getElementById("moneyInput").value = "";
+      document.getElementById("moneyInput").focus();
+    }
+
+    function confirmMoneyAndShowOptions() {
+      let amount = document.getElementById("moneyInput").value;
+      if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+        document.getElementById("paymentOptions").classList.remove("hidden");
+      } else {
+        document.getElementById("paymentOptions").classList.add("hidden");
+      }
+    }
+
+    function handleInputConfirmation(event) {
+        if (event.type === 'keyup' && event.key === 'Enter') {
+            confirmMoneyAndShowOptions();
+        } 
+        else if (event.type === 'blur') {
+            confirmMoneyAndShowOptions();
+        }
+    }
+
+    function quickAdd(amount) {
+      document.getElementById("moneyInput").value = amount;
+      confirmMoneyAndShowOptions(); 
+    }
+
+    function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+    }
+
+    function verifySecureCode(service) {
+      let amount = parseFloat(document.getElementById("moneyInput").value);
+
+      if (!amount || isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount to add.");
+        return;
+      }
+
+      // *** Insufficient Balance Check for amounts >= 10000 ***
+      if (amount >= 10000) { // Check if the amount is 10,000 or more
+        alert("Payment Failed. The money in your account is not enough for this payment. Check account balance and try again.");
+        return; // Stop the payment process
+      }
+      // ************************************
+
+      let generatedOTP = generateOTP();
+      alert(`Your OTP for ${service} is: ${generatedOTP}`); // Simulating OTP sending
+
+      let userOTP = prompt("Enter the OTP received:");
+      if (userOTP == generatedOTP) { 
+        let balanceElement = document.getElementById("walletBalance");
+        let currentBalance = parseFloat(balanceElement.innerText.replace("₹", "")) || 0;
+        let newBalance = currentBalance + amount;
+
+        balanceElement.innerText = `₹${newBalance.toFixed(2)}`;
+        alert(`₹${amount.toFixed(2)} added to your wallet via ${service}!`);
+        
+        // Hide sections and clear input after successful payment
+        document.getElementById("moneyInputSection").classList.add("hidden");
+        document.getElementById("paymentOptions").classList.add("hidden");
+        document.getElementById("moneyInput").value = "";
+      } else {
+        alert("Invalid OTP. Please enter the correct OTP.");
+      }
+    }
+  </script>
+
+</body>
+</html>

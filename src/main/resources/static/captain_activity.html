@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Activity Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            color: #333;
+            margin: 0;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color:  #f97316;
+            margin-bottom: 25px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            text-align: center;
+            padding: 12px 15px;
+            color: #666;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .nav-button.active {
+            color:  #f97316;
+        }
+
+        .nav-button:hover:not(.active) {
+            background-color: #f7f7f7;
+            color:  #f97316;
+        }
+
+        .calendar-icon {
+            font-size: 22px;
+            color:  #f97316;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .calendar-icon:hover {
+            color: #E68971;
+        }
+
+        .swiper-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .swiper-slide {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: none;
+            flex-direction: column;
+        }
+
+        .swiper-slide.active {
+            display: flex;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        th {
+            background:  #f97316;
+            color: white;
+        }
+
+        tfoot tr.total-row {
+            font-weight: bold;
+            background-color: #ffe0b2; /* Light orange background for totals */
+        }
+        tfoot tr.total-row td {
+            border-top: 2px solid  #f97316;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">Activity</div>
+
+    <div class="nav-container">
+        <div class="nav-bar">
+            <div class="nav-button active" data-target="daily">Daily</div>
+            <div class="nav-button" data-target="weekly">Weekly</div>
+            <div class="nav-button" data-target="monthly">Monthly</div>
+        </div>
+        <i class="fas fa-calendar-alt calendar-icon" id="calendarTrigger"></i>
+    </div>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide active" id="daily-slide">
+                <h2 id="daily-activities-title">Daily Activities for <span id="selected-date"></span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Distance (km)</th>
+                            <th>Fuel Used (L)</th>
+                            <th>Status</th> <th>Earnings (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daily-details">
+                        </tbody>
+                    <tfoot id="daily-totals">
+                        </tfoot>
+                </table>
+            </div>
+
+            <div class="swiper-slide" id="weekly-slide">
+                <h2>Weekly Summary</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Hours Driven</th>
+                            <th>Total Distance (km)</th>
+                            <th>Total Rides</th>
+                            <th>Total Earnings (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weekly-details">
+                        </tbody>
+                    <tfoot id="weekly-totals">
+                        </tfoot>
+                </table>
+            </div>
+
+            <div class="swiper-slide" id="monthly-slide">
+                <h2>Monthly Summary</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Hours</th>
+                            <th>Total Distance (km)</th>
+                            <th>Total Rides</th>
+                            <th>Total Earnings (INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthly-details">
+                        </tbody>
+                    <tfoot id="monthly-totals">
+                        </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // --- Global Data Store ---
+        // This will cache generated data to avoid re-generating the same day's data on subsequent views.
+        let activityDataCache = {};
+
+        const dailyDetailsBody = document.getElementById('daily-details');
+        const dailyTotalsFooter = document.getElementById('daily-totals');
+        const selectedDateSpan = document.getElementById('selected-date');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const swiperSlides = document.querySelectorAll('.swiper-slide');
+        const calendarTrigger = document.getElementById('calendarTrigger');
+
+        let currentView = 'daily'; // Default view
+
+        // --- Helper Functions for Random Data Generation ---
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomFloat(min, max, decimals = 2) {
+            const str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
+
+        function generateRandomDailyActivities(dateStr) {
+            // Check if data for this date is already cached
+            if (activityDataCache[dateStr]) {
+                return activityDataCache[dateStr];
+            }
+
+            const activities = [];
+            const commonActivities = ["Preparation", "Commute to Area", "Waiting/Resting", "Lunch Break", "Resting", "Commute Home"];
+            const rideActivities = [
+                { time: "09:00 - 09:30", distance: getRandomInt(5, 15), earnings: getRandomInt(100, 300), rides: 1 },
+                { time: "09:30 - 10:15", distance: getRandomInt(10, 25), earnings: getRandomInt(200, 450), rides: 1 },
+                { time: "10:15 - 10:45", distance: getRandomInt(5, 20), earnings: getRandomInt(150, 350), rides: 1 },
+                { time: "11:00 - 11:45", distance: getRandomInt(10, 30), earnings: getRandomInt(250, 500), rides: 1 },
+                { time: "12:30 - 13:00", distance: getRandomInt(8, 18), earnings: getRandomInt(180, 380), rides: 1 },
+                { time: "13:00 - 13:45", distance: getRandomInt(12, 28), earnings: getRandomInt(280, 550), rides: 1 },
+                { time: "14:00 - 14:30", distance: getRandomInt(7, 17), earnings: getRandomInt(160, 320), rides: 1 },
+                { time: "15:00 - 15:45", distance: getRandomInt(10, 25), earnings: getRandomInt(200, 400), rides: 1 }
+            ];
+
+            // Randomly decide if there's activity on this day (e.g., 85% chance of being an active day)
+            if (Math.random() > 0.15) { // If it's an active day
+                activities.push({ time: "08:00 - 08:30", distance: 0, fuelUsed: 0, status: "Preparation", earnings: 0, rides: 0 });
+
+                if (Math.random() < 0.7) {
+                    activities.push({ time: "08:30 - 09:00", distance: getRandomInt(5, 15), fuelUsed: getRandomFloat(0.5, 1.5), status: "Commute to Area", earnings: 0, rides: 0 });
+                }
+
+                let lastTime = new Date(`2000-01-01T09:00:00`);
+                let rideCounter = 1;
+
+                while (lastTime.getHours() < 16) {
+                    if (Math.random() < 0.6) {
+                        const rideTemplate = rideActivities[getRandomInt(0, rideActivities.length - 1)];
+                        const startTimeStr = lastTime.toTimeString().substring(0, 5);
+                        lastTime.setMinutes(lastTime.getMinutes() + getRandomInt(25, 50));
+                        const endTimeStr = lastTime.toTimeString().substring(0, 5);
+
+                        const distance = rideTemplate.distance;
+                        const earnings = rideTemplate.earnings;
+                        const fuelUsed = getRandomFloat(distance * 0.08, distance * 0.12);
+
+                        activities.push({
+                            time: `${startTimeStr} - ${endTimeStr}`,
+                            distance: distance,
+                            fuelUsed: fuelUsed,
+                            status: `Riding (Ride ${rideCounter++})`,
+                            earnings: earnings,
+                            rides: 1
+                        });
+
+                    } else {
+                        const restType = commonActivities[getRandomInt(2, 3)]; // Waiting or Lunch
+                        const startTimeStr = lastTime.toTimeString().substring(0, 5);
+                        const duration = restType === "Lunch Break" ? getRandomInt(45, 75) : getRandomInt(10, 30);
+                        lastTime.setMinutes(lastTime.getMinutes() + duration);
+                        const endTimeStr = lastTime.toTimeString().substring(0, 5);
+
+                        activities.push({
+                            time: `${startTimeStr} - ${endTimeStr}`,
+                            distance: 0,
+                            fuelUsed: 0,
+                            status: restType,
+                            earnings: 0,
+                            rides: 0
+                        });
+                    }
+                }
+
+                if (activities.length > 0 && lastTime.getHours() >= 15) {
+                    const startTimeStr = lastTime.toTimeString().substring(0, 5);
+                    lastTime.setMinutes(lastTime.getMinutes() + getRandomInt(15, 45));
+                    const endTimeStr = lastTime.toTimeString().substring(0, 5);
+                    const distance = getRandomInt(5, 15);
+                    const fuelUsed = getRandomFloat(distance * 0.08, distance * 0.12);
+                    activities.push({ time: `${startTimeStr} - ${endTimeStr}`, distance: distance, fuelUsed: fuelUsed, status: "Commute Home", earnings: 0, rides: 0 });
+                }
+            } else {
+                // If it's a non-active day, add a simple "Day Off" entry
+                activities.push({ time: "All Day", distance: 0, fuelUsed: 0, status: "Day Off", earnings: 0, rides: 0 });
+            }
+
+            // Store in cache before returning
+            activityDataCache[dateStr] = activities;
+            return activities;
+        }
+
+        // --- Core Rendering Functions ---
+
+        function renderDailyActivities(dateStr) {
+            // Ensure data exists for this date, generating it if not
+            const activities = generateRandomDailyActivities(dateStr);
+
+            dailyDetailsBody.innerHTML = '';
+            dailyTotalsFooter.innerHTML = '';
+            selectedDateSpan.textContent = dateStr;
+
+            if (activities.length === 0 || (activities.length === 1 && activities[0].status === "Day Off")) {
+                dailyDetailsBody.innerHTML = '<tr><td colspan="5">No activities recorded for this date.</td></tr>';
+                if (activities.length === 1 && activities[0].status === "Day Off") {
+                     dailyDetailsBody.innerHTML = '<tr><td colspan="5">Day Off - No activities recorded.</td></tr>';
+                }
+                // Add empty totals for a non-active day
+                const totalRow = dailyTotalsFooter.insertRow();
+                totalRow.classList.add('total-row');
+                totalRow.insertCell().textContent = 'TOTALS';
+                totalRow.insertCell().textContent = `0 km`;
+                totalRow.insertCell().textContent = `0.00 L`;
+                totalRow.insertCell().textContent = `Rides: 0`;
+                totalRow.insertCell().textContent = `INR 0.00`;
+                return;
+            }
+
+            let totalDistance = 0;
+            let totalFuel = 0;
+            let totalEarnings = 0;
+            let totalRides = 0;
+
+            activities.forEach(activity => {
+                const row = dailyDetailsBody.insertRow();
+                row.insertCell().textContent = activity.time;
+                row.insertCell().textContent = activity.distance > 0 ? `${activity.distance.toFixed(0)} km` : '-';
+                row.insertCell().textContent = activity.fuelUsed > 0 ? `${activity.fuelUsed.toFixed(2)} L` : '-';
+                row.insertCell().textContent = activity.status;
+                row.insertCell().textContent = activity.earnings > 0 ? `INR ${activity.earnings.toFixed(2)}` : '-';
+
+                totalDistance += activity.distance;
+                totalFuel += activity.fuelUsed;
+                totalEarnings += activity.earnings;
+                totalRides += activity.rides;
+            });
+
+            // Add totals row
+            const totalRow = dailyTotalsFooter.insertRow();
+            totalRow.classList.add('total-row');
+            totalRow.insertCell().textContent = 'TOTALS';
+            totalRow.insertCell().textContent = `${totalDistance.toFixed(0)} km`;
+            totalRow.insertCell().textContent = `${totalFuel.toFixed(2)} L`;
+            totalRow.insertCell().textContent = `Rides: ${totalRides}`;
+            totalRow.insertCell().textContent = `INR ${totalEarnings.toFixed(2)}`;
+        }
+
+
+        function renderWeeklySummary(selectedDate) {
+            const weeklyDetailsBody = document.getElementById('weekly-details');
+            const weeklyTotalsFooter = document.getElementById('weekly-totals');
+            weeklyDetailsBody.innerHTML = '';
+            weeklyTotalsFooter.innerHTML = '';
+
+            const date = new Date(selectedDate);
+            const dayOfWeek = (date.getDay() === 0) ? 6 : date.getDay() - 1; // Make Monday = 0, Sunday = 6
+            const startOfWeek = new Date(date);
+            startOfWeek.setDate(date.getDate() - dayOfWeek);
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            let weekTotalHours = 0;
+            let weekTotalDistance = 0;
+            let weekTotalRides = 0;
+            let weekTotalEarnings = 0;
+
+            // Iterate through all 7 days of the week
+            for (let i = 0; i < 7; i++) {
+                const currentDay = new Date(startOfWeek);
+                currentDay.setDate(startOfWeek.getDate() + i);
+                const dayStr = currentDay.toISOString().split('T')[0];
+
+                // Ensure data exists for this date, generating it if not
+                const dailyActivities = generateRandomDailyActivities(dayStr);
+
+                let dayHoursDriven = 0;
+                let dayDistance = 0;
+                let dayRides = 0;
+                let dayEarnings = 0;
+                let statusSummary = "Active"; // Default status
+
+                if (dailyActivities.length === 1 && dailyActivities[0].status === "Day Off") {
+                    statusSummary = "Day Off";
+                } else {
+                    dailyActivities.forEach(activity => {
+                        if (activity.status.includes("Riding") || activity.status.includes("Commute")) {
+                            const [startTimeStr, endTimeStr] = activity.time.split(' - ');
+                            const [startHour, startMinute] = startTimeStr.split(':').map(Number);
+                            const [endHour, endMinute] = endTimeStr.split(':').map(Number);
+                            const startMinutes = startHour * 60 + startMinute;
+                            const endMinutes = endHour * 60 + endMinute;
+                            dayHoursDriven += (endMinutes - startMinutes) / 60;
+                        }
+                        dayDistance += activity.distance;
+                        dayRides += activity.rides;
+                        dayEarnings += activity.earnings;
+                    });
+                }
+
+                const row = weeklyDetailsBody.insertRow();
+                row.insertCell().textContent = dayStr;
+                row.insertCell().textContent = currentDay.toLocaleDateString('en-IN', { weekday: 'long' });
+                row.insertCell().textContent = dayHoursDriven.toFixed(1);
+                row.insertCell().textContent = `${dayDistance.toFixed(0)} km`;
+                row.insertCell().textContent = dayRides;
+                row.insertCell().textContent = `INR ${dayEarnings.toFixed(2)}`;
+
+                weekTotalHours += dayHoursDriven;
+                weekTotalDistance += dayDistance;
+                weekTotalRides += dayRides;
+                weekTotalEarnings += dayEarnings;
+            }
+
+            // Add weekly totals row
+            const totalRow = weeklyTotalsFooter.insertRow();
+            totalRow.classList.add('total-row');
+            totalRow.insertCell().textContent = 'TOTALS';
+            totalRow.insertCell().textContent = ''; // Empty cell for Day
+            totalRow.insertCell().textContent = `${weekTotalHours.toFixed(1)}`;
+            totalRow.insertCell().textContent = `${weekTotalDistance.toFixed(0)} km`;
+            totalRow.insertCell().textContent = `${weekTotalRides}`;
+            totalRow.insertCell().textContent = `INR ${weekTotalEarnings.toFixed(2)}`;
+        }
+
+
+        function renderMonthlySummary(selectedDate) {
+            const monthlyDetailsBody = document.getElementById('monthly-details');
+            const monthlyTotalsFooter = document.getElementById('monthly-totals');
+            monthlyDetailsBody.innerHTML = '';
+            monthlyTotalsFooter.innerHTML = '';
+
+            const month = selectedDate.getMonth();
+            const year = selectedDate.getFullYear();
+            const monthName = selectedDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'long' });
+
+            let monthTotalHours = 0;
+            let monthTotalDistance = 0;
+            let monthTotalRides = 0;
+            let monthTotalEarnings = 0;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Aggregate data for the entire month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const currentDay = new Date(year, month, i);
+                const dayStr = currentDay.toISOString().split('T')[0];
+
+                // Ensure data exists for this date, generating it if not
+                const dailyActivities = generateRandomDailyActivities(dayStr);
+
+                if (!(dailyActivities.length === 1 && dailyActivities[0].status === "Day Off")) {
+                    dailyActivities.forEach(activity => {
+                        if (activity.status.includes("Riding") || activity.status.includes("Commute")) {
+                            const [startTimeStr, endTimeStr] = activity.time.split(' - ');
+                            const [startHour, startMinute] = startTimeStr.split(':').map(Number);
+                            const [endHour, endMinute] = endTimeStr.split(':').map(Number);
+                            const startMinutes = startHour * 60 + startMinute;
+                            const endMinutes = endHour * 60 + endMinute;
+                            monthTotalHours += (endMinutes - startMinutes) / 60;
+                        }
+                        monthTotalDistance += activity.distance;
+                        monthTotalRides += activity.rides;
+                        monthTotalEarnings += activity.earnings;
+                    });
+                }
+            }
+
+            const row = monthlyDetailsBody.insertRow();
+            row.insertCell().textContent = monthName;
+            row.insertCell().textContent = monthTotalHours.toFixed(1);
+            row.insertCell().textContent = `${monthTotalDistance.toFixed(0)} km`;
+            row.insertCell().textContent = monthTotalRides;
+            row.insertCell().textContent = `INR ${monthTotalEarnings.toFixed(2)}`;
+
+            const totalRow = monthlyTotalsFooter.insertRow();
+            totalRow.classList.add('total-row');
+            totalRow.insertCell().textContent = `TOTAL FOR ${monthName.toUpperCase()}`;
+            totalRow.insertCell().textContent = `${monthTotalHours.toFixed(1)}`;
+            totalRow.insertCell().textContent = `${monthTotalDistance.toFixed(0)} km`;
+            totalRow.insertCell().textContent = `${monthTotalRides}`;
+            totalRow.insertCell().textContent = `INR ${monthTotalEarnings.toFixed(2)}`;
+        }
+
+
+        // --- Event Listeners and Initial Load ---
+
+        // Navigation button logic
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const targetId = this.dataset.target + '-slide';
+                swiperSlides.forEach(slide => {
+                    slide.classList.remove('active');
+                    if (slide.id === targetId) {
+                        slide.classList.add('active');
+                        currentView = this.dataset.target;
+
+                        const selectedDate = flatpickrInstance.selectedDates[0] || new Date();
+
+                        if (currentView === 'daily') {
+                            renderDailyActivities(selectedDate.toISOString().split('T')[0]);
+                        } else if (currentView === 'weekly') {
+                            renderWeeklySummary(selectedDate);
+                        } else if (currentView === 'monthly') {
+                            renderMonthlySummary(selectedDate);
+                        }
+                    }
+                });
+            });
+        });
+
+        // Initialize Flatpickr for the calendar
+        const flatpickrInstance = flatpickr("#calendarTrigger", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    const selectedDate = selectedDates[0];
+                    if (currentView === 'daily') {
+                        renderDailyActivities(dateStr);
+                    } else if (currentView === 'weekly') {
+                        renderWeeklySummary(selectedDate);
+                    } else if (currentView === 'monthly') {
+                        renderMonthlySummary(selectedDate);
+                    }
+                }
+            }
+        });
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            // Render the initial view based on the current default (daily)
+            renderDailyActivities(todayStr);
+
+            // No need to pre-generate a large range. Data will be generated on demand.
+            // However, ensure weekly and monthly summary also generate their respective daily data
+            renderWeeklySummary(today);
+            renderMonthlySummary(today);
+        });
+    </script>
+</body>
+</html>

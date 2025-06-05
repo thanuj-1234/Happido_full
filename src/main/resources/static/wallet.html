@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet Payment Process</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6fb;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+ 
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+ 
+    .button {
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+ 
+    .button:hover {
+      background: #0056b3;
+    }
+ 
+    .hidden {
+      display: none;
+    }
+ 
+    .pay-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+ 
+    .quick-cash {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+ 
+    .quick-button {
+      padding: 8px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+ 
+    .quick-button:hover {
+      background: #218838;
+    }
+ 
+    .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    .currency-symbol {
+      font-size: 18px;
+      margin-right: 5px;
+    }
+ 
+    .input-box {
+      font-size: 16px;
+      padding: 5px;
+      text-align: left;
+    }
+ 
+    .icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+ 
+  <div class="container">
+    <h2>Wallet Payment Process</h2>
+    <p>Current Balance: <strong id="walletBalance">₹0.0</strong></p>
+   
+    <button class="button" onclick="showInput()">+ Add Money</button>
+ 
+    <div id="moneyInputSection" class="hidden">
+      <label>Enter Amount:</label>
+      <div class="input-container">
+        <span class="currency-symbol">₹</span>
+        <input type="number" id="moneyInput" class="input-box" oninput="confirmMoney()">
+      </div>
+ 
+      <h3>Quick Cash</h3>
+      <div class="quick-cash">
+        <button class="quick-button" onclick="quickAdd(100)">₹100</button>
+        <button class="quick-button" onclick="quickAdd(500)">₹500</button>
+        <button class="quick-button" onclick="quickAdd(1000)">₹1000</button>
+      </div>
+    </div>
+ 
+    <div id="paymentOptions" class="hidden">
+      <h3>Select Payment Method</h3>
+      <div class="pay-option">
+        <img src="amazonpay.png" class="icon">
+        <strong>AmazonPay</strong>
+        <button class="button" onclick="verifySecureCode('AmazonPay')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="paytm.png" class="icon">
+        <strong>Paytm</strong>
+        <button class="button" onclick="verifySecureCode('Paytm')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="gpay.png" class="icon">
+        <strong>GPay</strong>
+        <button class="button" onclick="verifySecureCode('GPay')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="phonepe.png" class="icon">
+        <strong>PhonePe</strong>
+        <button class="button" onclick="verifySecureCode('PhonePe')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="credit-debit.png" class="icon">
+        <strong>Credit/Debit Card</strong>
+        <button class="button" onclick="verifySecureCode('Card')">Pay</button>
+      </div>
+      <div class="pay-option">
+        <img src="netbanking.png" class="icon">
+        <strong>Net Banking</strong>
+        <button class="button" onclick="verifySecureCode('Net Banking')">Pay</button>
+      </div>
+    </div>
+  </div>
+ 
+  <script>
+    function showInput() {
+      document.getElementById("moneyInputSection").classList.remove("hidden");
+    }
+ 
+    function confirmMoney() {
+      let amount = document.getElementById("moneyInput").value;
+      if (amount && !isNaN(amount) && amount > 0) {
+        document.getElementById("paymentOptions").classList.remove("hidden"); // Show payment options
+      }
+    }
+ 
+    function quickAdd(amount) {
+      document.getElementById("moneyInput").value = amount;
+      confirmMoney();
+    }
+ 
+    function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+    }
+ 
+    function verifySecureCode(service) {
+      let generatedOTP = generateOTP();
+      alert(`Your OTP for ${service} is: ${generatedOTP}`); // Simulating OTP sending
+ 
+      let userOTP = prompt("Enter the OTP received:");
+      if (userOTP == generatedOTP) {
+        let amount = parseFloat(document.getElementById("moneyInput").value);
+        let balanceElement = document.getElementById("walletBalance");
+        let currentBalance = parseFloat(balanceElement.innerText.replace("₹", "")) || 0;
+        let newBalance = currentBalance + amount;
+ 
+        balanceElement.innerText = `₹${newBalance.toFixed(2)}`;
+        alert(`₹${amount} added to your wallet via ${service}!`);
+      } else {
+        alert("Invalid OTP. Please enter the correct OTP.");
+      }
+    }
+  </script>
+ 
+</body>
+</html>

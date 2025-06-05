@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAPPIDO Help & Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a modern look */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Styles for the blurred background image */
+        #blurred-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Ensure it's behind the content */
+            background-image: url('Media.jpg'); /* Placeholder image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(6px); /* Apply blur effect */
+            -webkit-filter: blur(6px); /* For Safari */
+            transform: scale(1.02); /* Slightly scale to hide blur edges */
+        }
+
+        /* Styles for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Below the modal, above other content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Styles for the popup message */
+        .popup-message {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            transform: scale(0.8);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .overlay.show .popup-message {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col antialiased relative">
+
+    <div id="blurred-background"></div>
+
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+        <section class="bg-white bg-opacity-60 p-6 md:p-12 rounded-3xl shadow-2xl max-w-5xl mx-auto transform hover:scale-[1.005] transition-transform duration-300 ease-in-out">
+            <h2 class="text-5xl font-extrabold text-center text-gray-900 mb-10 leading-tight">
+                HAPPIDO <span class="text-orange-600">Support Center</span>
+            </h2>
+
+            <div class="space-y-10 text-lg text-gray-700 leading-relaxed">
+                <p class="text-center max-w-3xl mx-auto">
+                    We're always eager to hear from you! Whether you have a question about your ride, need technical assistance, want to explore partnership opportunities, or simply wish to provide feedback, our dedicated team is here to help.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 text-center md:text-left">
+                    <div class="bg-white bg-opacity-70 p-6 rounded-xl shadow-md border border-gray-100 transform hover:translate-y-[-5px] transition-transform duration-200">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-4 flex items-center justify-center md:justify-start">
+                            <svg class="w-8 h-8 text-orange-500 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                            Reach Us Directly
+                        </h3>
+                        <p class="mb-3">
+                            <strong class="text-orange-600">Email:</strong> <a href="mailto:support@happido.com" class="text-blue-600 hover:underline hover:text-blue-800 transition-colors duration-200">support@happido.com</a>
+                        </p>
+                        <p class="mb-3">
+                            <strong class="text-orange-600">Phone:</strong> <a href="tel:+1234567890" class="text-blue-600 hover:underline hover:text-blue-800 transition-colors duration-200">+1 (234) 567-890</a> (24/7 Support)
+                        </p>
+                        <p>
+                            <strong class="text-orange-600">Operating Hours:</strong> 24 hours a day, 7 days a week, 365 days a year!
+                        </p>
+                    </div>
+                    <div class="bg-white bg-opacity-70 p-6 rounded-xl shadow-md border border-gray-100 transform hover:translate-y-[-5px] transition-transform duration-200">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-4 flex items-center justify-center md:justify-start">
+                            <svg class="w-8 h-8 text-orange-500 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                            Our Global Headquarters
+                        </h3>
+                        <p class="mb-2">HAPPIDO Headquarters</p>
+                        <p class="mb-2">123 Innovation Drive, Suite 400</p>
+                        <p class="mb-2">Tech City, State 12345</p>
+                        <p>Global Nation</p>
+                    </div>
+                </div>
+
+                <div class="pt-8">
+                    <h3 class="text-3xl font-bold text-gray-800 text-center mb-6">Send Us a Message</h3>
+                    <form id="contactForm" action="#" method="POST" class="space-y-6 max-w-2xl mx-auto p-8 bg-white bg-opacity-70 rounded-xl shadow-md border border-gray-100">
+                        <div>
+                            <label for="name" class="block text-gray-700 text-base font-semibold mb-2">Your Name:</label>
+                            <input type="text" id="name" name="name" class="shadow-sm appearance-none border border-gray-300 bg-white bg-opacity-80 text-gray-700 rounded-lg w-full py-3 px-4 leading-tight focus:outline-none focus:ring-3 focus:ring-orange-300 focus:border-orange-500 transition duration-200" placeholder="John Doe" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-700 text-base font-semibold mb-2">Your Email:</label>
+                            <input type="email" id="email" name="email" class="shadow-sm appearance-none border border-gray-300 bg-white bg-opacity-80 text-gray-700 rounded-lg w-full py-3 px-4 leading-tight focus:outline-none focus:ring-3 focus:ring-orange-300 focus:border-orange-500 transition duration-200" placeholder="you@example.com" required>
+                        </div>
+                        <div>
+                            <label for="subject" class="block text-gray-700 text-base font-semibold mb-2">Subject:</label>
+                            <div class="relative">
+                                <select id="subject" name="subject" class="block appearance-none w-full bg-white bg-opacity-80 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-lg shadow-sm leading-tight focus:outline-none focus:ring-3 focus:ring-orange-300 focus:border-orange-500 transition duration-200" required>
+                                    <option value="" disabled selected>Select a Subject</option>
+                                    <option value="booking_inquiry">Booking Inquiry</option>
+                                    <option value="cancellation_request">Cancellation Request</option>
+                                    <option value="driver_feedback">Driver Feedback</option>
+                                    <option value="payment_issue">Payment Issue</option>
+                                    <option value="technical_support">Technical Support</option>
+                                    <option value="lost_found">Lost & Found Item</option>
+                                    <option value="become_driver">Becoming a Driver</option>
+                                    <option value="general_inquiry">General Inquiry</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.05 6.879 4.636 8.293 9.293 12.95z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-gray-700 text-base font-semibold mb-2">Your Message:</label>
+                            <textarea id="message" name="message" rows="7" class="shadow-sm appearance-none border border-gray-300 bg-white bg-opacity-80 text-gray-700 rounded-lg w-full py-3 px-4 leading-tight focus:outline-none focus:ring-3 focus:ring-orange-300 focus:border-orange-500 transition duration-200" placeholder="Type your message here..." required></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-10 rounded-full shadow-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-300">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="pt-8">
+                    <h3 class="text-3xl font-bold text-gray-800 text-center mb-6">Frequently Asked Questions</h3>
+                    <div class="space-y-5">
+                        <h4 class="text-2xl font-semibold text-gray-800 pt-4">For Passengers:</h4>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: How do I book a ride?</h5>
+                            <p class="text-gray-600">A: You can book a ride directly through our HAPPIDO mobile app, available on iOS and Android. Simply enter your pick-up and drop-off locations, choose your preferred cab type, and confirm your booking.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: What payment methods are accepted?</h5>
+                            <p class="text-gray-600">A: We accept various payment methods including credit/debit cards, mobile wallets, and cash payments (where available). You can manage your payment options within the app.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: How can I track my driver?</h5>
+                            <p class="text-gray-600">A: Once your ride is confirmed, you can track your driver's location in real-time on the map within the HAPPIDO app. You'll also receive updates on their estimated arrival time.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: Can I schedule a ride in advance?</h5>
+                            <p class="text-gray-600">A: Yes, HAPPIDO allows you to schedule rides for a later time or date. This feature is perfect for airport transfers or important appointments. Just select the 'Schedule Ride' option in the app.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: How do I update my profile information or payment details?</h5>
+                            <p class="text-gray-600">A: You can easily update your personal and payment information by navigating to the 'Profile' or 'Settings' section within the HAPPIDO mobile application. Ensure all details are current for a smooth experience.</p>
+                        </div>
+
+                        <h4 class="text-2xl font-semibold text-gray-800 pt-8">For Drivers:</h4>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: How can I become a HAPPIDO driver?</h5>
+                            <p class="text-gray-600">A: To become a HAPPIDO driver, you need to meet certain eligibility criteria including age, driving experience, and vehicle requirements. Visit our 'Drive with Us' section on the website or app to start your application process.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: What are the vehicle requirements for drivers?</h5>
+                            <p class="text-gray-600">A: Vehicle requirements vary by region but generally include a modern, well-maintained vehicle that meets safety standards. Specific details can be found in the driver application portal or by contacting driver support.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: How and when do drivers get paid?</h5>
+                            <p class="text-gray-600">A: HAPPIDO offers flexible payment options, typically processed weekly or bi-weekly via direct deposit. Drivers can track their earnings and payment history directly through the driver app.</p>
+                        </div>
+                        <div class="bg-white bg-opacity-70 p-5 rounded-xl shadow-sm border border-gray-100">
+                            <h5 class="font-bold text-gray-800 mb-1">Q: Is there support for drivers?</h5>
+                            <p class="text-gray-600">A: Absolutely! HAPPIDO provides 24/7 driver support through the app, phone, and email. We also have dedicated driver hubs in major cities for in-person assistance and community building.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="popupOverlay" class="overlay">
+        <div class="popup-message">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Message Sent!</h3>
+            <p class="text-gray-700">
+                Your inquiry is now with our team. We'll be in touch with a solution very soon!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const contactForm = document.getElementById('contactForm');
+        const popupOverlay = document.getElementById('popupOverlay');
+
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Basic form validation (optional, but good practice)
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            if (!name || !email || !subject || !message) {
+                // In a real application, you'd show an inline error message
+                console.error("Please fill in all required fields.");
+                return;
+            }
+
+            // Show the popup and overlay
+            popupOverlay.classList.add('show');
+
+            // Hide the popup and overlay after 4 seconds
+            setTimeout(() => {
+                popupOverlay.classList.remove('show');
+                // Optionally, clear the form fields after successful submission
+                contactForm.reset();
+            }, 4000);
+        });
+    </script>
+</body>
+</html>

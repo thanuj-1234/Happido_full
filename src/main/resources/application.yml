@@ -1,0 +1,38 @@
+# application.yml
+
+spring:
+  application:
+    name: cabsy-backend
+  datasource:
+    url: jdbc:mysql://localhost:3306/cabsy_db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  or create or create-drop or validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false # Recommended for REST APIs to prevent N+1 issues
+  # Other Spring Boot properties...
+
+cors:
+  allowedOrigin: 'http://localhost:3000' # Your frontend URL, or '*' for all origins (DEV ONLY)
+  allowedMethods: 'GET,POST,PUT,DELETE,OPTIONS'
+  allowedHeaders: 'Authorization,Content-Type,Accept'
+  allowedCredentials: true
+  corsConfiguration: '/**'
+
+logging:
+  level:
+    root: WARN
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate: WARN
+    com.zaxxer.hikari: WARN
+    com.cabsy.backend: INFO # Keep your application's logs at INFO or DEBUG

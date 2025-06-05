@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help Topics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #FFF8F0; /* Very light orange background */
+        }
+        header {
+            background-color: #FF8C00; /* Orange background for the header */
+            color: white; /* White text for better contrast on orange */
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .container {
+            padding: 16px;
+        }
+        .menu-item, .faq-item {
+            background-color: white;
+            margin-bottom: 10px;
+            padding: 16px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        /* Styling for the main help topic dropdowns */
+        .menu-item {
+            border-left: 5px solid #FF8C00; /* Orange border */
+            padding: 18px 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .menu-item:hover {
+            background-color: #FFF2E6; /* Lighter orange for hover */
+        }
+ 
+        /* FAQ Item Styling */
+        .faq-item {
+            flex-direction: row; /* Default: question and arrow in a row */
+            align-items: flex-start; /* Align items to the start vertically */
+            padding-bottom: 16px; /* Add some initial bottom padding */
+        }
+ 
+        .faq-item.active {
+            flex-direction: column; /* When active, stack question and answer */
+            align-items: stretch; /* Stretch items to fill width */
+        }
+        .faq-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; /* Ensure header takes full width */
+            padding-bottom: 5px; /* Space between question and answer */
+        }
+ 
+        .arrow {
+            font-size: 18px;
+            color: #888;
+            transition: transform 0.3s ease;
+            transform: rotate(0deg); /* Default state: points right for all arrows */
+        }
+        /* Arrow for menu items (main categories) when active */
+        .menu-item.active .arrow {
+            transform: rotate(90deg); /* Points down when active */
+        }
+        /* Arrow for FAQ items (nested questions) when active */
+        .faq-item.active .arrow {
+            transform: rotate(90deg); /* Points down when active */
+        }
+ 
+        .section-title {
+            font-weight: bold;
+            margin: 20px 0 10px;
+            font-size: 16px;
+        }
+ 
+        /* Styles for smooth slide down animation */
+        .faqs-category {
+            margin-left: 15px;
+            margin-top: -5px;
+            padding-top: 5px;
+            overflow: hidden; /* Crucial to hide content outside max-height */
+            max-height: 0; /* Start hidden */
+            transition: max-height 0.4s ease-out; /* Smooth transition */
+        }
+        .faqs-category.active {
+            max-height: 1000px; /* A large enough value to accommodate content */
+        }
+ 
+        .faq-answer {
+            padding-top: 10px;
+            padding-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+            overflow: hidden;
+            white-space: pre-wrap; /* This ensures spaces and line breaks are respected by default */
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+ 
+            /* Slide animation for answer */
+            max-height: 0; /* Start hidden */
+            transition: max-height 0.4s ease-out; /* Smooth transition */
+        }
+ 
+        .faq-item.active .faq-answer {
+            max-height: 500px; /* A large enough value for the answer content */
+        }
+ 
+        /* Typing animation */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        .typing-animation {
+            animation: typing 0.02s steps(1, end) forwards;
+            overflow: hidden;
+            white-space: pre-wrap; /* Changed from nowrap to pre-wrap to preserve spaces and lines */
+            width: 0; /* Used for the typing animation effect */
+        }
+ 
+        /* New styles for the feedback/query box */
+        .query-box {
+            background-color: white;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .query-box h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .query-box textarea {
+            width: calc(100% - 20px); /* Account for padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical; /* Allow vertical resizing */
+            margin-bottom: 10px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+        .query-box button {
+            background-color: #FF8C00; /* Orange button */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .query-box button:hover {
+            background-color: #E67C00; /* Darker orange on hover */
+        }
+        /* Message for query submission */
+        .query-message {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #FFF2E6; /* Light orange background */
+            color: #FF8C00; /* Orange text */
+            border: 1px solid #FF8C00; /* Orange border */
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <header>Help</header>
+    <div class="container">
+        <div id="help-topics">
+            <div class="section-title">Help Topics</div>
+            <div class="menu-item" onclick="toggleCategory('ride-fare', this)">
+                <span>Ride fare related Issues</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-ride-fare" class="faqs-category"></div>
+ 
+            <div class="menu-item" onclick="toggleCategory('captain-vehicle', this)">
+                <span>Captain and Vehicle related issues</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-captain-vehicle" class="faqs-category"></div>
+ 
+            <div class="menu-item" onclick="toggleCategory('pass-payment', this)">
+                <span>Pass and Payment related Issues</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-pass-payment" class="faqs-category"></div>
+ 
+            <div class="menu-item" onclick="toggleCategory('parcel', this)">
+                <span>Parcel Related Issues</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-parcel" class="faqs-category"></div>
+ 
+            <div class="menu-item" onclick="toggleCategory('how-to-book', this)">
+                <span>How to book a ride</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-how-to-book" class="faqs-category"></div>
+ 
+            <div class="menu-item" onclick="toggleCategory('other', this)">
+                <span>Other Topics</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-other" class="faqs-category"></div>
+        </div>
+ 
+        <div class="query-box">
+            <h3>Have other questions or feedback?</h3>
+            <textarea id="userQuery" placeholder="Type your suggestion, feedback, or query here..."></textarea>
+            <button onclick="submitQuery()">Submit</button>
+            <div id="queryMessage" class="query-message" style="display:none;"></div>
+        </div>
+    </div>
+    <script>
+        const faqsData = {
+            'ride-fare': [
+                {
+                    question: 'I have been charged higher than the estimated fare',
+                    answer: 'The final fare may vary due to traffic conditions, route changes, or additional stops. If you believe there was an error, please contact customer support.'
+                },
+                {
+                    question: 'I have been charged a cancellation fee',
+                    answer: 'Cancellation fees are applied if you cancel a ride after the driver has already been dispatched. For more details, refer to our cancellation policy.'
+                },
+                {
+                    question: 'I didn\'t take the ride but I was charged for the same',
+                    answer: 'If you were charged for a ride you didn\'t take, please contact customer support with the ride details for a resolution.'
+                },
+                {
+                    question: 'I didn\'t receive cashback in my wallet',
+                    answer: 'Cashback is usually credited within 24 hours. If you haven\'t received it, please check your wallet balance or contact support.'
+                }
+            ],
+            'captain-vehicle': [
+                {
+                    question: 'The captain was rude',
+                    answer: 'We apologize for the inconvenience. Please report the incident to customer support with details, and we will take appropriate action.'
+                },
+                {
+                    question: 'The vehicle was not clean',
+                    answer: 'We strive to maintain cleanliness in all our vehicles. Please report the issue to customer support, and we will address it promptly.'
+                },
+                {
+                    question: 'The vehicle arrived late',
+                    answer: 'Delays can occur due to traffic or other unforeseen circumstances. If the delay was significant, please contact support for assistance.'
+                },
+                {
+                    question: 'The captain took a longer route',
+                    answer: 'If you believe the captain took an unnecessarily longer route, please report the ride details to customer support for review.'
+                }
+            ],
+            'pass-payment': [
+                {
+                    question: 'My payment failed',
+                    answer: 'Please ensure your payment method is valid and has sufficient funds. If the issue persists, contact support for help.'
+                },
+                {
+                    question: 'I was charged twice',
+                    answer: 'If you were charged twice for the same ride, please contact customer support with the transaction details for a refund.'
+                },
+                {
+                    question: 'I want to update my payment method',
+                    answer: 'You can update your payment method in the account settings. If you need assistance, please contact support.'
+                },
+                {
+                    question: 'I didn\'t receive my pass benefits',
+                    answer: 'Pass benefits are applied automatically. If you didn\'t receive them, please check your pass status or contact support.'
+                }
+            ],
+            'parcel': [
+                {
+                    question: 'My parcel was damaged',
+                    answer: 'We apologize for the damage. Please report the issue to customer support with details, and we will investigate.'
+                },
+                {
+                    question: 'The parcel was delivered late',
+                    answer: 'Delivery times can vary due to traffic and other factors. If the delay was significant, please contact support for assistance.'
+                },
+                {
+                    question: 'My parcel was lost',
+                    answer: 'If your parcel is lost, please contact customer support immediately with the tracking details for assistance.'
+                },
+                {
+                    question: 'I need to change delivery address for a parcel',
+                    answer: 'Delivery address changes may be possible if the parcel has not yet been dispatched. Please contact support for assistance.'
+                },
+                {
+                    question: 'I want to track my parcel',
+                    answer: 'You can track your parcel using the tracking link provided in your confirmation email. For further assistance, contact support.'
+                },
+                {
+                    question: 'I want to cancel my parcel delivery',
+                    answer: 'You can cancel your parcel delivery from the booking details page. If you need help, please contact support.'
+                }
+            ],
+            'how-to-book': [
+                {
+                    question: 'How do I book a ride step-by-step?',
+                    answer: `
+1. 📍 **Open the App:** Launch your ride-hailing application.
+2. 🗺️ **Set Destination:** Enter your desired drop-off location in the "Where to?" field.
+3. 🚗 **Choose Ride Type:** Select your preferred vehicle category (e.g., Mini, Sedan, Auto).
+4. 💰 **Confirm Fare:** Review the estimated fare and confirm.
+5. ✅ **Confirm Pickup:** Double-check your pickup location and confirm.
+6. 🔍 **Find Driver:** The app will search for an available driver nearby.
+7. 📱 **Track Ride:** Once a driver is assigned, you can track their arrival on the map.
+8. 🤝 **Enjoy Your Ride:** Get in the vehicle and enjoy your journey!
+9. 💳 **Payment:** Your fare will be automatically processed via your chosen payment method at the end of the ride.
+                    `
+                },
+                {
+                    question: 'Can I add multiple stops?',
+                    answer: 'Yes, you can add multiple stops to your ride. Look for the "+" sign next to your destination field after setting your first drop-off.'
+                },
+                {
+                    question: 'How do I change my pickup location?',
+                    answer: 'You can usually drag the pickup pin on the map or tap on the pickup address to edit it before confirming your ride. If a driver is already assigned, you might need to cancel and rebook for a significant change.'
+                }
+            ],
+            'other': [
+                {
+                    question: 'I have a suggestion',
+                    answer: 'We value your feedback! Please submit your suggestion through the feedback form in the app or contact support.'
+                },
+                {
+                    question: 'I want to report a bug',
+                    answer: 'Please report any bugs through the bug report form in the app or contact support with details.'
+                },
+                {
+                    question: 'I need help with something else',
+                    answer: 'For any other issues, please contact customer support, and we will assist you.'
+                }
+            ]
+        };
+ 
+        // Stores references to setTimeout for active typing animations
+        const activeTypingTimeouts = {};
+ 
+        function toggleCategory(topic, clickedElement) {
+            const faqCategoryDiv = document.getElementById(`faqs-${topic}`);
+ 
+            // Toggle 'active' class on the menu item for arrow rotation
+            clickedElement.classList.toggle('active');
+ 
+            // Toggle 'active' class on the faqCategoryDiv for slide animation
+            const isActiveCategory = faqCategoryDiv.classList.toggle('active');
+ 
+            // Populate FAQs if they haven't been populated yet for this category
+            // or if it's being opened
+            if (isActiveCategory && faqCategoryDiv.innerHTML === '') {
+                faqsData[topic].forEach(faq => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item';
+ 
+                    const faqItemHeader = document.createElement('div');
+                    faqItemHeader.className = 'faq-item-header';
+                    faqItemHeader.innerHTML = `<span>${faq.question}</span><span class="arrow">›</span>`;
+                    faqItem.appendChild(faqItemHeader);
+ 
+                    const answerDiv = document.createElement('div');
+                    answerDiv.className = 'faq-answer';
+                    answerDiv.dataset.fullAnswer = faq.answer; // Store full answer
+                    faqItem.appendChild(answerDiv);
+ 
+                    faqCategoryDiv.appendChild(faqItem);
+ 
+                    // Add click listener for individual FAQ items
+                    faqItem.onclick = (event) => {
+                        event.stopPropagation(); // Prevent category from toggling again
+ 
+                        const currentFaqItem = event.currentTarget; // The clicked faq-item
+                        const currentAnswerDiv = currentFaqItem.querySelector('.faq-answer');
+                        const fullText = currentAnswerDiv.dataset.fullAnswer;
+ 
+                        // Close any other open FAQ item in the same category
+                        faqCategoryDiv.querySelectorAll('.faq-item.active').forEach(item => {
+                            if (item !== currentFaqItem) {
+                                item.classList.remove('active');
+                                const otherAnswerDiv = item.querySelector('.faq-answer');
+                                if (otherAnswerDiv) {
+                                    // Clear any ongoing animation for the other answer
+                                    if (activeTypingTimeouts[item.querySelector('.faq-answer').dataset.fullAnswer]) {
+                                        clearTimeout(activeTypingTimeouts[item.querySelector('.faq-answer').dataset.fullAnswer]);
+                                        delete activeTypingTimeouts[item.querySelector('.faq-answer').dataset.fullAnswer];
+                                    }
+                                    otherAnswerDiv.style.maxHeight = '0';
+                                    otherAnswerDiv.classList.remove('typing-animation');
+                                    otherAnswerDiv.textContent = ''; // Clear content immediately
+                                }
+                            }
+                        });
+ 
+                        const isActiveFaq = currentFaqItem.classList.toggle('active');
+ 
+                        // Clear any ongoing typing animation for the current answer if it was previously active
+                        if (activeTypingTimeouts[fullText]) {
+                            clearTimeout(activeTypingTimeouts[fullText]);
+                            delete activeTypingTimeouts[fullText];
+                        }
+ 
+                        if (isActiveFaq) {
+                            currentAnswerDiv.style.maxHeight = '500px'; // Ensure it can expand
+                            currentAnswerDiv.textContent = ''; // Clear for new typing animation
+                            currentAnswerDiv.classList.remove('typing-animation'); // Remove to re-trigger
+                            void currentAnswerDiv.offsetWidth; // Trigger reflow
+                            currentAnswerDiv.classList.add('typing-animation'); // Re-add for typing
+ 
+                            let i = 0;
+                            const typingSpeed = 10; // Speed of typing
+ 
+                            function typeWriter() {
+                                if (i < fullText.length) {
+                                    // Use textContent for accurate whitespace handling
+                                    currentAnswerDiv.textContent += fullText.charAt(i);
+                                    i++;
+                                    // Store timeout reference for cleanup
+                                    activeTypingTimeouts[fullText] = setTimeout(typeWriter, typingSpeed);
+                                } else {
+                                    // Animation complete, ensure class is removed if not needed, or keep for styling
+                                    currentAnswerDiv.classList.remove('typing-animation');
+                                    delete activeTypingTimeouts[fullText]; // Clean up timeout reference
+                                    // Ensure final display has correct wrapping etc.
+                                    currentAnswerDiv.style.whiteSpace = 'pre-wrap';
+                                }
+                            }
+                            typeWriter();
+                        } else {
+                            // When closing an FAQ item
+                            currentAnswerDiv.style.maxHeight = '0';
+                            currentAnswerDiv.classList.remove('typing-animation');
+                            currentAnswerDiv.textContent = ''; // Clear text immediately when collapsing
+                            currentAnswerDiv.style.whiteSpace = 'pre-wrap'; // Reset to default
+                        }
+                    };
+                });
+            } else if (!isActiveCategory) {
+                // If closing a category, clear its content and reset any active FAQ-related items
+                faqCategoryDiv.innerHTML = '';
+                faqCategoryDiv.style.maxHeight = '0'; // Ensure it collapses visually
+                // Also clear any lingering timeouts if category was active
+                for (const key in activeTypingTimeouts) {
+                    clearTimeout(activeTypingTimeouts[key]);
+                    delete activeTypingTimeouts[key];
+                }
+            }
+ 
+            // This part handles the main category slide up/down animation
+            if (isActiveCategory) {
+                // Set max-height to scrollHeight to allow smooth transition
+                // Add a buffer (e.g., 50px) to ensure all content fits during transition
+                faqCategoryDiv.style.maxHeight = faqCategoryDiv.scrollHeight + 50 + 'px';
+            } else {
+                faqCategoryDiv.style.maxHeight = '0';
+            }
+        }
+ 
+        // Function to handle submitting the user query
+        function submitQuery() {
+            const queryTextarea = document.getElementById('userQuery');
+            const userQuery = queryTextarea.value.trim();
+            const queryMessageDiv = document.getElementById('queryMessage');
+ 
+            if (userQuery) {
+                // In a real application, you would send this data to a server
+                console.log("User Query Submitted:", userQuery);
+ 
+                queryMessageDiv.textContent = "Thank you for your feedback/query! We'll get back to you soon.";
+                queryMessageDiv.style.display = 'block';
+                queryMessageDiv.style.opacity = '0'; // Start with opacity 0 for fade-in
+                setTimeout(() => { queryMessageDiv.style.opacity = '1'; }, 10); // Trigger fade-in
+ 
+                queryTextarea.value = ''; // Clear the textarea
+ 
+                // Hide the message after a few seconds
+                setTimeout(() => {
+                    queryMessageDiv.style.opacity = '0';
+                    queryMessageDiv.addEventListener('transitionend', function handler() {
+                        queryMessageDiv.style.display = 'none';
+                        queryMessageDiv.removeEventListener('transitionend', handler);
+                    }, { once: true });
+                }, 3000); // Message disappears after 3 seconds
+            } else {
+                alert("Please type your query or feedback before submitting.");
+            }
+        }
+    </script>
+</body>
+</html>

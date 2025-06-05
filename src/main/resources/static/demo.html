@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Ride App</title>
+    <style>
+        /* Custom font import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Color Variables */
+        :root {
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --red-50: #fef2f2;
+            --red-100: #fee2e2;
+            --red-600: #dc2626;
+            --white: #ffffff;
+            --black: #000000;
+            --green-500: #22c55e;
+            --yellow-400: #facc15;
+            --blue-500: #3b82f6; /* Added for info messages */
+        }
+
+        /* Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-100);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden; /* Prevent horizontal scroll when panel slides in */
+            margin: 0;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: rgb(254, 253, 252);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            margin-left: 20px;
+            color: var(--gray-800);
+            gap: 1.5rem;
+        }
+
+        .navbar-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.025em;
+            color: var(--orange-500);
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            transition: background-color 0.15s ease-in-out;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .navbar-logo:hover {
+            background-color: var(--gray-100);
+        }
+
+        .navbar-logo svg {
+            height: 2rem;
+            width: 2rem;
+            margin-right: 0.5rem;
+        }
+
+        .navbar-ride-btn {
+            background-color: var(--orange-500);
+            color: var(--white);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease-in-out;
+            text-decoration: none;
+            display: none; /* hidden by default */
+            border: none;
+            cursor: pointer;
+        }
+
+        .navbar-ride-btn:hover {
+            background-color: var(--orange-600);
+            transform: scale(1.05);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-right: 20px;
+        }
+
+        .navbar-link {
+            color: var(--gray-700);
+            padding: 0.75rem 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            transition: color 0.15s ease-in-out;
+            text-decoration: none;
+        }
+
+        .navbar-link:hover {
+            color: var(--orange-600);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            border: none;
+            background: none;
+            cursor: pointer;
+            outline: none;
+            border-radius: 9999px;
+            padding: 0.25rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--gray-100);
+        }
+
+        .profile-btn img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            border: 2px solid var(--orange-500);
+            object-fit: cover;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            padding: 1.5rem;
+            display: flex; /* Use flex to center the inner content */
+            justify-content: center; /* Center horizontally */
+            align-items: flex-start; /* Align to top, not center vertically */
+        }
+
+        .main-content-inner,
+        #rideConfirmedSection,
+        #ratingSection,
+        #paymentOptionsSection { /* Apply same centering styles */
+            max-width: 56rem;
+            width: 100%; /* Ensure it takes full width of parent */
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-top: 1.5rem; /* Add some top margin for spacing */
+        }
+
+
+        .get-a-ride-heading {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 2rem;
+        }
+
+        .location-input-wrapper {
+            background-color: var(--gray-100);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative; /* Needed for custom arrow */
+        }
+
+        .location-input-wrapper:last-of-type {
+            margin-bottom: 2rem;
+        }
+
+        .location-input-wrapper .icon {
+            margin-right: 0.75rem;
+            color: var(--gray-700);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .location-input-wrapper.pickup .icon {
+            color: var(--black);
+        }
+
+        .location-input-wrapper.dropoff .icon {
+            color: var(--black);
+        }
+
+        /* Custom Dropdown Styles */
+        .location-input-wrapper select {
+            flex-grow: 1;
+            border: none;
+            background-color: transparent;
+            font-size: 1rem;
+            color: var(--gray-700);
+            outline: none;
+            padding: 0;
+            appearance: none; /* Remove default dropdown arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            padding-right: 2rem; /* Space for custom arrow */
+        }
+
+        /* Custom arrow for select */
+        .location-input-wrapper::after {
+            content: '▼'; /* Unicode down arrow */
+            position: absolute;
+            right: 1rem;
+            color: var(--gray-500);
+            pointer-events: none; /* Make sure clicks go through to the select */
+            font-size: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+
+        .location-input-wrapper .add-button {
+            background-color: var(--black);
+            color: var(--white);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 0.75rem; /* Added margin for spacing */
+        }
+
+        .distance-display {
+            background-color: var(--gray-100);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+
+        .main-action-button {
+            background-color: rgb(234, 136, 56);
+            color: var(--white);
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease-in-out;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            font-size: 1.125rem;
+        }
+
+        .main-action-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* --- Ride Options Section Styles (Pop-up) --- */
+        #rideOptionsSection,
+        #paymentOptionsSection {
+            position: fixed; /* Position fixed relative to viewport */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-width: 56rem; /* Match main content width */
+            margin: 0 auto; /* Center it */
+            background-color: var(--white);
+            border-radius: 0.5rem 0.5rem 0 0; /* Rounded top corners */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2); /* Shadow coming from bottom */
+            padding: 1.5rem;
+            z-index: 90; /* Below profile panel, above main content */
+
+            /* Animation properties */
+            transform: translateY(100%); /* Start off-screen at the bottom */
+            visibility: hidden; /* Hide completely */
+            opacity: 0; /* Start fully transparent */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s;
+        }
+
+        #rideOptionsSection.open,
+        #paymentOptionsSection.open {
+            transform: translateY(0); /* Slide up to original position */
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Adjust for centering on larger screens */
+        @media (min-width: 768px) {
+            #rideOptionsSection,
+            #paymentOptionsSection {
+                left: 50%;
+                transform: translate(-50%, 100%); /* Center and push down */
+            }
+            #rideOptionsSection.open,
+            #paymentOptionsSection.open {
+                transform: translate(-50%, 0); /* Center and slide up */
+            }
+        }
+
+
+        .ride-options-header {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .ride-card {
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ride-card:last-of-type {
+            border-bottom: none;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0;
+        }
+
+        .ride-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .ride-image-container {
+            position: relative;
+            width: 120px; /* Adjust as needed */
+            height: 60px; /* Adjust as needed */
+            margin-right: 1rem;
+        }
+
+        .ride-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .ride-image-container .lightning-icon {
+            position: absolute;
+            top: -5px; /* Adjust as needed */
+            right: 0;
+            color: #FFD700; /* Gold color for lightning */
+            font-size: 1.5rem;
+        }
+
+        .ride-details {
+            flex-grow: 1;
+        }
+
+        .ride-type {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ride-type .passengers {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .ride-price {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--black);
+        }
+
+        .ride-eta {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        .ride-description {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+        }
+
+        .payment-method-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--gray-100);
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .payment-method-display:hover {
+            background-color: var(--gray-200);
+        }
+
+        .payment-method-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .payment-method-left svg {
+            width: 2rem;
+            height: 1.5rem;
+        }
+
+        .payment-method-right svg {
+            color: var(--gray-500);
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .choose-ride-button {
+            background-color: var(--orange-600);
+            color: var(--white);
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.15s ease-in-out;
+            border: none;
+            cursor: pointer;
+            font-size: 1.125rem;
+        }
+
+        .choose-ride-button:hover {
+            background-color: var(--orange-500);
+        }
+
+        /* Sliding Profile Panel */
+        #profilePanel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 450px; /* Default max-width for larger screens */
+            height: 100vh;
+            background-color: var(--white);
+            z-index: 100;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        #profilePanel.open {
+            transform: translateX(0);
+        }
+
+        /* Overlay for when the panel is open */
+        #panelOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            display: none;
+        }
+
+        #panelOverlay.open {
+            display: block;
+        }
+
+        /* Overlay for ride options pop-up */
+        #rideOptionsOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 80; /* Below profile panel, above content */
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        #rideOptionsOverlay.open {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Custom icon sizes for panel buttons */
+        .icon-size{
+            width: 1.5rem;
+            height: 1.5rem;
+            color: green;
+        }
+        .icon-size1 {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: red;
+            
+        }
+
+        /* Profile Panel Header */
+        .profile-panel-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-panel-close-btn {
+            color: var(--gray-500);
+            transition: color 0.15s ease-in-out;
+            border: none;
+            background: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .profile-panel-close-btn:hover {
+            color: var(--gray-800);
+        }
+
+        .profile-panel-close-btn svg {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .profile-name {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .profile-avatar-container {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 9999px;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid var(--orange-500);
+            position: relative; /* For the edit icon positioning */
+        }
+
+        .profile-avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
+        .profile-avatar-edit-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--gray-700);
+            color: var(--white);
+            border-radius: 9999px;
+            padding: 0.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .profile-avatar-edit-icon:hover {
+            background-color: var(--black);
+        }
+
+        .profile-avatar-edit-icon svg {
+            width: 0.9rem;
+            height: 0.9rem;
+        }
+
+        /* Action Buttons Grid */
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-button {
+            background-color: var(--gray-100);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+            transition: background-color 0.15s ease-in-out;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: var(--gray-200);
+        }
+
+        .action-button svg {
+            color: var(--orange-500);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-button span {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center; /* Center text if it wraps */
+        }
+
+        /* Uber Cash Section */
+        .uber-cash-section {
+            background-color: var(--gray-50);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .uber-cash-label {
+            color: var(--gray-700);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .uber-cash-amount {
+            color: var(--gray-900);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Profile Details List */
+        .profile-details-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+
+        .profile-details-list li {
+            margin-bottom: 1rem;
+        }
+
+        .profile-details-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-700);
+            transition: color 0.15s ease-in-out;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .profile-details-link:hover {
+            color: var(--orange-600);
+        }
+
+        .profile-details-link svg {
+            color: var(--gray-500);
+        }
+
+        .profile-details-link span {
+            font-size: 1.125rem;
+        }
+
+        .profile-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .profile-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-detail-item .label {
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .profile-detail-item .value {
+            color: var(--gray-600);
+        }
+
+        .profile-detail-item .edit-icon {
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: color 0.15s ease-in-out;
+        }
+
+        .profile-detail-item .edit-icon:hover {
+            color: var(--orange-600);
+        }
+
+        .profile-detail-item .edit-input {
+            flex-grow: 1;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+            color: var(--gray-700);
+            outline: none;
+        }
+
+
+        /* Sign Out Button */
+        .sign-out-btn {
+            background-color: var(--red-50);
+            color: var(--red-600);
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            width: 100%;
+            transition: background-color 0.15s ease-in-out;
+            border: none;
+            cursor: pointer;
+        }
+
+        .sign-out-btn:hover {
+            background-color: var(--red-100);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--gray-800);
+            color: var(--white);
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        /* --- Ride Confirmed Section Styles --- */
+        #rideConfirmedSection {
+            display: none; /* Hidden by default */
+            text-align: center;
+            position: relative; /* For absolute positioning of map-like elements if needed */
+        }
+
+        #rideConfirmedSection h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green-500);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        #rideConfirmedSection h2 svg {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .ride-detail-card {
+            background-color: var(--gray-50);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .ride-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .ride-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .ride-detail-item .label {
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .ride-detail-item .value {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1.1rem;
+        }
+
+        .ride-detail-item .value.otp {
+            font-size: 1.5rem;
+            color: var(--orange-600);
+            letter-spacing: 0.1em;
+        }
+
+        .ride-detail-item .value.car-number {
+            font-size: 1.25rem;
+            color: var(--black);
+        }
+
+        .driver-info-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .driver-avatar {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 2px solid var(--green-500);
+            flex-shrink: 0;
+        }
+
+        .driver-details-text {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .driver-details-text .driver-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .driver-details-text .driver-rating {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .driver-details-text .driver-rating svg {
+            color: var(--yellow-400);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        .upi{
+            height: 7%;
+            width: 7%;
+        }
+
+        .ride-status-display,
+        .driver-location-display,
+        .eta-display,
+        .notification-area {
+            background-color: var(--blue-500); /* Use blue for info */
+            color: var(--white);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .ride-status-display {
+            background-color: var(--green-500); /* Status is usually good news */
+        }
+        .notification-area {
+            background-color: var(--gray-700); /* More neutral for notifications */
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+
+        .ride-action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .ride-action-buttons .button {
+            flex-grow: 1;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 1.125rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .cancel-ride-button {
+            background-color: var(--red-600);
+            color: var(--white);
+        }
+
+        .cancel-ride-button:hover {
+            background-color: var(--red-700);
+        }
+
+        .call-driver-button {
+            background-color: var(--blue-500);
+            color: var(--white);
+        }
+
+        .call-driver-button:hover {
+            background-color: #2563eb; /* A slightly darker blue */
+        }
+
+        /* --- Rating Section Styles --- */
+        #ratingSection {
+            display: none; /* Hidden by default */
+            text-align: center;
+        }
+
+        #ratingSection h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-driver-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-driver-info img {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 3px solid var(--orange-500);
+        }
+
+        .rating-driver-info .driver-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .stars {
+            font-size: 2.5rem; /* Larger stars */
+            color: var(--gray-300); /* Default grey for unselected stars */
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.2rem;
+            flex-direction: row-reverse; /* Added: Ensures stars appear 1 to 5 from left to right */
+        }
+
+        .stars input[type="radio"] {
+            display: none; /* Hide actual radio buttons */
+        }
+
+        .stars label {
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+            line-height: 1; /* Prevent extra space around stars */
+        }
+
+        /* When a star is hovered, color it and all stars to its visual left (due to row-reverse) */
+        .stars label:hover,
+        .stars label:hover ~ label {
+            color: var(--yellow-400); /* Hover effect */
+        }
+
+        /* When an input is checked, color its corresponding label and all stars to its visual left */
+        .stars input[type="radio"]:checked + label, /* Added: Colors the label of the checked input */
+        .stars input[type="radio"]:checked ~ label { /* Colors labels to the left of the checked input (due to row-reverse) */
+            color: var(--yellow-400); /* Selected stars */
+        }
+
+        /* Removed: This rule is no longer needed with the above changes for LTR fill */
+        /* .stars label:has(~ input[type="radio"]:checked) {
+            color: var(--yellow-400);
+        } */
+        .feedback-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--gray-300);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--gray-700);
+            resize: vertical; /* Allow vertical resizing */
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .feedback-textarea:focus {
+            border-color: var(--orange-500);
+        }
+
+        .rating-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .rating-buttons .button {
+            flex-grow: 1;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 1.125rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .submit-rating-button {
+            background-color: var(--green-500);
+            color: var(--white);
+        }
+
+        .submit-rating-button:hover {
+            background-color: #16a34a; /* Darker green */
+        }
+
+        .skip-rating-button {
+            background-color: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .skip-rating-button:hover {
+            background-color: var(--gray-300);
+        }
+
+        /* Rating Confirmation Message */
+        #ratingConfirmation {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--green-50); /* Light green background */
+            border-radius: 0.5rem;
+            border: 1px solid var(--green-200);
+            color: var(--green-700);
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: none; /* Hidden by default */
+        }
+        #ratingConfirmation p {
+            margin-bottom: 0.5rem;
+        }
+        #ratingConfirmation .stars-display {
+            color: var(--yellow-400);
+            font-size: 1.8rem;
+            margin-top: 0.5rem;
+        }
+        #ratingConfirmation .feedback-summary {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--gray-700);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+
+        /* --- Payment Options Section Styles --- */
+        #paymentOptionsSection .payment-method-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #paymentOptionsSection .payment-method-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        #paymentOptionsSection .payment-method-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        #paymentOptionsSection .payment-method-item:last-child {
+            border-bottom: none;
+        }
+
+        #paymentOptionsSection .payment-method-item svg {
+            width: 2rem;
+            height: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        #paymentOptionsSection .payment-method-item .method-name {
+            flex-grow: 1;
+            font-weight: 500;
+            color: var(--gray-800);
+            font-size: 1rem;
+        }
+
+        #paymentOptionsSection .payment-method-item .selected-indicator {
+            color: var(--green-500);
+            font-size: 1.2rem;
+        }
+
+
+        /* Responsive Styles */
+
+        /* Small screens (e.g., mobile phones) */
+        @media (max-width: 767px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.75rem;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: right;
+                margin-left: 0;
+                
+            }
+
+            .navbar-right {
+                
+                float: left;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+                margin-top: -70px;
+                
+            }
+
+            .navbar-ride-btn {
+                display: block; /* Show on small screens */
+                order: -1; /* Place it before the logo on small screens if desired, or remove to keep it where it is */
+            }
+
+            .navbar-link {
+                display: none; /* Hide activities link on small screens for brevity */
+            }
+
+            .main-content {
+                padding: rem;
+            }
+
+            .main-content-inner {
+                padding: 1.5rem;
+            }
+
+            .get-a-ride-heading {
+                font-size: 1.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #profilePanel {
+                width: 90%; /* Take up more width on small screens */
+            }
+
+            .action-buttons-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+            }
+
+            .profile-name {
+                font-size: 1.5rem;
+            }
+
+            .uber-cash-amount {
+                font-size: 1.25rem;
+            }
+
+            .profile-details-link span, .profile-detail-item .value {
+                font-size: 1rem;
+            }
+
+            #rideOptionsSection,
+            #paymentOptionsSection {
+                width: 100%; /* Take full width on small screens */
+                border-radius: 0.5rem 0.5rem 0 0; /* Keep top corners rounded */
+            }
+
+            #rideConfirmedSection,
+            #ratingSection {
+                padding: 1.5rem; /* Adjust padding for small screens */
+            }
+
+            #rideConfirmedSection h2 {
+                font-size: 1.75rem;
+            }
+
+            .ride-detail-item .value.otp {
+                font-size: 1.25rem;
+            }
+
+            .ride-action-buttons,
+            .rating-buttons {
+                flex-direction: column; /* Stack buttons on small screens */
+            }
+        }
+
+        /* Medium screens (e.g., tablets) and up */
+        @media (min-width: 768px) {
+            .navbar-ride-btn {
+                display: block; /* Show on medium screens and up */
+            }
+
+            .navbar-link {
+                display: block; /* Show on medium screens and up */
+            }
+        }
+
+        /* Large screens (e.g., desktops) */
+        @media (min-width: 1024px) {
+            .navbar {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+
+            .main-content {
+                padding: 2rem;
+            }
+
+            .main-content-inner {
+                padding: 3rem;
+            }
+
+            .get-a-ride-heading {
+                font-size: 2.25rem;
+            }
+
+            #profilePanel {
+                max-width: 450px; /* Maintain fixed max-width for consistency */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="panelOverlay" class="hidden"></div>
+    <div id="rideOptionsOverlay"></div>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="#" class="navbar-logo">
+                <img src="shared image.png" alt="Happido Logo" width="50" height="50">
+            </a>
+            <a href="#" class="navbar-ride-btn">
+                Happido
+            </a>
+        </div>
+
+        <div class="navbar-right">
+            <a href="#" class="navbar-link">Activities</a>
+
+            <button id="openProfilePanel" class="profile-btn">
+                <img src="https://via.placeholder.com/40/FF7F00/FFFFFF?text=JP" alt="Profile">
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="main-content-inner" id="mainContentInner">
+            <h1 class="get-a-ride-heading">Get a ride</h1>
+
+            <div class="location-input-wrapper pickup">
+                <span class="icon">
+                    <svg class="icon-size1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </span>
+                <select id="pickupLocation" class="location-input">
+                    <option value="">Select Pickup Location</option>
+                    <option value="chennai_central">Chennai Central</option>
+                    <option value="adyar">Adyar</option>
+                    <option value="velachery">Velachery</option>
+                    <option value="tnagar">T. Nagar</option>
+                    <option value="kovalam">Kovalam</option>
+                </select>
+            </div>
+
+            <div class="location-input-wrapper dropoff">
+                <span class="icon">
+                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </span>
+                <select id="dropoffLocation" class="location-input">
+                    <option value="">Select Dropoff Location</option>
+                    <option value="chennai_central">Chennai Central</option>
+                    <option value="adyar">Adyar</option>
+                    <option value="velachery">Velachery</option>
+                    <option value="tnagar">T. Nagar</option>
+                    <option value="kovalam">Kovalam</option>
+                </select>
+                <button class="add-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div id="distanceDisplay" class="distance-display">
+                </div>
+
+            <button class="main-action-button" id="findRideButton">
+                Find
+            </button>
+        </div>
+
+        <div id="rideConfirmedSection">
+            <h2>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Ride Confirmed!
+            </h2>
+
+
+            <div class="ride-detail-card">
+                <div class="ride-detail-item">
+                    <span class="label">OTP:</span>
+                    <span class="value otp" id="rideOtp"></span>
+                </div>
+                <div class="ride-detail-item">
+                    <span class="label">Car Number:</span>
+                    <span class="value car-number" id="rideCarNumber"></span>
+                </div>
+                <div class="ride-detail-item">
+                    <span class="label">Amount:</span>
+                    <span class="value" id="rideAmount"></span>
+                </div>
+                <div class="ride-detail-item">
+                    <span class="label">Distance:</span>
+                    <span class="value" id="rideDistance"></span>
+                </div>
+            </div>
+
+            <div class="driver-info-card">
+                <img src="https://via.placeholder.com/64/4B5563/FFFFFF?text=DR" alt="Driver Avatar" class="driver-avatar" id="driverAvatar">
+                <div class="driver-details-text">
+                    <div class="driver-name" id="driverName">Driver Name</div>
+                    <div class="driver-rating">
+                        <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.691h4.17c.969 0 1.371 1.24.588 1.81l-3.373 2.451a1 1 0 00-.362 1.118l1.286 3.967c.3.921-.455 1.688-1.242 1.118l-3.373-2.451a1 1 0 00-1.176 0l-3.373 2.451c-.787.57-1.542-.197-1.242-1.118l1.286-3.967a1 1 0 00-.362-1.118L3.029 9.395c-.783-.57-.381-1.81.588-1.81h4.17a1 1 0 00.95-.691l1.286-3.967z"></path>
+                        </svg>
+                        <span id="driverRating">4.8</span> ratings
+                    </div>
+                </div>
+            </div>
+            <div id="rideStatusDisplay" class="ride-status-display">Status: Requested</div>
+            <div id="driverLocationDisplay" class="driver-location-display">Driver Location: ---</div>
+            <div id="etaDisplay" class="eta-display">ETA: Calculating...</div>
+            <div id="notificationArea" class="notification-area">Waiting for driver to accept...</div>
+            <div class="ride-action-buttons">
+                <button class="button call-driver-button" id="callDriverButton">Call Driver</button>
+                <button class="button cancel-ride-button" id="cancelRideButton">Cancel Ride</button>
+            </div>
+        </div>
+        <div id="ratingSection">
+            <h2>Rate Your Ride</h2>
+            <div id="ratingFormContent">
+                <div class="rating-driver-info">
+                    <img src="https://via.placeholder.com/64/4B5563/FFFFFF?text=DR" alt="Driver Avatar" id="ratingDriverAvatar">
+                    <div class="driver-name" id="ratingDriverName">Driver Name</div>
+                </div>
+                <div class="stars">
+                    <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
+                </div>
+                <textarea id="feedbackTextarea" class="feedback-textarea" placeholder="Share your feedback (optional)"></textarea>
+                <div class="rating-buttons">
+                    <button class="button submit-rating-button" id="submitRatingButton">Submit Rating</button>
+                    <button class="button skip-rating-button" id="skipRatingButton">Skip</button>
+                </div>
+            </div>
+            <div id="ratingConfirmation">
+                <p>Thank you for your feedback!</p>
+                <div class="stars-display" id="submittedStars"></div>
+                <p id="submittedFeedback" class="feedback-summary"></p>
+                <p style="margin-top: 1rem; font-size: 0.9em; color: var(--gray-500);">Returning to main screen...</p>
+            </div>
+        </div>
+        </main>
+
+    <div id="rideOptionsSection">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+            <button id="closeRideOptions" class="profile-panel-close-btn" style="color: var(--gray-700);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <p class="ride-options-header">You're going green with Comfort Electric</p>
+
+        <div class="ride-card">
+            <div class="ride-card-top">
+                <div class="ride-image-container">
+                    <img src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_100,h_100/v1689204481/assets/69/0710b7-c548-43d9-9524-7098e94e5088/original/Comfort-Electric-32.svg" alt="Comfort Electric Car">
+                    <span class="lightning-icon">&#9889;</span> </div>
+                <div class="ride-details">
+                    <div class="ride-type">
+                        Comfort Electric
+                        <span class="passengers">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            4
+                        </span>
+                    </div>
+                    <div class="ride-eta" id="comfortElectricETA">
+                        8:36am • 5 min away
+                    </div>
+                </div>
+                <div class="ride-price" id="comfortElectricPrice">
+                    ₹0.00
+                </div>
+            </div>
+            <p class="ride-description">Premium zero-emission cars</p>
+        </div>
+
+        <div class="payment-method-display" id="openPaymentOptionsBtn">
+            <div class="payment-method-left" id="currentPaymentMethodText">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                    <path d="M2.5 13.5H21.5V10.5C21.5 6.35786 18.1421 3 14 3H10C5.85786 3 2.5 6.35786 2.5 10.5V13.5ZM2.5 13.5C2.5 17.6421 5.85786 21 10 21H14C18.1421 21 21.5 17.6421 21.5 13.5V13.5Z" fill="#1A1A1A"/>
+                    <rect x="5.5" y="10.5" width="13" height="3" fill="#FFFFFF"/>
+                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#205B88"/>
+                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
+                    <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
+                </svg>
+                <span>VISA •••• 1059</span>
+            </div>
+            <div class="payment-method-right">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </div>
+
+        <button class="choose-ride-button" id="chooseComfortElectricButton">
+            Book Ride
+        </button>
+    </div>
+    <div id="paymentOptionsSection">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <button id="closePaymentOptionsBtn" class="profile-panel-close-btn" style="color: var(--gray-700);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <h3 style="font-size: 1.2rem; color: var(--gray-800); margin: 0 auto; margin-right: 2rem;">Choose Payment</h3>
+        </div>
+        <ul class="payment-method-list">
+            <li class="payment-method-item" data-method="VISA •••• 1059">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                    <path d="M2.5 13.5H21.5V10.5C21.5 6.35786 18.1421 3 14 3H10C5.85786 3 2.5 6.35786 2.5 10.5V13.5ZM2.5 13.5C2.5 17.6421 5.85786 21 10 21H14C18.1421 21 21.5 17.6421 21.5 13.5V13.5Z" fill="#1A1A1A"/>
+                    <rect x="5.5" y="10.5" width="13" height="3" fill="#FFFFFF"/>
+                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#205B88"/>
+                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
+                    <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
+                </svg>
+                <span class="method-name">Card •••• 1059</span>
+                <span class="selected-indicator" id="cardSelected">&#10003;</span>
+            </li>
+            <li class="payment-method-item" data-method="Cash">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                    <path d="M17 5H7a3 3 0 00-3 3v8a3 3 0 003 3h10a3 3 0 003-3V8a3 3 0 00-3-3zM7 7h10a1 1 0 011 1v2H6V8a1 1 0 011-1zm10 10H7a1 1 0 01-1-1v-2h12v2a1 1 0 01-1 1z"></path>
+                    <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+                <span class="method-name">Cash</span>
+                <span class="selected-indicator" id="cashSelected" style="display: none;">&#10003;</span>
+            </li>
+            <li class="payment-method-item" data-method="Happido Cash">
+                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 100-16 8 8 0 000 16zm-1-7h2V8h-2v5zm0 3h2v-2h-2v2z"></path>
+                </svg>
+                <span class="method-name">Happido Cash</span>
+                <span class="selected-indicator" id="happidoCashSelected" style="display: none;">&#10003;</span>
+            </li>
+            <li class="payment-method-item" data-method="UPI Cash">
+                <img src="upi_image.png" class="upi"/>
+                <span class="method-name">UPI</span>
+                <span class="selected-indicator" id="upiCashSelected" style="display: none;">&#10003;</span>
+            </li>
+        </ul>
+    </div>
+    <div id="profilePanel">
+        <div class="profile-panel-header">
+            <button id="closeProfilePanel" class="profile-panel-close-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="profile-info">
+            <h2 class="profile-name">Thanuj Tenka</h2>
+            <div class="profile-avatar-container">
+                <img id="profileAvatar" src="https://via.placeholder.com/64/FF7F00/FFFFFF?text=TT" alt="Profile Avatar">
+                <div class="profile-avatar-edit-icon">
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <label for="avatarUpload" style="cursor: pointer;">
+                        <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" border="none"></path>
+                        </svg>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons-grid">
+            <button class="action-button">
+                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0a1.5 1.5 0 10-2.121 2.121m2.121-2.121L12 10.59l-1.591 1.591A1.5 1.5 0 018 12.001v.001h.01m-.01-.001h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
+                <span>Help</span>
+            </button>
+            <button class="action-button">
+                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <span>Wallet</span>
+            </button>
+            <button class="action-button">
+                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                <span>Activity</span>
+            </button>
+        </div>
+
+        <div class="uber-cash-section">
+            <span class="uber-cash-label">Happido Cash</span>
+            <span class="uber-cash-amount">₹0.00</span>
+        </div>
+
+        <ul class="profile-details-list">
+            <li class="profile-detail-item">
+                <span class="label">Name:</span>
+                <span class="value" id="userName">Thanuj Tenka</span>
+                <svg class="icon-size edit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-field="userName">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" border="none"></path>
+                        </svg>
+            </li>
+            <li class="profile-detail-item">
+                <span class="label">Phone:</span>
+                <span class="value" id="userPhone">+91 9876543210</span>
+                <svg class="icon-size edit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-field="userPhone">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+            </li>
+            <li class="profile-detail-item">
+                <span class="label">Email:</span>
+                <span class="value" id="userEmail">thanuj.tenka@example.com</span>
+                <svg class="icon-size edit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-field="userEmail">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+            </li>
+            <li>
+                <a href="#" class="profile-details-link">
+                    <!-- <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1 0 013 12V7a4 4 0 014-4z"></path></svg> -->
+                    <span>Change Password</span>
+                </a>
+            </li>
+
+           
+        </ul>
+
+        <button class="sign-out-btn">
+            Sign out
+        </button>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 RideNow. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const openProfilePanelBtn = document.getElementById('openProfilePanel');
+        const closeProfilePanelBtn = document.getElementById('closeProfilePanel');
+        const profilePanel = document.getElementById('profilePanel');
+        const panelOverlay = document.getElementById('panelOverlay');
+
+        const mainContentInner = document.getElementById('mainContentInner');
+        const pickupLocationSelect = document.getElementById('pickupLocation');
+        const dropoffLocationSelect = document.getElementById('dropoffLocation');
+        const distanceDisplay = document.getElementById('distanceDisplay');
+        const findRideButton = document.getElementById('findRideButton');
+
+        // Ride Options Pop-up elements
+        const rideOptionsSection = document.getElementById('rideOptionsSection');
+        const closeRideOptionsBtn = document.getElementById('closeRideOptions');
+        const rideOptionsOverlay = document.getElementById('rideOptionsOverlay');
+
+        const comfortElectricPrice = document.getElementById('comfortElectricPrice');
+        const comfortElectricETA = document.getElementById('comfortElectricETA');
+        const chooseComfortElectricButton = document.getElementById('chooseComfortElectricButton');
+        const openPaymentOptionsBtn = document.getElementById('openPaymentOptionsBtn');
+        const currentPaymentMethodText = document.getElementById('currentPaymentMethodText'); // This now holds the whole span for text and icon
+
+        // Payment Options Pop-up elements (New)
+        const paymentOptionsSection = document.getElementById('paymentOptionsSection');
+        const closePaymentOptionsBtn = document.getElementById('closePaymentOptionsBtn');
+        const paymentMethodItems = document.querySelectorAll('#paymentOptionsSection .payment-method-item');
+        const cardSelectedIndicator = document.getElementById('cardSelected');
+        const cashSelectedIndicator = document.getElementById('cashSelected');
+        const happidoCashSelectedIndicator = document.getElementById('happidoCashSelected');
+        const upiCashSelectedIndicator = document.getElementById('upiCashSelected');
+
+
+        // Ride Confirmed Section elements
+        const rideConfirmedSection = document.getElementById('rideConfirmedSection');
+        const rideOtp = document.getElementById('rideOtp');
+        const rideCarNumber = document.getElementById('rideCarNumber');
+        const rideAmount = document.getElementById('rideAmount');
+        const rideDistance = document.getElementById('rideDistance');
+        const driverName = document.getElementById('driverName');
+        const driverRating = document.getElementById('driverRating');
+        const driverAvatar = document.getElementById('driverAvatar'); // New: Driver avatar on confirmed screen
+        const cancelRideButton = document.getElementById('cancelRideButton');
+        const callDriverButton = document.getElementById('callDriverButton');
+
+        // New elements for ride status and real-time updates
+        const rideStatusDisplay = document.getElementById('rideStatusDisplay');
+        const driverLocationDisplay = document.getElementById('driverLocationDisplay');
+        const etaDisplay = document.getElementById('etaDisplay');
+        const notificationArea = document.getElementById('notificationArea');
+
+        // Rating Section elements
+        const ratingSection = document.getElementById('ratingSection');
+        const ratingFormContent = document.getElementById('ratingFormContent'); // Container for actual form
+        const ratingConfirmation = document.getElementById('ratingConfirmation'); // Confirmation message container
+        const ratingDriverAvatar = document.getElementById('ratingDriverAvatar');
+        const ratingDriverName = document.getElementById('ratingDriverName');
+        const feedbackTextarea = document.getElementById('feedbackTextarea');
+        const submitRatingButton = document.getElementById('submitRatingButton');
+        const skipRatingButton = document.getElementById('skipRatingButton');
+        const starInputs = document.querySelectorAll('.stars input[type="radio"]');
+        const submittedStars = document.getElementById('submittedStars');
+        const submittedFeedback = document.getElementById('submittedFeedback');
+
+
+        const profileAvatar = document.getElementById('profileAvatar');
+        const avatarUpload = document.getElementById('avatarUpload');
+        const editIcons = document.querySelectorAll('.edit-icon');
+
+        // Predefined fixed distances between locations (in KM)
+        const distances = new Map([
+            ['chennai_central-adyar', 14],
+            ['chennai_central-velachery', 16],
+            ['chennai_central-tnagar', 7],
+            ['chennai_central-kovalam', 37],
+            ['adyar-velachery', 9],
+            ['adyar-tnagar', 6],
+            ['adyar-kovalam', 28],
+            ['velachery-tnagar', 11],
+            ['velachery-kovalam', 22],
+            ['tnagar-kovalam', 30]
+        ]);
+
+        // Constants for ride calculation
+        const BASE_FARE = 50; // Base fare in INR
+        const PER_KM_RATE = 15; // Rate per KM in INR
+        const AVERAGE_SPEED_KMPH = 20; // Average speed for ETA calculation
+
+        // Global variables to store ride details for the confirmed screen and rating page
+        let currentRideDistance = null;
+        let currentRidePrice = null;
+        let currentRideDetails = {}; // Stores OTP, car number, driver info for confirmed/rating screen
+
+        // Payment
+        let selectedPaymentMethod = 'Card •••• 1059'; // Default payment method
+
+        // --- New Ride State Management ---
+        let rideStatus = 'idle'; // Initial state
+        let driverLocationUpdateInterval = null; // To store the interval ID for driver movement
+        let rideProgressTimeouts = []; // To store timeout IDs for ride status progression
+
+        const RIDE_STATUSES = {
+            IDLE: 'Idle',
+            REQUESTED: 'Requested',
+            SEARCHING: 'Searching for Driver',
+            DRIVER_FOUND: 'Driver Found/Assigned',
+            EN_ROUTE_PICKUP: 'En Route to Pickup',
+            ARRIVED_PICKUP: 'Arrived at Pickup',
+            PICKED_UP_EN_ROUTE_DEST: 'Picked Up/En Route to Destination',
+            AT_DESTINATION: 'At Destination/Arrived',
+            COMPLETED: 'Completed',
+            CANCELLED: 'Cancelled',
+            NO_SHOW: 'No Show',
+            DRIVER_UNAVAILABLE: 'Driver Unavailable'
+        };
+
+        const STATUS_MESSAGES = {
+            [RIDE_STATUSES.IDLE]: 'Ready for your next ride.',
+            [RIDE_STATUSES.REQUESTED]: 'Request sent. Waiting for a driver...',
+            [RIDE_STATUSES.SEARCHING]: 'Searching for nearby drivers.',
+            [RIDE_STATUSES.DRIVER_FOUND]: 'Driver found! Your ride is confirmed.',
+            [RIDE_STATUSES.EN_ROUTE_PICKUP]: 'Your driver is on their way to pick you up.',
+            [RIDE_STATUSES.ARRIVED_PICKUP]: 'Your driver has arrived at the pickup location. Please meet your driver.',
+            [RIDE_STATUSES.PICKED_UP_EN_ROUTE_DEST]: 'Enjoy your ride! Heading to your destination.',
+            [RIDE_STATUSES.AT_DESTINATION]: 'You have arrived at your destination.',
+            [RIDE_STATUSES.COMPLETED]: 'Ride completed. Hope you had a great journey!',
+            [RIDE_STATUSES.CANCELLED]: 'Ride cancelled.',
+            [RIDE_STATUSES.NO_SHOW]: 'Ride cancelled: Passenger No Show.',
+            [RIDE_STATUSES.DRIVER_UNAVAILABLE]: 'Ride cancelled: Driver became unavailable.'
+        };
+
+        function updateRideStatusUI(status, message = null) {
+            rideStatus = status;
+            rideStatusDisplay.textContent = `Status: ${status}`;
+            notificationArea.textContent = message || STATUS_MESSAGES[status];
+            console.log(`[RIDE STATUS] ${new Date().toLocaleTimeString()}: ${status} - ${notificationArea.textContent}`);
+
+            // Update button visibility based on status
+            if (rideStatus === RIDE_STATUSES.DRIVER_FOUND || rideStatus === RIDE_STATUSES.EN_ROUTE_PICKUP || rideStatus === RIDE_STATUSES.ARRIVED_PICKUP) {
+                callDriverButton.style.display = 'block';
+                cancelRideButton.style.display = 'block';
+            } else if (rideStatus === RIDE_STATUSES.PICKED_UP_EN_ROUTE_DEST) {
+                callDriverButton.style.display = 'none'; // REMOVED CALL DRIVER AFTER PICKUP
+                cancelRideButton.style.display = 'none';
+            } else if (rideStatus === RIDE_STATUSES.AT_DESTINATION || rideStatus === RIDE_STATUSES.COMPLETED || rideStatus === RIDE_STATUSES.CANCELLED || rideStatus === RIDE_STATUSES.NO_SHOW || rideStatus === RIDE_STATUSES.DRIVER_UNAVAILABLE) {
+                callDriverButton.style.display = 'none';
+                cancelRideButton.style.display = 'none';
+            } else { // Initial states like REQUESTED, SEARCHING
+                callDriverButton.style.display = 'none';
+                cancelRideButton.style.display = 'block';
+            }
+        }
+
+        function simulateDriverMovement(totalPickupTime, totalTripTime) {
+            let currentPickupETA = totalPickupTime; // Time to reach pickup
+            let currentDestinationETA = totalTripTime; // Time from pickup to destination
+
+            // Simulated locations for driver approaching pickup
+            const pickupLocations = ["2 km away", "1.5 km away", "1 km away", "0.5 km away", "At your location"];
+            let pickupLocationIndex = 0;
+
+            // Clear any existing interval before starting a new one
+            if (driverLocationUpdateInterval) {
+                clearInterval(driverLocationUpdateInterval);
+            }
+
+            driverLocationUpdateInterval = setInterval(() => {
+                if (rideStatus === RIDE_STATUSES.EN_ROUTE_PICKUP) {
+                    currentPickupETA = Math.max(0, currentPickupETA - 1); // Decrease ETA by 1 simulated minute
+                    driverLocationDisplay.textContent = `Driver Location: ${pickupLocations[Math.min(pickupLocationIndex, pickupLocations.length - 1)]}`;
+                    etaDisplay.textContent = `Pickup ETA: ${currentPickupETA} min`;
+                    pickupLocationIndex++;
+                    if (currentPickupETA <= 0) {
+                        clearInterval(driverLocationUpdateInterval); // Stop when driver arrives
+                    }
+                } else if (rideStatus === RIDE_STATUSES.PICKED_UP_EN_ROUTE_DEST) {
+                    currentDestinationETA = Math.max(0, currentDestinationETA - 1); // Decrease ETA to destination
+                    // Driver location display should be hidden after pickup
+                    etaDisplay.textContent = `Destination ETA: ${currentDestinationETA} min`;
+                    if (currentDestinationETA <= 0) {
+                        clearInterval(driverLocationUpdateInterval); // Stop when arrived at destination
+                    }
+                } else {
+                    // Stop interval if ride is completed, cancelled, or at destination/idle
+                    clearInterval(driverLocationUpdateInterval);
+                    driverLocationUpdateInterval = null;
+                    driverLocationDisplay.style.display = 'none'; // Ensure hidden
+                    etaDisplay.textContent = 'ETA: N/A';
+                }
+            }, 5000); // Update every 5 seconds (simulating 1 min real-time)
+        }
+
+        function startRideSimulation(pickupLocationCode, dropoffLocationCode, totalDistance) {
+            // Clear any existing simulation timeouts/intervals
+            rideProgressTimeouts.forEach(id => clearTimeout(id));
+            rideProgressTimeouts = [];
+            if (driverLocationUpdateInterval) {
+                clearInterval(driverLocationUpdateInterval);
+                driverLocationUpdateInterval = null;
+            }
+
+            // Reset display elements
+            driverLocationDisplay.style.display = 'block'; // Ensure it's visible at start
+            driverLocationDisplay.textContent = 'Driver Location: Searching...';
+            etaDisplay.textContent = 'ETA: Calculating...';
+
+            const initialPickupETA = 5; // Simulated minutes for driver to reach pickup
+            const totalTravelTimeMinutes = Math.round((totalDistance / AVERAGE_SPEED_KMPH) * 60); // Time from pickup to destination
+
+            // Phase 1: Requested -> Searching -> Driver Found
+            updateRideStatusUI(RIDE_STATUSES.REQUESTED);
+            rideProgressTimeouts.push(setTimeout(() => {
+                updateRideStatusUI(RIDE_STATUSES.SEARCHING);
+                rideProgressTimeouts.push(setTimeout(() => {
+                    updateRideStatusUI(RIDE_STATUSES.DRIVER_FOUND, `Your driver ${currentRideDetails.driverName} (${currentRideDetails.carNumber}) is assigned!`);
+                    etaDisplay.textContent = `Pickup ETA: ${initialPickupETA} min`;
+                    driverLocationDisplay.textContent = `Driver Location: Initializing...`;
+
+                    // Phase 2: Driver En Route to Pickup
+                    rideProgressTimeouts.push(setTimeout(() => {
+                        updateRideStatusUI(RIDE_STATUSES.EN_ROUTE_PICKUP, `Driver is en route to ${pickupLocationSelect.options[pickupLocationSelect.selectedIndex].text}.`);
+                        simulateDriverMovement(initialPickupETA, totalTravelTimeMinutes); // Start driver movement simulation
+                    }, 3000)); // 3 seconds to transition to en route
+                }, 3000)); // 3 seconds to find driver
+            }, 2000)); // 2 seconds for initial request
+
+            // Phase 3: Driver Arrives at Pickup
+            // This timeout depends on the initialPickupETA (simulated as 1 real minute per simulated minute)
+            rideProgressTimeouts.push(setTimeout(() => {
+                updateRideStatusUI(RIDE_STATUSES.ARRIVED_PICKUP);
+                etaDisplay.textContent = `Pickup ETA: Arrived`;
+                driverLocationDisplay.textContent = `Driver Location: At Pickup`;
+                if (driverLocationUpdateInterval) {
+                    clearInterval(driverLocationUpdateInterval); // Stop pickup ETA updates
+                    driverLocationUpdateInterval = null;
+                }
+
+                // Phase 4: Picked Up / En Route to Destination
+                rideProgressTimeouts.push(setTimeout(() => {
+                    updateRideStatusUI(RIDE_STATUSES.PICKED_UP_EN_ROUTE_DEST, `You're on your way to ${dropoffLocationSelect.options[dropoffLocationSelect.selectedIndex].text}!`);
+                    driverLocationDisplay.style.display = 'none'; // Hide driver location after pickup
+                    simulateDriverMovement(0, totalTravelTimeMinutes); // Start destination ETA updates
+                }, 5000)); // 5 seconds for passenger to get in after arrival
+            }, (initialPickupETA * 5000) + 8000)); // (ETA_minutes * 5000ms/min) + buffer for prev steps.
+
+
+            // Phase 5: At Destination / Arrived
+            rideProgressTimeouts.push(setTimeout(() => {
+                updateRideStatusUI(RIDE_STATUSES.AT_DESTINATION);
+                etaDisplay.textContent = `Destination ETA: Arrived`;
+                driverLocationDisplay.style.display = 'none'; // Ensure hidden
+                if (driverLocationUpdateInterval) {
+                    clearInterval(driverLocationUpdateInterval); // Stop destination ETA updates
+                    driverLocationUpdateInterval = null;
+                }
+
+                // Phase 6: Ride Completed
+                rideProgressTimeouts.push(setTimeout(() => {
+                    updateRideStatusUI(RIDE_STATUSES.COMPLETED);
+                    showRatingPage(); // Show rating page after completion
+                }, 3000)); // 3 seconds after arrival to complete
+            }, (initialPickupETA * 5000) + 8000 + (totalTravelTimeMinutes * 5000) + 5000)); // Total time for simulation
+        }
+
+        function calculateDistance() {
+            const pickup = pickupLocationSelect.value;
+            const dropoff = dropoffLocationSelect.value;
+
+            distanceDisplay.style.display = 'none';
+
+            if (pickup && dropoff) {
+                if (pickup === dropoff) {
+                    distanceDisplay.textContent = 'Pickup and Dropoff locations cannot be the same.';
+                    distanceDisplay.style.display = 'block';
+                    currentRideDistance = null;
+                    currentRidePrice = null;
+                    return null;
+                }
+
+                let distance = null;
+                const routeKey1 = `${pickup}-${dropoff}`;
+                const routeKey2 = `${dropoff}-${pickup}`;
+
+                if (distances.has(routeKey1)) {
+                    distance = distances.get(routeKey1);
+                } else if (distances.has(routeKey2)) {
+                    distance = distances.get(routeKey2);
+                }
+
+                if (distance !== null) {
+                    distanceDisplay.textContent = `Estimated Distance: ${distance} KM`;
+                    distanceDisplay.style.display = 'block';
+                    currentRideDistance = distance;
+                    currentRidePrice = (BASE_FARE + (distance * PER_KM_RATE)).toFixed(2);
+                    return distance;
+                } else {
+                    distanceDisplay.textContent = 'Distance information not available for this route.';
+                    distanceDisplay.style.display = 'block';
+                    currentRideDistance = null;
+                    currentRidePrice = null;
+                    return null;
+                }
+            } else {
+                distanceDisplay.style.display = 'none';
+                currentRideDistance = null;
+                currentRidePrice = null;
+                return null;
+            }
+        }
+
+        function openRideOptionsPanel() {
+            const distance = calculateDistance();
+
+            const pickup = pickupLocationSelect.value;
+            const dropoff = dropoffLocationSelect.value;
+
+            if (distance !== null && pickup !== dropoff) {
+                comfortElectricPrice.textContent = `₹${currentRidePrice}`;
+
+                const estimatedTravelTimeMinutes = Math.round((distance / AVERAGE_SPEED_KMPH) * 60);
+
+                const now = new Date();
+                const arrivalTime = new Date(now.getTime() + estimatedTravelTimeMinutes * 60 * 1000);
+                const arrivalHours = arrivalTime.getHours();
+                const arrivalMinutes = arrivalTime.getMinutes();
+                const formattedArrivalTime = `${arrivalHours % 12 || 12}:${arrivalMinutes < 10 ? '0' : ''}${arrivalMinutes}${arrivalHours >= 12 ? 'pm' : 'am'}`;
+
+                comfortElectricETA.textContent = `${formattedArrivalTime} • ${estimatedTravelTimeMinutes} min away`;
+
+                rideOptionsSection.classList.add('open');
+                rideOptionsOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+
+                // Update payment method display in ride options panel
+                updatePaymentMethodDisplay(selectedPaymentMethod);
+
+            } else {
+                closeRideOptionsPanel();
+            }
+        }
+
+        function closeRideOptionsPanel() {
+            rideOptionsSection.classList.remove('open');
+            rideOptionsOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function showRideConfirmedScreen() {
+            if (currentRideDistance === null || currentRidePrice === null) {
+                alert('Please select valid pickup and dropoff locations first.');
+                return;
+            }
+
+            mainContentInner.style.display = 'none';
+            closeRideOptionsPanel();
+
+            // Generate and store ride details
+            const otp = Math.floor(1000 + Math.random() * 9000);
+            const carNumber = `TN 01 ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${String.fromCharCode(65 + Math.floor(Math.random() * 26))} ${Math.floor(1000 + Math.random() * 9000)}`;
+            const driverNames = ["Arjun", "Priya", "Rahul", "Deepa", "Vikram"];
+            const selectedDriverName = driverNames[Math.floor(Math.random() * driverNames.length)];
+            const driverRatings = ["4.7", "4.9", "4.6", "4.8", "4.5"];
+            const selectedDriverRating = driverRatings[Math.floor(Math.random() * driverRatings.length)];
+            const driverAvatarUrl = `https://via.placeholder.com/64/4B5563/FFFFFF?text=${selectedDriverName.charAt(0).toUpperCase()}D`; // Generate avatar based on driver initial
+
+            currentRideDetails = {
+                otp: otp,
+                carNumber: carNumber,
+                amount: currentRidePrice,
+                distance: currentRideDistance,
+                driverName: selectedDriverName,
+                driverRating: selectedDriverRating,
+                driverAvatarUrl: driverAvatarUrl
+            };
+
+            // Populate the confirmed ride details
+            rideOtp.textContent = currentRideDetails.otp;
+            rideCarNumber.textContent = currentRideDetails.carNumber;
+            rideAmount.textContent = `₹${currentRideDetails.amount}`;
+            rideDistance.textContent = `${currentRideDetails.distance} KM`;
+            driverName.textContent = currentRideDetails.driverName;
+            driverRating.textContent = currentRideDetails.driverRating;
+            driverAvatar.src = currentRideDetails.driverAvatarUrl;
+
+            rideConfirmedSection.style.display = 'block';
+
+            startRideSimulation(
+                pickupLocationSelect.value,
+                dropoffLocationSelect.value,
+                currentRideDistance
+            );
+        }
+
+        function hideRideConfirmedScreen() {
+            // Clear any ongoing simulations
+            rideProgressTimeouts.forEach(id => clearTimeout(id));
+            rideProgressTimeouts = [];
+            if (driverLocationUpdateInterval) {
+                clearInterval(driverLocationUpdateInterval);
+                driverLocationUpdateInterval = null;
+            }
+
+            rideConfirmedSection.style.display = 'none';
+            ratingSection.style.display = 'none'; // Ensure rating section is also hidden
+            paymentOptionsSection.classList.remove('open'); // Ensure payment options is closed
+            mainContentInner.style.display = 'block'; // Show original content
+            calculateDistance(); // Recalculate distance for the original screen state
+            updateRideStatusUI(RIDE_STATUSES.IDLE); // Reset status when going back
+            driverLocationDisplay.textContent = 'Driver Location: ---';
+            etaDisplay.textContent = 'ETA: Calculating...';
+            notificationArea.textContent = 'Ready for your next ride.';
+            currentRideDistance = null; // Clear ride details
+            currentRidePrice = null;
+            currentRideDetails = {}; // Clear stored ride details
+        }
+
+        function cancelRide() {
+            // Using a custom message box instead of alert/confirm
+            const confirmCancel = window.confirm("Are you sure you want to cancel this ride?"); // Using window.confirm for simplicity here, but custom modal is preferred.
+            if (confirmCancel) {
+                // Clear all pending timeouts/intervals for the ride simulation
+                rideProgressTimeouts.forEach(id => clearTimeout(id));
+                rideProgressTimeouts = [];
+                if (driverLocationUpdateInterval) {
+                    clearInterval(driverLocationUpdateInterval);
+                    driverLocationUpdateInterval = null;
+                }
+
+                updateRideStatusUI(RIDE_STATUSES.CANCELLED, "Your ride has been cancelled.");
+                alert("Ride cancelled successfully."); // Using alert for simplicity
+                setTimeout(hideRideConfirmedScreen, 2000);
+            }
+        }
+
+        function showRatingPage() {
+            rideConfirmedSection.style.display = 'none';
+            ratingSection.style.display = 'block';
+
+            // Populate driver info on rating page
+            ratingDriverName.textContent = currentRideDetails.driverName;
+            ratingDriverAvatar.src = currentRideDetails.driverAvatarUrl;
+
+            // Reset stars and feedback form
+            starInputs.forEach(input => input.checked = false);
+            feedbackTextarea.value = '';
+            ratingFormContent.style.display = 'block'; // Show the form
+            ratingConfirmation.style.display = 'none'; // Hide confirmation message
+        }
+
+        function submitRating() {
+            const selectedRating = document.querySelector('.stars input[name="rating"]:checked');
+            const ratingValue = selectedRating ? selectedRating.value : '0'; // Default to 0 if no rating
+            const feedback = feedbackTextarea.value.trim();
+
+            console.log(`[RATING SUBMITTED] Driver: ${currentRideDetails.driverName}, Rating: ${ratingValue} stars, Feedback: "${feedback}"`);
+
+            // Hide the rating form content
+            ratingFormContent.style.display = 'none';
+
+            // Display the confirmation message
+            submittedStars.innerHTML = '★'.repeat(parseInt(ratingValue));
+            submittedFeedback.textContent = feedback ? `"${feedback}"` : "No feedback provided.";
+            ratingConfirmation.style.display = 'block';
+
+            // After a delay, hide the rating section and return to main screen
+            setTimeout(() => {
+                hideRideConfirmedScreen(); // Return to main screen
+            }, 3000); // 3 seconds delay for user to read confirmation
+        }
+
+        function skipRating() {
+            console.log(`[RATING SKIPPED] Driver: ${currentRideDetails.driverName}`);
+            hideRideConfirmedScreen(); // Return to main screen
+        }
+
+        // --- Payment Options Functions ---
+        function openPaymentOptions() {
+            closeRideOptionsPanel(); // Close ride options panel
+            paymentOptionsSection.classList.add('open'); // Open payment options panel
+            document.body.style.overflow = 'hidden';
+            updatePaymentOptionsUI(); // Update checkmarks
+        }
+
+        function closePaymentOptions() {
+            paymentOptionsSection.classList.remove('open');
+            rideOptionsSection.classList.add('open'); // Go back to ride options panel
+            document.body.style.overflow = 'hidden'; // Keep body overflow hidden
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            updatePaymentMethodDisplay(method);
+            closePaymentOptions();
+        }
+
+        function updatePaymentMethodDisplay(method) {
+            let iconHtml = '';
+            let textContent = method;
+
+            if (method.includes('Card')) {
+                iconHtml = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                                <path d="M2.5 13.5H21.5V10.5C21.5 6.35786 18.1421 3 14 3H10C5.85786 3 2.5 6.35786 2.5 10.5V13.5ZM2.5 13.5C2.5 17.6421 5.85786 21 10 21H14C18.1421 21 21.5 17.6421 21.5 13.5V13.5Z" fill="#1A1A1A"/>
+                                <rect x="5.5" y="10.5" width="13" height="3" fill="#FFFFFF"/>
+                                <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#205B88"/>
+                                <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
+                                <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
+                            </svg>`;
+                textContent = method;
+            } else if (method === 'Cash') {
+                iconHtml = `<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                                <path d="M17 5H7a3 3 0 00-3 3v8a3 3 0 003 3h10a3 3 0 003-3V8a3 3 0 00-3-3zM7 7h10a1 1 0 011 1v2H6V8a1 1 0 011-1zm10 10H7a1 1 0 01-1-1v-2h12v2a1 1 0 01-1 1z"></path>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>`;
+                textContent = 'Cash';
+            } else if (method === 'Happido Cash') {
+                iconHtml = `<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
+                                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 100-16 8 8 0 000 16zm-1-7h2V8h-2v5zm0 3h2v-2h-2v2z"></path>
+                            </svg>`;
+                textContent = 'Happido Cash';
+            }
+            currentPaymentMethodText.innerHTML = `${iconHtml}<span>${textContent}</span>`;
+        }
+
+        function updatePaymentOptionsUI() {
+            // Hide all checkmarks first
+            cardSelectedIndicator.style.display = 'none';
+            cashSelectedIndicator.style.display = 'none';
+            happidoCashSelectedIndicator.style.display = 'none';
+            upiCashSelectedIndicator.style.display = 'none';
+
+            // Show checkmark for the selected method
+            if (selectedPaymentMethod.includes('Card')) {
+                cardSelectedIndicator.style.display = 'inline';
+            } else if (selectedPaymentMethod === 'Cash') {
+                cashSelectedIndicator.style.display = 'inline';
+            } else if (selectedPaymentMethod === 'Happido Cash') {
+                happidoCashSelectedIndicator.style.display = 'inline';
+            }
+            else if(upiCashSelectedIndicator == 'UPI')
+            {
+                upiCashSelectedIndicator.style.display = 'inline'; 
+            }
+        }
+
+
+        // --- Profile Panel Functions ---
+        function openProfilePanel() {
+            profilePanel.classList.add('open');
+            panelOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProfilePanel() {
+            profilePanel.classList.remove('open');
+            panelOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // --- Event Listeners ---
+        // Profile Panel
+        openProfilePanelBtn.addEventListener('click', openProfilePanel);
+        closeProfilePanelBtn.addEventListener('click', closeProfilePanel);
+        panelOverlay.addEventListener('click', closeProfilePanel);
+
+        // Ride Options Panel
+        findRideButton.addEventListener('click', openRideOptionsPanel);
+        closeRideOptionsBtn.addEventListener('click', closeRideOptionsPanel);
+        rideOptionsOverlay.addEventListener('click', closeRideOptionsPanel);
+
+        // Payment Options Panel (New)
+        openPaymentOptionsBtn.addEventListener('click', openPaymentOptions);
+        closePaymentOptionsBtn.addEventListener('click', closePaymentOptions);
+        paymentMethodItems.forEach(item => {
+            item.addEventListener('click', () => {
+                selectPaymentMethod(item.dataset.method);
+            });
+        });
+
+
+        // Ride Confirmation & Cancellation
+        chooseComfortElectricButton.addEventListener('click', showRideConfirmedScreen);
+        cancelRideButton.addEventListener('click', cancelRide);
+        callDriverButton.addEventListener('click', () => {
+            alert(`Calling driver ${currentRideDetails.driverName} at ${currentRideDetails.carNumber}. (Simulated call)`);
+            console.log(`[ACTION] Calling driver ${currentRideDetails.driverName}.`);
+        });
+
+        // Rating Page Buttons
+        submitRatingButton.addEventListener('click', submitRating);
+        skipRatingButton.addEventListener('click', skipRating);
+
+        // Location selection changes should hide ride options and update distance
+        pickupLocationSelect.addEventListener('change', () => {
+            calculateDistance();
+            closeRideOptionsPanel();
+            hideRideConfirmedScreen(); // Ensures a clean state for a new ride request
+        });
+        dropoffLocationSelect.addEventListener('change', () => {
+            calculateDistance();
+            closeRideOptionsPanel();
+            hideRideConfirmedScreen(); // Ensures a clean state for a new ride request
+        });
+
+        // Other functionalities
+        avatarUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileAvatar.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        editIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                const field = this.dataset.field;
+                const valueSpan = document.getElementById(field);
+                const currentValue = valueSpan.textContent;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.classList.add('edit-input');
+
+                valueSpan.replaceWith(input);
+                input.focus();
+
+                const saveChanges = () => {
+                    const newValue = input.value;
+                    const newSpan = document.createElement('span');
+                    newSpan.id = field;
+                    newSpan.classList.add('value');
+                    newSpan.textContent = newValue;
+                    input.replaceWith(newSpan);
+                    console.log(`Updated ${field}: ${newValue}`);
+                };
+
+                input.addEventListener('blur', saveChanges);
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        saveChanges();
+                    }
+                });
+            });
+        });
+
+        // Initial setup
+        calculateDistance();
+        updateRideStatusUI(RIDE_STATUSES.IDLE);
+        updatePaymentMethodDisplay(selectedPaymentMethod); // Set initial display for payment
+    </script>
+</body>
+</html>

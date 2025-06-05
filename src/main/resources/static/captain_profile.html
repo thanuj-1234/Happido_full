@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happido Driver Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Base Body Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --orange-500: #f97316;
+            --orange-600: #ea580c;
+            --green-500: #22c55e; /* Added green color */
+            --green-600: #16a34a; /* Added darker green for hover/active */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --red-50: #fef2f2;
+            --red-100: #fee2e2;
+            --red-600: #dc2626;
+            --white: #ffffff;
+            --black: #000000;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            /* overflow-x: hidden; Prevent horizontal scroll when panel is open */
+        }
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        .main-content {
+            transition: margin-right 0.3s ease, filter 0.3s ease;
+            filter: brightness(100%); /* Initial brightness */
+            min-height: 100vh; /* Ensure it takes full height */
+        }
+
+        .main-content.panel-open {
+            filter: brightness(50%); /* Darken effect when panel is open */
+        }
+        /* -- footer ---*/
+        .containss {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #d0d3e2;
+    }
+
+    .footer {
+      background-color: #1f1f1f;
+      color: #fff;
+      padding: 40px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+
+    .footer-column {
+      flex: 1 1 200px;
+      margin: 10px;
+    }
+
+    .footer-column h3 {
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-column ul li a {
+      text-decoration: none;
+      color: #aaa;
+      transition: color 0.3s;
+    }
+
+    .footer-column ul li a:hover {
+      color: #fff;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .social-icons img {
+      width: 40px; /* Default icon size */
+      height: 40px;
+    }
+
+    .social-icons .youtube {
+      width: 50px; /* Increased width */
+      height: 35px; /* Reduced height */
+    }
+
+    @media (max-width: 768px) {
+      .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .footer-column {
+        max-width: 300px;
+      }
+    }
+
+        /* --- NAVBAR CSS (ORIGINAL AS REQUESTED) --- */
+        .navbar {
+            background-color: rgb(254, 253, 252);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            margin-left: 20px;
+            color: var(--gray-800);
+            gap: 1.5rem;
+        }
+
+
+        .navbar-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.025em;
+            color: var(--orange-500);
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            transition: background-color 0.15s ease-in-out;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .navbar-logo:hover {
+            background-color: var(--gray-100);
+        }
+
+        .navbar-logo svg {
+            height: 2rem;
+            width: 2rem;
+            margin-right: 0.5rem;
+        }
+
+        .home-button {
+            background-color:#f97316;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            /* transition: all 0.3s ease-in-out; */
+            text-decoration: none;
+            /* display: none; hidden by default */
+            border: none;
+            cursor: pointer;
+        }
+
+        .home-button:hover {
+            background-color: #ea580c;
+            transform: scale(1.05);
+        }
+        .navbar .nav-buttons {
+            display: flex; /* Ensures button is correctly aligned */
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-right: 20px;
+        }
+
+        .navbar-link {
+            color: var(--gray-700);
+            padding: 0.75rem 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            transition: color 0.15s ease-in-out;
+            text-decoration: none;
+        }
+        .navbar-link:hover {
+            color: var(--orange-600);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            border: none;
+            background: none;
+            cursor: pointer;
+            outline: none;
+            border-radius: 9999px;
+            padding: 0.25rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--gray-100);
+        }
+
+        .profile-btn img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            border: 2px solid var(--orange-500);
+            object-fit: cover;
+        }
+        /* --- END NAVBAR CSS --- */
+
+        /* New CSS for Navbar Toggles */
+        .navbar-right .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between label and toggle */
+            margin: 0 10px; /* Adjust spacing around Activities link */
+            padding: 5px 10px; /* Padding for the border */
+            border: 2px solid transparent; /* Default transparent border */
+            border-radius: 20px; /* Rounded corners for the border */
+            transition: border-color 0.3s ease-in-out; /* Smooth transition for border color */
+        }
+
+        .navbar-right .toggle-container.on-duty-border {
+            border-color: var(--green-500); /* Green border when on duty */
+        }
+
+
+        .navbar-right .toggle-container label {
+            font-size: 14px; /* Smaller font for navbar */
+            color: #555;
+            font-weight: normal; /* Less bold than profile page */
+        }
+        /* End New CSS for Navbar Toggles */
+
+
+        /* Profile Side Panel */
+        .profile-side-panel {
+            position: fixed;
+            top: 0;
+            right: -470px; /* Hidden by default */
+            width: 400px; /* Adjust width as needed */
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto; /* Enable scrolling for panel content */
+            padding-bottom: 20px; /* Add some padding at the bottom */
+        }
+
+        .profile-side-panel.open {
+            right: 0; /* Slide in */
+        }
+
+        .profile-container {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .profile-panel-header {
+            display: flex;
+            justify-content: flex-end;
+            /* padding-bottom: 10px; */
+        }
+
+        .profile-panel-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+            padding: 5px;
+        }
+
+        .profile-panel-close-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .profile-info {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-name {
+            margin: 10px 0 20px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .profile-avatar-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        #profileAvatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 1; /* Make sure image is visible */
+        }
+
+        .profile-avatar-edit-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .profile-avatar-edit-icon label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-avatar-edit-icon svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 11fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: #e0e0e0;
+            border-color: #ccc;
+        }
+
+        .action-button svg {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 5px;
+            color: #FF7F00;
+        }
+
+        /* Profile Sections with Dropdown */
+        .profile-sections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-section {
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+            flex-wrap: wrap; /* Allow content to wrap */
+        }
+
+        .profile-section:hover {
+            background-color: #f0f0f0;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .section-label .material-icons {
+            margin-right: 10px;
+            color: #FF7F00;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            max-height: 0; /* Hidden by default */
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            width: 100%; /* Take full width of parent */
+            padding-top: 0; /* No padding when closed */
+            padding-bottom: 0;
+            box-sizing: border-box; /* Include padding in width */
+            margin-top: 10px; /* Space from label */
+        }
+
+        .dropdown-content.open {
+            max-height: 500px; /* Adjust as needed for content height, make it large enough */
+            padding-top: 10px; /* Add padding when open */
+            padding-bottom: 10px;
+        }
+
+        .dropdown-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #555;
+            font-size: 15px;
+            /* Allow password inputs to align to the right naturally */
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #333;
+            min-width: 80px; /* Give labels some width */
+            flex-shrink: 0; /* Prevent label from shrinking */
+        }
+
+        .field-value {
+            flex-grow: 1;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .edit-field-icon, .upload-icon {
+            font-size: 20px;
+            color: #FF7F00;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .edit-field-icon.hidden {
+            display: none;
+        }
+
+        .edit-input {
+            /* width: calc(100% - 130px); */ /* Adjusted width for input - use flex-grow instead */
+            flex-grow: 1; /* Allow input to take available space */
+            padding: 8px 10px; /* Increased padding */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-left: 10px; /* Space from label */
+        }
+         /* Specific styling for password inputs */
+        .dropdown-item input[type="password"] {
+            margin-right: 0; /* No right margin for password inputs */
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            margin-left: auto; /* Push to the right */
+        }
+        .action-buttons-row {
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            width: 100%; /* Take full width of parent */
+            padding-top: 10px; /* Space above buttons */
+        }
+
+        .action-buttons button {
+            background-color: var(--orange-500);
+            color: white;
+            border: none;
+            padding: 8px 15px; /* Adjusted padding for buttons */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px; /* Adjusted font size */
+            transition: background-color 0.2s;
+        }
+
+        .action-buttons button.cancel-button {
+            background-color: var(--gray-500); /* Consistent gray for cancel */
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            background-color: var(--orange-600);
+        }
+
+        .action-buttons button.cancel-button:hover {
+            background-color: var(--gray-600);
+        }
+
+        .star-rating .material-icons {
+            color: #FFD700; /* Gold color for stars */
+            font-size: 18px;
+            vertical-align: middle;
+        }
+
+        .profile-bottom-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .logout-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            border-top: 1px solid #eee; /* Added border for separation */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 45px;
+            height: 25px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 25px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        /* Changes for the toggle button */
+        input:checked + .slider {
+            background-color: var(--green-500); /* Green when checked */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--green-500); /* Focus shadow for green */
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark semi-transparent */
+            z-index: 999; /* Below panel, above main content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .profile-side-panel {
+                width: 100%; /* Full width on smaller screens */
+                right: -100%;
+            }
+            .profile-side-panel.open {
+                right: 0;
+            }
+        }
+
+        /* Password Reset Modal Styles */
+        .password-reset-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001; /* Higher than overlay */
+            display: none; /* Hidden by default */
+            max-width: 380px; /* Adjusted max-width */
+            width: 90%;
+            text-align: center;
+        }
+
+        .password-reset-modal.open {
+            display: block;
+        }
+
+        .password-reset-modal .modal-content {
+            position: relative;
+        }
+
+        .password-reset-modal .modal-close-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+            padding: 5px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .password-reset-modal .modal-close-btn:hover {
+            color: var(--orange-600);
+        }
+
+        .password-reset-modal h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 22px;
+        }
+
+        .password-reset-modal .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .password-reset-modal .modal-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        /* New styles for password show/hide icon */
+        .password-input-group {
+            position: relative; /* For positioning the icon */
+        }
+
+        .password-input-group .modal-input {
+            padding-right: 40px; /* Make space for the icon */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px; /* Adjust as needed */
+            top: 50%; /* Center vertically */
+            transform: translateY(calc(-50% + 5px)); /* Fine-tune vertical centering with label height */
+            cursor: pointer;
+            color: var(--gray-500); /* Neutral color */
+            font-size: 20px; /* Adjust icon size */
+            user-select: none; /* Prevent text selection on icon */
+        }
+        /* End New styles for password show/hide icon */
+
+        .password-reset-modal .modal-button {
+            background-color: var(--orange-500);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .password-reset-modal .modal-button:hover {
+            background-color: var(--orange-600);
+        }
+
+        .password-reset-modal .modal-button.cancel {
+            background-color: var(--gray-500);
+            margin-left: 0;
+            margin-top: 15px; /* Add some space between submit and cancel */
+        }
+
+        .password-reset-modal .modal-button.cancel:hover {
+            background-color: var(--gray-600);
+        }
+
+        /* Resend OTP Button and Timer */
+        #resendOtpContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--gray-700);
+            /* display: none; */ /* Handled by JS based on state */
+        }
+
+        #resendOtpBtn {
+            background: none;
+            border: none;
+            color: var(--orange-500);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        #resendOtpBtn:hover:not(:disabled) {
+            color: var(--orange-600);
+        }
+
+        #resendOtpBtn:disabled {
+            color: var(--gray-500);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        #otpTimer {
+            font-weight: bold;
+            color: var(--red-600);
+        }
+
+        /* NEW: OTP Message Modal Styles */
+        .otp-message-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1002; /* Higher than password reset modal */
+            display: none; /* Hidden by default */
+            max-width: 380px; /* Adjusted to match password-reset-modal's max-width */
+            width: 90%;
+            text-align: center;
+        }
+
+        .otp-message-modal.open {
+            display: block;
+        }
+
+        .otp-message-modal h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .otp-message-modal p {
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 15px;
+            word-break: break-word; /* Ensure long OTPs wrap */
+        }
+
+        .otp-message-modal .modal-button {
+            background-color: var(--orange-500);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .otp-message-modal .modal-button:hover {
+            background-color: var(--orange-600);
+        }
+        /* END NEW: OTP Message Modal Styles */
+
+        /* Styles for Off Duty Content */
+        .off-duty-content {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .off-duty-content h2 {
+            margin-bottom: 15px;
+            font-size: 2.5em;
+            color: var(--orange-600);
+        }
+
+        .off-duty-message {
+            font-size: 1.5em;
+            color: var(--gray-700);
+            margin-top: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Ride Request Card Styles */
+        .ride-requests-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            max-width: 600px; /* Limit width for readability */
+            margin: 20px auto; /* Center the container */
+        }
+
+        .ride-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            border: 1px solid var(--gray-200);
+        }
+
+        .ride-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--gray-100);
+            padding-bottom: 10px;
+        }
+
+        .ride-card-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .ride-amount {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--green-600); /* Use green for amount */
+        }
+
+        .ride-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gray-700);
+            font-size: 0.95em;
+        }
+
+        .ride-info-row .material-icons {
+            color: var(--orange-500);
+            font-size: 1.2em;
+        }
+
+        .ride-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end; /* Align buttons to the right */
+        }
+
+        .ride-actions button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            border: none;
+        }
+
+        .ride-actions .accept-btn {
+            background-color: var(--green-500);
+            color: var(--white);
+        }
+
+        .ride-actions .accept-btn:hover {
+            background-color: var(--green-600);
+            transform: translateY(-1px);
+        }
+
+        .ride-actions .cancel-btn {
+            background-color: var(--red-500); /* Red for cancel */
+            color: var(--white);
+        }
+
+        .ride-actions .cancel-btn:hover {
+            background-color: var(--red-600);
+            transform: translateY(-1px);
+        }
+        /* Style for the new "Complete Ride" button */
+        .ride-actions .complete-ride-btn {
+            background-color: var(--orange-500); /* Use orange for complete */
+            color: var(--white);
+        }
+
+        .ride-actions .complete-ride-btn:hover {
+            background-color: var(--orange-600);
+            transform: translateY(-1px);
+        }
+
+
+        .no-rides-message {
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 1.1em;
+            margin-top: 50px;
+        }
+
+        /* Payment Screen Styles */
+        .payment-screen {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+            background-color: #f8f8f8;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .payment-screen h2 {
+            font-size: 2.2em;
+            color: var(--orange-600);
+            margin-bottom: 25px;
+        }
+
+        .payment-amount {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--green-600);
+            margin-bottom: 30px;
+        }
+
+        .qr-code-container {
+            width: 250px;
+            height: 250px;
+            background-color: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-code-container img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+
+        .complete-payment-btn {
+            background-color: var(--orange-500);
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            border: none;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .complete-payment-btn:hover {
+            background-color: var(--orange-600);
+            transform: translateY(-2px);
+        }
+
+        /* Thank You Screen Styles */
+        .thank-you-screen {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+            background-color: #f8f8f8;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .thank-you-screen h2 {
+            font-size: 3em;
+            color: var(--green-600);
+            margin-bottom: 20px;
+        }
+
+        .thank-you-screen p {
+            font-size: 1.5em;
+            color: var(--gray-700);
+            margin-bottom: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="#" class="navbar-logo">
+                    <img src="shared image.png" alt="Happido Logo" width="50" height="50">
+                </a>
+                <a href="#" class="home-button">
+                    Happido
+                </a>
+            </div>  
+            <div class="navbar-right">
+                <div class="toggle-container" id="navbarToggleContainer">
+                    <label for="navbarStatusToggle" id="navbarStatusLabel">Off Duty</label>
+                    <label class="switch">
+                        <input type="checkbox" id="navbarStatusToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <a href="captain_activity.html" class="navbar-link">Activities</a>
+                <!-- <a href="#" class="navbar-link" >Support</a>
+            <a href="#" class="navbar-link" >About</a> -->
+                
+                <button id="openProfilePanel" class="profile-btn">
+                    <img src="profile.png" alt="Profile" id="navbarProfileImg">
+                </button>
+            </div>
+        </nav>
+
+        <div id="onDutyContent" style="display: none;">
+            <div class="ride-requests-container" id="rideRequestsContainer">
+                </div>
+            <div id="noRidesMessage" class="no-rides-message" style="display: none;">
+                No available rides at the moment. Please wait for new requests.
+            </div>
+            </div>
+
+        <div id="offDutyContent" class="off-duty-content">
+            <h2 id="offDutyWelcomeText">Welcome, Driver!</h2>
+            <p class="off-duty-message">Go <span style="color: var(--green-500); font-weight: bold;">ON DUTY</span> Driver to start earning!</p>
+            <p style="margin-top: 20px; color: var(--gray-600);">Toggle the switch in the top right corner to go online and accept rides.</p>
+        </div>
+
+        <div id="paymentScreen" class="payment-screen">
+            <h2>Payment for Your Ride!</h2>
+            <p>Please ask the customer to scan the QR code to complete payment.</p>
+            <div class="qr-code-container">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HappidoPaymentQR" alt="QR Code" id="paymentQrCode">
+            </div>
+            <div class="payment-amount" id="finalPaymentAmount">₹0</div>
+            <button class="complete-payment-btn" id="completePaymentBtn">Complete Ride</button>
+        </div>
+
+        <div id="thankYouScreen" class="thank-you-screen">
+            <h2>Thank You!</h2>
+            <p>Your ride has been successfully completed. We appreciate your service!</p>
+            <p>Redirecting to dashboard...</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="profile-side-panel" id="driverProfilePanel">
+        <div class="profile-container">
+            <div class="profile-panel-header">
+                <button id="closeProfilePanel" class="profile-panel-close-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="profile-info">
+                <h2 class="profile-name" id="profilePanelName">Thanuj Tenka</h2>
+                <div class="profile-avatar-container">
+                    <img id="profileAvatar" src="profile.png" alt="Profile Avatar">
+                    <div class="profile-avatar-edit-icon">
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                        <label for="avatarUpload" style="cursor: pointer;">
+                            <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons-grid">
+                <button class="action-button"  id="help">
+                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0a1.5 1.5 0 10-2.121 2.121m2.121-2.121L12 10.59l-1.591 1.591A1.5 1.5 0 018 12.001v.001h.01m-.01-.001h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
+                    <span>Help</span>
+                </button>
+            
+        
+                <button class="action-button" id="wallet">
+                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    <span>Wallet</span>
+                </button>
+                <button class="action-button" id="activity">
+                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Activity</span>
+                </button>
+            </div>
+
+            <div class="profile-sections-list">
+                <div class="profile-section" data-field="profile-info">
+                    <span class="section-label">
+                        <span class="material-icons">person</span> Profile Info
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item">
+                            <span class="field-label">Name:</span>
+                            <span class="field-value" data-field-name="name"></span>
+                            <span class="material-icons edit-field-icon" data-target-field="name">edit</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="field-label">Age:</span>
+                            <span class="field-value" data-field-name="age">30</span>
+                            <span class="material-icons edit-field-icon" data-target-field="age">edit</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="field-label">Phone:</span>
+                            <span class="field-value" data-field-name="phone">+91 98765 43210</span>
+                            <span class="material-icons edit-field-icon" data-target-field="phone">edit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section" data-field="happido-id-card">
+                    <span class="section-label">
+                        <span class="material-icons">credit_card</span> Happido ID Card
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item" data-info="id-number">ID Number: HAP12345</div>
+                        <div class="dropdown-item" data-info="valid-until">Valid Until: 12/2026</div>
+                        <div class="dropdown-item" data-info="status">Status: Active</div>
+                    </div>
+                </div>
+
+                <div class="profile-section" data-field="documents">
+                    <span class="section-label">
+                        <span class="material-icons">description</span> Documents (RC, DL, PAN)
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item">
+                            <span class="field-label">RC:</span>
+                            <span class="field-value" data-document-type="rc"></span>
+                            <span class="material-icons upload-icon" data-target-document="rc">upload</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="field-label">DL:</span>
+                            <span class="field-value" data-document-type="dl"></span>
+                            <span class="material-icons upload-icon" data-target-document="dl">upload</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <span class="field-label">PAN:</span>
+                            <span class="field-value" data-document-type="pan"></span>
+                            <span class="material-icons upload-icon" data-target-document="pan">upload</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section" data-field="earnings-payments">
+                    <span class="section-label">
+                        <span class="material-icons">payments</span> Earnings & Payments
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item" data-info="wallet-balance">Wallet Balance: ₹ 500</div>
+                        <div class="dropdown-item" data-info="last-payout">Last Payout: ₹ 2500</div>
+                        <div class="dropdown-item" data-info="next-payout">28 May 2025</div>
+                    </div>
+                </div>
+
+                <div class="profile-section" data-field="ratings-reviews">
+                    <span class="section-label">
+                        <span class="material-icons">star</span> Ratings & Reviews
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <div class="dropdown-item" data-info="average-rating">
+                            <span class="field-label">Average Rating:</span>
+                            <span class="star-rating">
+                                <span class="material-icons">star</span>
+                                <span class="material-icons">star</span>
+                                <span class="material-icons">star</span>
+                                <span class="material-icons" style="color:#ccc;">star_border</span>
+                                <span class="material-icons" style="color:#ccc;">star_border</span>
+                            </span>
+                        </div>
+                        <div class="dropdown-item" data-info="total-reviews">Total Reviews: 120</div>
+                        <div class="dropdown-item" data-info="recent-feedback">"Polite driver, smooth ride!"</div>
+                    </div>
+                </div>
+
+                <div class="profile-section" data-field="reset-password">
+                    <span class="section-label">
+                        <span class="material-icons">vpn_key</span> Reset Password
+                    </span>
+                    <span class="material-icons dropdown-icon">expand_more</span>
+                    <div class="dropdown-content">
+                        <p>Click the button below to reset your password via OTP.</p>
+                        <button class="modal-button" id="openPasswordResetModalBtn" style="width: auto; padding: 10px 20px; margin-top: 10px;"> Reset Password </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-bottom-actions">
+                <button class="logout-button">
+                    <span class="material-icons">logout</span> Logout
+                </button>
+                <div class="toggle-container">
+                    <label for="driverAvailability">Driver Availability</label>
+                    <label class="switch">
+                        <input type="checkbox" id="driverAvailability">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="password-reset-modal" id="passwordResetModal">
+        <div class="modal-content">
+            <button id="closeResetModal" class="modal-close-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <h3>Reset Your Password</h3>
+            <div id="otpPhase">
+                <p>Enter the OTP sent to your verified mobile number/email.</p>
+                <div class="input-group">
+                    <label for="otpInput">Enter OTP:</label>
+                    <input type="text" id="otpInput" class="modal-input" maxlength="4" placeholder="e.g., 1234">
+                </div>
+                <button class="modal-button" id="verifyOtpBtn">Verify OTP</button>
+                <div id="resendOtpContainer" style="display: none;">
+                    <button id="resendOtpBtn" disabled>Resend OTP</button>
+                    <span id="otpTimer"></span>
+                </div>
+            </div>
+            <div id="passwordChangePhase" style="display: none;">
+                <div class="input-group password-input-group">
+                    <label for="newModalPassword">New Password:</label>
+                    <input type="password" id="newModalPassword" class="modal-input" placeholder="Enter new password">
+                    <span class="toggle-password material-icons" data-target="newModalPassword">visibility_off</span>
+                </div>
+                <div class="input-group password-input-group">
+                    <label for="confirmModalPassword">Confirm New Password:</label>
+                    <input type="password" id="confirmModalPassword" class="modal-input" placeholder="Confirm new password">
+                    <span class="toggle-password material-icons" data-target="confirmModalPassword">visibility_off</span>
+                </div>
+                <button class="modal-button" id="changePasswordSubmitBtn">Change Password</button>
+                <button class="modal-button cancel" id="cancelPasswordChangeBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="otp-message-modal" id="otpMessageModal">
+        <h4></h4>
+        <p id="otpMessageContent"></p>
+        <button class="modal-button" id="closeOtpMessageModalBtn">OK</button>
+    </div>
+
+    <div class="containss">
+
+        <footer class="footer">
+          <div class="footer-column">
+            <h3>Company</h3>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Our Services</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Affiliate Program</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Get Help</h3>
+            <ul>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Booking Support</a></li>
+              <li><a href="#">Refund & Cancellation</a></li>
+              <li><a href="#">Customer Care</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Ride Services</h3>
+            <ul>
+              <li><a href="#">Book a Ride</a></li>
+              <li><a href="#">Ride Rates</a></li>
+              <li><a href="#">Safety Guidelines</a></li>
+              <li><a href="#">Driver Support</a></li>
+              <li><a href="#">Service Areas</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+              <img src="fb.png" alt="Facebook">
+              <img src="twitter.jpg" alt="Twitter">
+              <img src="insta.png" alt="Instagram">
+              <img src="youtube.png" class="youtube" alt="YouTube">
+            </div>
+          </div>
+        </footer>
+
+   </div>
+    <script>
+        const openProfilePanelBtn = document.getElementById('openProfilePanel');
+        const navbarProfileImg = document.getElementById('navbarProfileImg');
+        const closeProfilePanelBtn = document.getElementById('closeProfilePanel');
+        const driverProfilePanel = document.getElementById('driverProfilePanel');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.querySelector('.main-content');
+        const body = document.body;
+        const profileAvatarContainer = document.querySelector('.profile-avatar-container');
+        const avatarUpload = document.getElementById('avatarUpload');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const profileAvatarEditIcon = document.querySelector('.profile-avatar-edit-icon');
+        const driverNameDisplay = document.getElementById('driverNameDisplay');
+        const profileInfoNameField = document.querySelector('.dropdown-item [data-field-name="name"]');
+        const profilePanelName = document.getElementById('profilePanelName');
+
+        // Initial values for profile fields (can be fetched from a backend)
+        let profileData = {
+            name: "Thanuj Tenka",
+            age: 30,
+            phone: "+91 98765 43210",
+            rc: "Not Uploaded",
+            dl: "Not Uploaded",
+            pan: "Not Uploaded"
+        };
+
+        // Function to update profile fields
+        function updateProfileFields() {
+            profileInfoNameField.textContent = profileData.name;
+            profilePanelName.textContent = profileData.name;
+            document.querySelector('.dropdown-item [data-field-name="age"]').textContent = profileData.age;
+            document.querySelector('.dropdown-item [data-field-name="phone"]').textContent = profileData.phone;
+            document.querySelector('.dropdown-item [data-document-type="rc"]').textContent = profileData.rc;
+            document.querySelector('.dropdown-item [data-document-type="dl"]').textContent = profileData.dl;
+            document.querySelector('.dropdown-item [data-document-type="pan"]').textContent = profileData.pan;
+        }
+
+        // Call initially to populate data
+        updateProfileFields();
+
+        // Open Profile Panel
+        openProfilePanelBtn.addEventListener('click', () => {
+            driverProfilePanel.classList.add('open');
+            overlay.classList.add('open');
+            mainContent.classList.add('panel-open');
+            body.classList.add('no-scroll');
+        });
+
+        // Close Profile Panel
+        closeProfilePanelBtn.addEventListener('click', () => {
+            driverProfilePanel.classList.remove('open');
+            overlay.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            body.classList.remove('no-scroll');
+        });
+
+        // Close panel when clicking outside (on overlay)
+        overlay.addEventListener('click', () => {
+            driverProfilePanel.classList.remove('open');
+            overlay.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            body.classList.remove('no-scroll');
+        });
+
+        // Handle avatar upload
+        profileAvatarContainer.addEventListener('click', () => {
+            avatarUpload.click(); // Trigger the hidden file input
+        });
+
+        avatarUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileAvatar.src = e.target.result;
+                    navbarProfileImg.src = e.target.result; // Update navbar image too
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Profile section dropdowns
+        document.querySelectorAll('.profile-section').forEach(section => {
+            section.addEventListener('click', (event) => {
+                // Prevent toggling if a button or input inside was clicked
+                if (event.target.closest('.edit-field-icon') || event.target.closest('.upload-icon') || event.target.closest('.modal-button') || event.target.tagName === 'INPUT') {
+                    return;
+                }
+
+                const dropdownContent = section.querySelector('.dropdown-content');
+                const dropdownIcon = section.querySelector('.dropdown-icon');
+
+                if (dropdownContent && dropdownIcon) {
+                    const isOpen = dropdownContent.classList.contains('open');
+                    // Close all other open dropdowns before opening the current one
+                    document.querySelectorAll('.dropdown-content.open').forEach(openContent => {
+                        openContent.classList.remove('open');
+                        openContent.closest('.profile-section').querySelector('.dropdown-icon').classList.remove('open');
+                    });
+
+                    if (!isOpen) {
+                        dropdownContent.classList.add('open');
+                        dropdownIcon.classList.add('open');
+                    } else {
+                        dropdownContent.classList.remove('open');
+                        dropdownIcon.classList.remove('open');
+                    }
+                }
+            });
+        });
+
+        // Edit profile fields (inline editing)
+        document.querySelectorAll('.edit-field-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const fieldName = this.dataset.targetField;
+                const fieldValueSpan = this.previousElementSibling;
+                const originalValue = fieldValueSpan.textContent;
+
+                // Create input element
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalValue;
+                input.classList.add('edit-input');
+
+                // Replace span with input
+                fieldValueSpan.style.display = 'none';
+                this.style.display = 'none'; // Hide edit icon
+                fieldValueSpan.parentNode.insertBefore(input, fieldValueSpan.nextSibling);
+
+                input.focus();
+
+                // Create save and cancel buttons
+                const saveButton = document.createElement('button');
+                saveButton.textContent = 'Save';
+                saveButton.classList.add('modal-button'); // Reuse modal button style
+                saveButton.style.marginLeft = '10px';
+                saveButton.style.padding = '5px 10px';
+                saveButton.style.fontSize = '12px';
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.classList.add('modal-button', 'cancel-button'); // Reuse modal button style
+                cancelButton.style.marginLeft = '5px';
+                cancelButton.style.padding = '5px 10px';
+                cancelButton.style.fontSize = '12px';
+
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.classList.add('action-buttons');
+                buttonsDiv.appendChild(saveButton);
+                buttonsDiv.appendChild(cancelButton);
+
+                // Add buttons to the dropdown item row
+                fieldValueSpan.parentNode.appendChild(buttonsDiv);
+
+
+                // Save button logic
+                saveButton.addEventListener('click', () => {
+                    profileData[fieldName] = input.value;
+                    updateProfileFields(); // Update all displayed fields
+                    removeEditControls();
+                    alert(`Updated ${fieldName} to: ${input.value}`);
+                });
+
+                // Cancel button logic
+                cancelButton.addEventListener('click', () => {
+                    removeEditControls();
+                });
+
+                // Handle Enter key to save
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        saveButton.click();
+                    }
+                });
+
+                // Function to remove editing controls
+                const removeEditControls = () => {
+                    input.remove();
+                    buttonsDiv.remove();
+                    fieldValueSpan.style.display = ''; // Show original span
+                    this.style.display = ''; // Show edit icon
+                };
+            });
+        });
+        const storedProfileData = localStorage.getItem('captainProfileData');
+        const profile = JSON.parse(storedProfileData);
+        console.log(profile);
+
+        // Handle document uploads
+        document.querySelectorAll('.upload-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const documentType = this.dataset.targetDocument;
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*,application/pdf'; // Accept images and PDFs
+                fileInput.style.display = 'none'; // Hide the input
+
+                fileInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        profileData[documentType] = file.name; // Store file name
+                        updateProfileFields();
+                        alert(`Uploaded ${file.name} for ${documentType.toUpperCase()}`);
+                    }
+                    fileInput.remove(); // Clean up the hidden input
+                });
+
+                // Append and trigger click
+                document.body.appendChild(fileInput);
+                fileInput.click();
+            });
+        });
+
+        // --- Password Reset Modal Logic ---
+        const passwordResetModal = document.getElementById('passwordResetModal');
+        const openPasswordResetModalBtn = document.getElementById('openPasswordResetModalBtn');
+        const closeResetModal = document.getElementById('closeResetModal');
+        const otpPhase = document.getElementById('otpPhase');
+        const passwordChangePhase = document.getElementById('passwordChangePhase');
+        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+        const resendOtpBtn = document.getElementById('resendOtpBtn');
+        const otpTimer = document.getElementById('otpTimer');
+        const resendOtpContainer = document.getElementById('resendOtpContainer');
+        const otpInput = document.getElementById('otpInput');
+        const newModalPassword = document.getElementById('newModalPassword');
+        const confirmModalPassword = document.getElementById('confirmModalPassword');
+        const changePasswordSubmitBtn = document.getElementById('changePasswordSubmitBtn');
+        const cancelPasswordChangeBtn = document.getElementById('cancelPasswordChangeBtn');
+        const otpMessageModal = document.getElementById('otpMessageModal');
+        const otpMessageContent = document.getElementById('otpMessageContent');
+        const closeOtpMessageModalBtn = document.getElementById('closeOtpMessageModalBtn');
+
+        let otpCountdown;
+        let correctOtp; // Will now be generated randomly
+
+        // Function to generate a random 4-digit OTP
+        function generateRandomOtp() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        function startOtpTimer() {
+            let timeLeft = 60;
+            resendOtpBtn.disabled = true;
+            otpTimer.textContent = `(${timeLeft}s)`;
+
+            otpCountdown = setInterval(() => {
+                timeLeft--;
+                otpTimer.textContent = `(${timeLeft}s)`;
+                if (timeLeft <= 0) {
+                    clearInterval(otpCountdown);
+                    resendOtpBtn.disabled = false;
+                    otpTimer.textContent = '';
+                }
+            }, 1000);
+        }
+
+        openPasswordResetModalBtn.addEventListener('click', () => {
+            window.location.href="forgot_password_captain.html";
+        });
+
+        closeResetModal.addEventListener('click', () => {
+            passwordResetModal.classList.remove('open');
+            overlay.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            body.classList.remove('no-scroll');
+            clearInterval(otpCountdown); // Stop timer when modal closes
+        });
+
+        verifyOtpBtn.addEventListener('click', () => {
+            const enteredOtp = otpInput.value;
+            if (enteredOtp === correctOtp) {
+                otpPhase.style.display = 'none';
+                passwordChangePhase.style.display = 'block';
+                clearInterval(otpCountdown); // Stop timer on successful OTP verification
+                resendOtpContainer.style.display = 'none'; // Hide resend/timer
+                showOtpMessage("OTP Verified", "You can now set your new password.");
+            } else {
+                alert('Invalid OTP. Please try again.');
+            }
+        });
+
+        resendOtpBtn.addEventListener('click', () => {
+            correctOtp = generateRandomOtp(); // Generate a new random OTP for resend
+            alert(`New OTP sent! Check the pop-up for the demo OTP: ${correctOtp}`);
+            clearInterval(otpCountdown);
+            startOtpTimer(); // Restart timer
+            showOtpMessage("New OTP Sent (For Demo)", `A new OTP has been sent to your registered mobile number/email. The OTP is: <span style="font-weight: bold; color: var(--orange-600);">${correctOtp}</span>`);
+        });
+
+        changePasswordSubmitBtn.addEventListener('click', () => {
+            const newPass = newModalPassword.value;
+            const confirmPass = confirmModalPassword.value;
+
+            if (newPass.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                alert('New password and confirm password do not match.');
+                return;
+            }
+            alert('Password changed successfully!');
+            passwordResetModal.classList.remove('open');
+            overlay.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            body.classList.remove('no-scroll');
+        });
+
+        cancelPasswordChangeBtn.addEventListener('click', () => {
+            passwordResetModal.classList.remove('open');
+            overlay.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            body.classList.remove('no-scroll');
+            clearInterval(otpCountdown);
+        });
+
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const targetInput = document.getElementById(targetId);
+                if (targetInput.type === 'password') {
+                    targetInput.type = 'text';
+                    this.textContent = 'visibility'; // Change to eye-open icon
+                } else {
+                    targetInput.type = 'password';
+                    this.textContent = 'visibility_off'; // Change to eye-closed icon
+                }
+            });
+        });
+
+        // OTP Message Modal functions
+        function showOtpMessage(title, message) {
+            otpMessageModal.querySelector('h4').textContent = title;
+            otpMessageContent.innerHTML = message; // Use innerHTML to render span for OTP
+            otpMessageModal.classList.add('open');
+            overlay.classList.add('open');
+        }
+
+        closeOtpMessageModalBtn.addEventListener('click', () => {
+            otpMessageModal.classList.remove('open');
+            // Only remove overlay if password reset modal is not open
+            if (!passwordResetModal.classList.contains('open')) {
+                overlay.classList.remove('open');
+                mainContent.classList.remove('panel-open');
+                body.classList.add('no-scroll');
+            }
+        });
+
+        // --- End Password Reset Modal Logic ---
+
+
+        // Navbar Status Toggle (On Duty/Off Duty)
+        const navbarStatusToggle = document.getElementById('navbarStatusToggle');
+        const navbarStatusLabel = document.getElementById('navbarStatusLabel');
+        const navbarToggleContainer = document.getElementById('navbarToggleContainer');
+        const onDutyContent = document.getElementById('onDutyContent');
+        const offDutyContent = document.getElementById('offDutyContent');
+
+        navbarStatusToggle.addEventListener('change', function() {
+            if (this.checked) {
+                navbarStatusLabel.textContent = 'On Duty';
+                navbarToggleContainer.classList.add('on-duty-border');
+                offDutyContent.style.display = 'none';
+                onDutyContent.style.display = 'block';
+                renderRideRequests(); // Render rides when going on duty
+            } else {
+                navbarStatusLabel.textContent = 'Off Duty';
+                navbarToggleContainer.classList.remove('on-duty-border');
+                onDutyContent.style.display = 'none';
+                offDutyContent.style.display = 'flex';
+                rideRequestsContainer.innerHTML = ''; // Clear rides when going off duty
+                paymentScreen.style.display = 'none'; // Hide payment screen
+                thankYouScreen.style.display = 'none'; // Hide thank you screen
+                acceptedRide = null; // Clear accepted ride state
+                noRidesMessage.style.display = 'none'; // Ensure message is hidden when off duty
+            }
+        });
+
+
+        // Ride Request Functionality
+        const rideRequestsContainer = document.getElementById('rideRequestsContainer');
+        const noRidesMessage = document.getElementById('noRidesMessage');
+        const paymentScreen = document.getElementById('paymentScreen');
+        const finalPaymentAmount = document.getElementById('finalPaymentAmount');
+        const completePaymentBtn = document.getElementById('completePaymentBtn');
+        const thankYouScreen = document.getElementById('thankYouScreen');
+
+        let availableRides = [
+            {
+                id: 'ride1',
+                pickup: '123 Main St, Anytown',
+                drop: '456 Oak Ave, Anytown',
+                distance: '5.2 km',
+                amount: '₹120',
+                status: 'pending'
+            },
+            {
+                id: 'ride2',
+                pickup: '789 Pine Ln, Othercity',
+                drop: '101 Elm Blvd, Othercity',
+                distance: '10.5 km',
+                amount: '₹250',
+                status: 'pending'
+            },
+            {
+                id: 'ride3',
+                pickup: '222 Birch St, Anytown',
+                drop: '333 Willow Rd, Anytown',
+                distance: '2.1 km',
+                amount: '₹75',
+                status: 'pending'
+            }
+        ];
+
+        let acceptedRide = null; // To store the single accepted ride
+
+        function createRideCard(ride) {
+            let actionsHtml = '';
+            if (ride.status === 'pending') {
+                actionsHtml = `
+                    <button class="cancel-btn" data-ride-id="${ride.id}">Cancel</button>
+                    <button class="accept-btn" data-ride-id="${ride.id}">Accept</button>
+                `;
+            } else if (ride.status === 'accepted') {
+                actionsHtml = `
+                    <button class="accept-btn" data-ride-id="${ride.id}" disabled>Accepted</button>
+                    <button class="complete-ride-btn" data-ride-id="${ride.id}">Complete Ride</button> `;
+            }
+
+            return `
+                <div class="ride-card" data-ride-id="${ride.id}">
+                    <div class="ride-card-header">
+                        <span class="ride-card-title">${ride.status === 'accepted' ? 'Accepted Ride' : 'New Ride Request'}</span>
+                        <span class="ride-amount">${ride.amount}</span>
+                    </div>
+                    <div class="ride-info-row">
+                        <span class="material-icons">location_on</span>
+                        <span>Pickup: ${ride.pickup}</span>
+                    </div>
+                    <div class="ride-info-row">
+                        <span class="material-icons">flag</span>
+                        <span>Drop: ${ride.drop}</span>
+                    </div>
+                    <div class="ride-info-row">
+                        <span class="material-icons">route</span>
+                        <span>Distance: ${ride.distance}</span>
+                    </div>
+                    <div class="ride-actions">
+                        ${actionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRideRequests() {
+            rideRequestsContainer.innerHTML = ''; // Clear existing rides
+            paymentScreen.style.display = 'none'; // Hide payment screen
+            thankYouScreen.style.display = 'none'; // Hide thank you screen
+
+            if (acceptedRide) {
+                // If a ride is accepted, only display that one
+                rideRequestsContainer.insertAdjacentHTML('beforeend', createRideCard(acceptedRide));
+                rideRequestsContainer.style.display = 'block'; // Ensure container is visible
+                noRidesMessage.style.display = 'none'; // Hide no rides message
+            } else {
+                // If no ride is accepted, display all pending rides
+                const pendingRides = availableRides.filter(ride => ride.status === 'pending');
+                if (pendingRides.length > 0) {
+                    pendingRides.forEach(ride => {
+                        rideRequestsContainer.insertAdjacentHTML('beforeend', createRideCard(ride));
+                    });
+                    rideRequestsContainer.style.display = 'block';
+                    noRidesMessage.style.display = 'none';
+                } else {
+                    // No pending rides available
+                    rideRequestsContainer.style.display = 'none';
+                    noRidesMessage.style.display = 'block';
+                }
+            }
+
+            attachRideCardListeners();
+        }
+
+        function handleRideAction(event) {
+            const target = event.target;
+            const rideId = target.dataset.rideId;
+
+            if (!rideId) return; // Not a ride action button
+
+            if (target.classList.contains('accept-btn')) {
+                // Accept button clicked
+                const accepted = availableRides.find(ride => ride.id === rideId);
+                if (accepted) {
+                    accepted.status = 'accepted';
+                    acceptedRide = accepted; // Set the accepted ride globally
+                    renderRideRequests(); // Immediately render the accepted ride with the new 'Complete' button
+                }
+            } else if (target.classList.contains('cancel-btn')) {
+                // Cancel button clicked
+                const index = availableRides.findIndex(ride => ride.id === rideId);
+                if (index > -1) {
+                    availableRides.splice(index, 1); // Remove the ride from available rides
+                    alert(`Ride ${rideId} cancelled.`);
+                }
+                renderRideRequests(); // Re-render to update the display
+            } else if (target.classList.contains('complete-ride-btn')) { // NEW LOGIC FOR COMPLETE BUTTON
+                if (acceptedRide && acceptedRide.id === rideId) {
+                    rideRequestsContainer.style.display = 'none'; // Hide the accepted ride card
+                    finalPaymentAmount.textContent = acceptedRide.amount;
+                    paymentScreen.style.display = 'flex'; // Show payment screen
+                }
+            }
+        }
+
+        completePaymentBtn.addEventListener('click', () => {
+            paymentScreen.style.display = 'none'; // Hide payment screen
+            thankYouScreen.style.display = 'flex'; // Show thank you screen
+
+            const completedRideId = acceptedRide ? acceptedRide.id : null; // Get ID of the ride just completed
+            acceptedRide = null; // Reset accepted ride state *before* filtering
+
+            // After a delay, go back to main dashboard state
+            setTimeout(() => {
+                thankYouScreen.style.display = 'none';
+
+                // Filter out the completed ride from availableRides
+                if (completedRideId) {
+                    availableRides = availableRides.filter(ride => ride.id !== completedRideId);
+                }
+
+                if (navbarStatusToggle.checked) {
+                    renderRideRequests(); // Go back to showing new ride requests or 'no rides' message
+                } else {
+                    offDutyContent.style.display = 'flex'; // Show off duty content
+                }
+            }, 3000); // Display "Thank you" for 3 seconds then go back to main state
+        });
+
+
+        function attachRideCardListeners() {
+            // Event delegation for Accept and Cancel buttons
+            // Remove previous listeners to prevent duplicates if any (though delegation usually handles this)
+            rideRequestsContainer.removeEventListener('click', handleRideAction);
+
+            // Add new listeners
+            rideRequestsContainer.addEventListener('click', handleRideAction);
+        }
+
+        // Initial render when the driver is off duty (no rides shown)
+        renderRideRequests();
+
+        // Placeholder for Help button (inside action buttons grid)
+        
+        function openPageInSameTab(url) {
+            if (typeof url !== 'string' || !url.trim()) {
+                console.error("Invalid URL provided to openPageInSameTab.");
+                alert("Error: Invalid URL. Please provide a valid web address.");
+                return;
+            }
+            window.location.href = url;
+        }
+        document.getElementById("activity").addEventListener('click',function()
+    {
+        openPageInSameTab("captain_activity.html");
+    });
+    document.getElementById("help").addEventListener('click',function()
+    {
+        openPageInSameTab("captain_help.html");
+    });
+//     document.getElementById("openProfilePanel").addEventListener('click',function()
+// {
+//     openPageInSameTab("captain_activity.html");
+// })
+    document.getElementById("wallet").addEventListener('click',function()
+    {
+        openPageInSameTab("payment.html");
+    });
+
+    
+    </script>
+</body>
+</html>

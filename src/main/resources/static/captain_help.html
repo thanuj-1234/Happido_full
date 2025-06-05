@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            /* Define your light orange color palette */
+            --primary-color: #FFA726; /* A warm orange, like a light tangerine */
+            --primary-hover-color: #FB8C00; /* A slightly darker orange for hover states */
+            --border-color: #FFB74D; /* Lighter orange for borders */
+            --background-color: #FFF3E0; /* Very light orange/cream for background */
+            --text-color: #333;
+            --light-text-color: #555;
+            --white-color: white;
+            --shadow-color: rgba(0,0,0,0.05);
+            --header-shadow-color: rgba(0,0,0,0.1);
+            --light-grey-border: #eee;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+        }
+        header {
+            background-color: var(--primary-color); /* Help bar background color set to orange */
+            padding: 16px;
+            box-shadow: 0 1px 2px var(--header-shadow-color);
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--white-color); /* Help text color set to white for contrast */
+        }
+        .container {
+            padding: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        .menu-item {
+            background-color: var(--white-color);
+            margin-bottom: 10px;
+            padding: 18px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            box-shadow: 0 1px 2px var(--shadow-color);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold; /* Keep menu item titles bold */
+            border-left: 5px solid var(--primary-color); /* Left border color */
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .menu-item:hover {
+            background-color: var(--background-color); /* Lighter orange on hover */
+        }
+        .arrow {
+            font-size: 20px;
+            color: var(--primary-color); /* Arrow color */
+            transition: transform 0.3s ease;
+        }
+        .menu-item.active .arrow {
+            transform: rotate(90deg);
+        }
+        .faqs-category {
+            margin-left: 15px;
+            margin-top: -5px;
+            padding-top: 5px;
+            overflow: hidden;
+            max-height: 0; /* Still used for category expand/collapse */
+            transition: max-height 0.4s ease-out;
+        }
+        .faqs-category.active {
+            max-height: 1000px; /* Sufficiently large to show content */
+        }
+        .faq-item {
+            background-color: var(--white-color);
+            margin-bottom: 10px;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px var(--shadow-color);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .faq-item:hover {
+            background-color: #f5f5f5; /* Slight hover for inner FAQs */
+        }
+        .faq-question {
+            color: var(--text-color);
+        }
+        .faq-answer {
+            padding-top: 10px;
+            font-size: 14px;
+            color: var(--light-text-color);
+            /* These CSS properties are now less critical for animation, but keep for structure */
+            display: none; /* Hide by default, JavaScript will control visibility */
+            border-top: 1px solid var(--light-grey-border);
+            margin-top: 10px;
+            /* Removed transitions related to max-height/opacity here */
+        }
+        .faq-answer.show {
+            display: block; /* Shown by JS */
+        }
+        /* Optional: Add a blinking cursor for typing effect */
+        .faq-answer::after {
+            content: '|';
+            animation: blink-caret .75s step-end infinite;
+            display: inline-block; /* Ensure cursor is on the same line */
+        }
+        .faq-answer.show.typing-done::after {
+            content: ''; /* Hide cursor when typing is done */
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--text-color); }
+        }
+
+        .query-box {
+            background-color: var(--white-color);
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px var(--shadow-color);
+        }
+        .query-box h3 {
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        .query-box textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--light-grey-border);
+            border-radius: 5px;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .query-box button {
+            background-color: var(--primary-color); /* Button background */
+            color: var(--white-color);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .query-box button:hover {
+            background-color: var(--primary-hover-color); /* Button hover */
+        }
+    </style>
+</head>
+<body>
+    <header>Help</header>
+    <div class="container">
+        <div id="help-topics">
+            <div class="section-title">Help Topics</div>
+            <div class="menu-item" onclick="toggleCategory('driver-issues', this)">
+                <span>Issues faced by Captains</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-driver-issues" class="faqs-category"></div>
+            <div class="menu-item" onclick="toggleCategory('other', this)">
+                <span>Other Topics</span>
+                <span class="arrow">›</span>
+            </div>
+            <div id="faqs-other" class="faqs-category"></div>
+        </div>
+
+        <div class="query-box">
+            <h3>Have other questions or feedback?</h3>
+            <textarea id="userQuery" placeholder="Type your suggestion, feedback, or query here..."></textarea>
+            <button onclick="submitQuery()">Submit</button>
+        </div>
+    </div>
+    <script>
+        const faqsData = {
+            'driver-issues': [
+                { question: 'My daily earnings are not reflecting correctly', answer: 'Earnings are typically processed within 24 hours. If it\'s been longer, please contact support with your ride details.' },
+                { question: 'I\'m having trouble with the navigation system', answer: 'Try restarting the app. If the issue persists, ensure your device\'s GPS is enabled and your app is updated to the latest version.' },
+                { question: 'How do I update my vehicle information?', answer: 'You can update your vehicle details by going to the "Profile" section in your driver app and selecting "Vehicle Information".' },
+                { question: 'What should I do if a customer leaves an item in my car?', answer: 'Please report the lost item immediately through the app\'s support section. Do not attempt to contact the customer directly for privacy reasons.' },
+                { question: 'I have an issue with a ride cancellation', answer: 'Cancellations have specific policies. Check the cancellation policy in the app or contact support for assistance with a particular ride.' }
+            ],
+            'other': [
+                { question: 'I have a suggestion', answer: 'Submit your suggestion through the feedback section in the app. We appreciate your input!' },
+                { question: 'I need help with something else', answer: 'For any other issues not listed here, please contact our customer support team directly through the app or by phone.' }
+            ]
+        };
+
+        // Stores references to typing animation timeouts to clear them if needed
+        let typingTimeouts = [];
+
+        function typeAnswer(element, text, index, speed) {
+            if (index < text.length) {
+                element.textContent += text.charAt(index);
+                typingTimeouts.push(setTimeout(() => typeAnswer(element, text, index + 1, speed), speed));
+            } else {
+                element.classList.add('typing-done'); // Add class when typing is complete
+            }
+        }
+
+        function clearTypingAnimation() {
+            typingTimeouts.forEach(timeout => clearTimeout(timeout));
+            typingTimeouts = [];
+        }
+
+        function toggleCategory(topic, clickedElement) {
+            const faqCategoryDiv = document.getElementById(`faqs-${topic}`);
+            const arrowElement = clickedElement.querySelector('.arrow');
+
+            clickedElement.classList.toggle('active');
+            const isActiveCategory = faqCategoryDiv.classList.toggle('active');
+
+            if (isActiveCategory) {
+                if (faqCategoryDiv.innerHTML === '') {
+                    faqsData[topic].forEach(faq => {
+                        const faqItem = document.createElement('div');
+                        faqItem.className = 'faq-item';
+
+                        const faqQuestionDiv = document.createElement('div');
+                        faqQuestionDiv.className = 'faq-question';
+                        faqQuestionDiv.textContent = faq.question;
+                        faqItem.appendChild(faqQuestionDiv);
+
+                        const faqAnswerDiv = document.createElement('div');
+                        faqAnswerDiv.className = 'faq-answer';
+                        // Do not set textContent here initially, it will be typed
+                        faqItem.appendChild(faqAnswerDiv);
+
+                        // Store original answer text
+                        faqAnswerDiv.dataset.originalAnswer = faq.answer;
+
+                        faqQuestionDiv.addEventListener('click', () => {
+                            const isCurrentlyShown = faqAnswerDiv.classList.contains('show');
+
+                            // Clear any ongoing typing animations
+                            clearTypingAnimation();
+
+                            // Close all other open answers within this specific category
+                            Array.from(faqCategoryDiv.querySelectorAll('.faq-answer.show')).forEach(answer => {
+                                if (answer !== faqAnswerDiv) {
+                                    answer.classList.remove('show');
+                                    answer.classList.remove('typing-done');
+                                    answer.textContent = ''; // Clear text
+                                }
+                            });
+
+                            if (!isCurrentlyShown) {
+                                // Show the answer container and start typing
+                                faqAnswerDiv.classList.add('show');
+                                faqAnswerDiv.classList.remove('typing-done'); // Ensure cursor appears
+                                faqAnswerDiv.textContent = ''; // Clear content before typing
+                                typeAnswer(faqAnswerDiv, faqAnswerDiv.dataset.originalAnswer, 0, 30); // 30ms per character
+                            } else {
+                                // Hide the answer
+                                faqAnswerDiv.classList.remove('show');
+                                faqAnswerDiv.classList.remove('typing-done');
+                                faqAnswerDiv.textContent = ''; // Clear text when hidden
+                            }
+                        });
+
+                        faqCategoryDiv.appendChild(faqItem);
+                    });
+                }
+                setTimeout(() => {
+                    faqCategoryDiv.style.maxHeight = faqCategoryDiv.scrollHeight + 'px';
+                }, 10);
+            } else {
+                faqCategoryDiv.style.maxHeight = '0';
+                // Clear any running animations if category is collapsed
+                clearTypingAnimation();
+                // Optionally clear text content of all answers in the collapsed category
+                Array.from(faqCategoryDiv.querySelectorAll('.faq-answer')).forEach(answer => {
+                    answer.textContent = '';
+                    answer.classList.remove('show');
+                    answer.classList.remove('typing-done');
+                });
+            }
+        }
+
+        function submitQuery() {
+            const queryTextarea = document.getElementById('userQuery');
+            const userQuery = queryTextarea.value.trim();
+
+            if (userQuery) {
+                console.log("User Query Submitted:", userQuery);
+                alert("Thank you for your feedback/query! We'll get back to you soon.");
+                queryTextarea.value = '';
+            } else {
+                alert("Please type your query or feedback before submitting.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Footer for Ride Services</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #d0d3e2;
+    }
+
+    .footer {
+      background-color: #1f1f1f;
+      color: #fff;
+      padding: 40px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+
+    .footer-column {
+      flex: 1 1 200px;
+      margin: 10px;
+    }
+
+    .footer-column h3 {
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-column ul li a {
+      text-decoration: none;
+      color: #aaa;
+      transition: color 0.3s;
+    }
+
+    .footer-column ul li a:hover {
+      color: #fff;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .social-icons img {
+      width: 40px; /* Default icon size */
+      height: 40px;
+    }
+
+    .social-icons .youtube {
+      width: 50px; /* Increased width */
+      height: 35px; /* Reduced height */
+    }
+
+    @media (max-width: 768px) {
+      .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .footer-column {
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <footer class="footer">
+    <div class="footer-column">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Services</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Affiliate Program</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Get Help</h3>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Booking Support</a></li>
+        <li><a href="#">Refund & Cancellation</a></li>
+        <li><a href="#">Customer Care</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Ride Services</h3>
+      <ul>
+        <li><a href="#">Book a Ride</a></li>
+        <li><a href="#">Ride Rates</a></li>
+        <li><a href="#">Safety Guidelines</a></li>
+        <li><a href="#">Driver Support</a></li>
+        <li><a href="#">Service Areas</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Follow Us</h3>
+      <div class="social-icons">
+        <img src="fb.png" alt="Facebook">
+        <img src="twitter.png" alt="Twitter">
+        <img src="insta.png" alt="Instagram">
+        <img src="youtube.png" class="youtube" alt="YouTube">
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
