@@ -34,6 +34,55 @@
         *, *::before, *::after {
             box-sizing: border-box;
         }
+ 
+
+/*button hide*/
+.hiddens {
+            display: none;
+        }
+
+        
+
+        /* Button styling */
+        .btns {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            font-weight: 600; /* Equivalent to font-semibold */
+            padding: 0.75rem 1.5rem; /* Equivalent to py-3 px-6 */
+            border-radius: 0.75rem; /* Equivalent to rounded-xl */
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block; /* Ensures padding works correctly */
+            font-size: 1.125rem; /* text-lg */
+        }
+
+       .btns:hover {
+            background-color: #4338ca; /* Indigo 700 */
+        }
+
+        /* Styling for the custom message box */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .message-box.show {
+            opacity: 1;
+        }
+
+
+
 
         body {
             font-family: 'Inter', sans-serif;
@@ -1461,7 +1510,7 @@
             <div class="driver-info-card">
                 <img src="" alt="Driver Avatar" class="driver-avatar" id="driverAvatar">
                 <div class="driver-details-text">
-                    <div class="driver-name" id="driverName">Driver Name</div>
+                    <div class="driver-name" id="driverName"></div>
                     <div class="driver-rating">
                         <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
                             <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.691h4.17c.969 0 1.371 1.24.588 1.81l-3.373 2.451a1 1 0 00-.362 1.118l1.286 3.967c.3.921-.455 1.688-1.242 1.118l-3.373-2.451a1 1 0 00-1.176 0l-3.373 2.451c-.787.57-1.542-.197-1.242-1.118l1.286-3.967a1 1 0 00-.362-1.118L3.029 9.395c-.783-.57-.381-1.81.588-1.81h4.17a1 1 0 00.95-.691l1.286-3.967z"></path>
@@ -1470,13 +1519,9 @@
                     </div>
                 </div>
             </div>
-            <div id="rideStatusDisplay" class="ride-status-display">Status: Requested</div>
-            <div id="driverLocationDisplay" class="driver-location-display">Driver Location: ---</div>
-            <div id="etaDisplay" class="eta-display">ETA: Calculating...</div>
-            <div id="notificationArea" class="notification-area">Waiting for driver to accept...</div>
-            <div class="ride-action-buttons">
-                <button class="button call-driver-button" id="callDriverButton">Call Driver</button>
-                <button class="button cancel-ride-button" id="cancelRideButton">Cancel Ride</button>
+            <div id="rideStatusDisplay" class="ride-status-display"></div>
+                <button class="button call-driver-button" id="callDriver">Ride Complete</button>
+                <!-- <button class="button cancel-ride-button" id="cancelRideButton">Cancel Ride</button> -->
             </div>
         </div>
         <div id="ratingSection">
@@ -1495,11 +1540,11 @@
                 </div>
                 <textarea id="feedbackTextarea" class="feedback-textarea" placeholder="Share your feedback (optional)"></textarea>
                 <div class="rating-buttons">
-                    <button class="button submit-rating-button" id="submitRatingButton">Submit Rating</button>
+                    <button class="button submit-rating-button" id="submitRatingButtons">Submit Rating</button>
                     <button class="button skip-rating-button" id="skipRatingButton">Skip</button>
                 </div>
             </div>
-            <div id="ratingConfirmation">
+            <div id="ratingConfirmations">
                 <p>Thank you for your feedback!</p>
                 <div class="stars-display" id="submittedStars"></div>
                 <p id="submittedFeedback" class="feedback-summary"></p>
@@ -1564,6 +1609,15 @@
 
         <button class="choose-ride-button" id="chooseComfortElectricButton">
             Book Ride
+        </button>
+    </div>
+
+    <!-- Waiting Page (initially hidden) -->
+    <div id="waitingPage" class="hiddens">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Your Ride is Coming!</h1>
+        <p class="text-gray-600 mb-8 text-lg">Please wait while we find a driver for you.</p>
+        <button id="waitingBtn" class="btn">
+            Waiting...
         </button>
     </div>
     <div id="paymentOptionsSection">
@@ -1676,7 +1730,7 @@
                 </svg>
             </li>
             <li>
-                <a href="forgot_password.html" class="profile-details-link">
+                <a href="change_password_captain.html" class="profile-details-link">
                     <!-- <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1 0 013 12V7a4 4 0 014-4z"></path></svg> -->
                     <span>Change Password</span>
                 </a>
@@ -1778,7 +1832,7 @@
         const driverRating = document.getElementById('driverRating');
         const driverAvatar = document.getElementById('driverAvatar'); // New: Driver avatar on confirmed screen
         const cancelRideButton = document.getElementById('cancelRideButton');
-        const callDriverButton = document.getElementById('callDriverButton');
+        const callDriverButtons = document.getElementById('callDriverButtons');
 
         // New elements for ride status and real-time updates
         const rideStatusDisplay = document.getElementById('rideStatusDisplay');
@@ -1798,7 +1852,8 @@
         const starInputs = document.querySelectorAll('.stars input[type="radio"]');
         const submittedStars = document.getElementById('submittedStars');
         const submittedFeedback = document.getElementById('submittedFeedback');
-
+        const waitingPage = document.getElementById('waitingPage');
+        const waitingBtn = document.getElementById('waitingBtn');
 
         const profileAvatar = document.getElementById('profileAvatar');
         const avatarUpload = document.getElementById('avatarUpload');
@@ -1877,10 +1932,10 @@
             [RIDE_STATUSES.NO_SHOW]: 'Ride cancelled: Passenger No Show.',
             [RIDE_STATUSES.DRIVER_UNAVAILABLE]: 'Ride cancelled: Driver became unavailable.'
         };
-
+         let ridd;
         function updateRideStatusUI(status, message = null) {
             rideStatus = status;
-            rideStatusDisplay.textContent = `Status: ${status}`;
+            rideStatusDisplay.textContent = `Status: ${ridd.status}`;
             notificationArea.textContent = message || STATUS_MESSAGES[status];
             console.log(`[RIDE STATUS] ${new Date().toLocaleTimeString()}: ${status} - ${notificationArea.textContent}`);
 
@@ -2098,10 +2153,12 @@
                 // Phase 6: Ride Completed
                 rideProgressTimeouts.push(setTimeout(() => {
                     updateRideStatusUI(RIDE_STATUSES.COMPLETED);
-                    showRatingPage(); // Show rating page after completion
+                     // Show rating page after completion
                 }, 3000)); // 3 seconds after arrival to complete
             }, (initialPickupETA * 5000) + 8000 + (totalTravelTimeMinutes * 5000) + 5000)); // Total time for simulation
         }
+
+        const dist=0;
 
         function calculateDistance() {
             const pickup = pickupLocationSelect.value;
@@ -2127,6 +2184,7 @@
                 } else if (distances.has(routeKey2)) {
                     distance = distances.get(routeKey2);
                 }
+                
 
                 if (distance !== null) {
                     distanceDisplay.textContent = `Estimated Distance: ${distance} KM`;
@@ -2185,14 +2243,16 @@
             rideOptionsOverlay.classList.remove('open');
             document.body.style.overflow = '';
         }
+        
+         
+          
+       async function showRideConfirmedScreen(ride) {
+        
 
-        function showRideConfirmedScreen() {
-            if (currentRideDistance === null || currentRidePrice === null) {
-                alert('Please select valid pickup and dropoff locations first.');
-                return;
-            }
+            console.log(ride);
 
             mainContentInner.style.display = 'none';
+            waitingPage.classList.add('hiddens');
             closeRideOptionsPanel();
 
             // Generate and store ride details
@@ -2203,17 +2263,39 @@
             const driverRatings = ["4.7", "4.9", "4.6", "4.8", "4.5"];
             const selectedDriverRating = driverRatings[Math.floor(Math.random() * driverRatings.length)];
             const driverAvatarUrl = " "; // Generate avatar based on driver initial
+          let ridess;
+            
+            try {
+        const response = await fetch(`api/drivers/${ride.driverId}`, {
+            method: 'GET', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            }
+            // body: JSON.stringify(rideRequestData), // Convert the updates object to a JSON string
+        });
 
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+        const apiResponse = await response.json(); 
+        
+         ridess = apiResponse.data;
+        console.log(ridess.name);
+        
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
             currentRideDetails = {
                 otp: otp,
                 carNumber: carNumber,
-                amount: currentRidePrice,
-                distance: currentRideDistance,
-                driverName: selectedDriverName,
+                amount: ride.actualFare,
+                distance: ride.distance,
+                driverName: ridess.name,
                 driverRating: selectedDriverRating,
                 driverAvatarUrl: driverAvatarUrl
             };
-
+             
             // Populate the confirmed ride details
             rideOtp.textContent = currentRideDetails.otp;
             rideCarNumber.textContent = currentRideDetails.carNumber;
@@ -2225,11 +2307,7 @@
 
             rideConfirmedSection.style.display = 'block';
 
-            startRideSimulation(
-                pickupLocationSelect.value,
-                dropoffLocationSelect.value,
-                currentRideDistance
-            );
+            rideStatusDisplay.textContent = ride.status
         }
 
         function hideRideConfirmedScreen() {
@@ -2302,7 +2380,7 @@
             submittedStars.innerHTML = '★'.repeat(parseInt(ratingValue));
             submittedFeedback.textContent = feedback ? `"${feedback}"` : "No feedback provided.";
             ratingConfirmation.style.display = 'block';
-
+           alert("helo");
             // After a delay, hide the rating section and return to main screen
             setTimeout(() => {
                 hideRideConfirmedScreen(); // Return to main screen
@@ -2416,18 +2494,104 @@
                 selectPaymentMethod(item.dataset.method);
             });
         });
-
-
-        // Ride Confirmation & Cancellation
-        chooseComfortElectricButton.addEventListener('click', showRideConfirmedScreen);
-        cancelRideButton.addEventListener('click', cancelRide);
-        callDriverButton.addEventListener('click', () => {
-            alert(`Calling driver ${currentRideDetails.driverName} at ${currentRideDetails.carNumber}. (Simulated call)`);
-            console.log(`[ACTION] Calling driver ${currentRideDetails.driverName}.`);
+        let ride;
+        let rides;
+    async function getRiderData() {
+        try {
+        const response = await fetch(`/api/rides/${ride.id}`, {
+            method: 'GET', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            }
+            // body: JSON.stringify(rideRequestData), // Convert the updates object to a JSON string
         });
 
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+        const apiResponse = await response.json(); 
+        console.log('API Response:', apiResponse);
+        ridd=apiResponse.data;
+        if(apiResponse.data.status == "IN_PROGRESS")
+        showRideConfirmedScreen(apiResponse.data);
+         
+         console.log(apiResponse.data.status);
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
+         
+    }
+ 
+          async function bookRide() {
+            const pickup = document.getElementById("pickupLocation").value;
+            const drop = document.getElementById("dropoffLocation").value;
+             const dist = calculateDistance();
+            const pr = document.getElementById("comfortElectricPrice");
+            // (BASE_FARE + (distance * PER_KM_RATE)).toFixed(2);
+            const rideRequestData = {
+    pickupAddress: pickup,
+    destinationAddress: drop,
+    actualFare:(BASE_FARE + (dist * PER_KM_RATE)).toFixed(2),
+    distance: dist // New: Distance of the ride
+};    
+console.log(rideRequestData);
+            try {
+        const response = await fetch(`/api/rides/request/${profile.id}`, {
+            method: 'POST', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            },
+            body: JSON.stringify(rideRequestData), // Convert the updates object to a JSON string
+        });
+
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+        const apiResponse = await response.json(); 
+        console.log('API Response:', apiResponse);
+        
+          ride = apiResponse.data;
+          console.log(ride);
+          rideBook();
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
+            
+          }
+
+
+
+
+    function rideBook()
+      {   
+        mainContentInner.style.display = 'none';
+        closeRideOptionsPanel();
+        waitingPage.classList.remove('hiddens');
+        
+      }
+      waitingBtn.addEventListener('click', () => {
+        getRiderData();
+        
+            // You can add more functionality here, like refreshing driver status or canceling the ride
+        });
+        // Ride Confirmation & Cancellation
+        const callDriverButto = document.getElementById('callDriver');
+
+        // Add an event listener to the button
+        // When the button is clicked, the callDriver function will be executed.
+        callDriverButto.addEventListener('click', showRatingPage);
+        // document.getElementById("callDriver").addEventListener('click', submitRating);
+        chooseComfortElectricButton.addEventListener('click', bookRide);
+        cancelRideButton.addEventListener('click', cancelRide);
+        const callDriverButt = document.getElementById('submitRatingButtons');
+
+// Add an event listener to the button
+// When the button is clicked, the callDriver function will be executed.
+callDriverButt.addEventListener('click', submitRating);
         // Rating Page Buttons
-        submitRatingButton.addEventListener('click', submitRating);
+        // submitRatingButton.addEventListener('click', submitRating);
         skipRatingButton.addEventListener('click', skipRating);
 
         // Location selection changes should hide ride options and update distance

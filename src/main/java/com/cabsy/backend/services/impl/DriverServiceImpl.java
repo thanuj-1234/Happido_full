@@ -1,20 +1,24 @@
 // src/main/java/com/cabsy/backend/services/impl/DriverServiceImpl.java
 package com.cabsy.backend.services.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.cabsy.backend.dtos.DriverRegistrationDTO;
 import com.cabsy.backend.dtos.DriverResponseDTO;
+import com.cabsy.backend.dtos.PasswordResetConfirmationDTO; // NEW import
 import com.cabsy.backend.models.Driver;
 import com.cabsy.backend.models.DriverStatus;
 import com.cabsy.backend.repositories.DriverRepository;
 import com.cabsy.backend.services.DriverService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Use Spring's @Transactional
-import java.time.LocalDateTime; // <--- NEW: Import for updatedAt
-import java.util.List;
-import java.util.Map; // <--- NEW: Import for Map in updateDriverProfile
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DriverServiceImpl implements DriverService {
@@ -78,15 +82,12 @@ public class DriverServiceImpl implements DriverService {
                 .orElseThrow(() -> new RuntimeException("Driver not found with id: " + driverId)); // TODO: Custom exception
 
         // Optional: Add business logic for valid status transitions here if needed
-        // For example, a driver cannot go directly from OFFLINE to OCCUPIED.
-
         driver.setStatus(newStatus);
         driver.setUpdatedAt(LocalDateTime.now()); // Ensure updated_at is set manually if @PreUpdate is not sufficient
         Driver updatedDriver = driverRepository.save(driver); // Persist changes
         return convertToDto(updatedDriver);
     }
 
-    // <--- NEW: Implementation for updateDriverProfile --->
     @Override
     @Transactional
     public DriverResponseDTO updateDriverProfile(Long id, Map<String, String> updates) {
@@ -135,7 +136,6 @@ public class DriverServiceImpl implements DriverService {
                         throw new RuntimeException("Invalid rating format: " + value); // TODO: Custom exception
                     }
                     break;
-                // Add more cases for other fields if they are updatable via this endpoint
                 default:
                     // Optionally log or throw an error for unsupported fields
                     System.out.println("Ignoring unknown or unsupported driver update field: " + key);
@@ -146,6 +146,38 @@ public class DriverServiceImpl implements DriverService {
         driver.setUpdatedAt(LocalDateTime.now()); // Update the timestamp manually
         Driver updatedDriver = driverRepository.save(driver); // Save the updated driver
         return convertToDto(updatedDriver); // Return the DTO
+    }
+
+    @Override
+    public Optional<DriverStatus> getDriverStatus(Long id) {
+        return driverRepository.findById(id)
+                .map(Driver::getStatus); // Directly map to the status enum
+    }
+
+   
+    @Override
+    @Transactional
+    public PasswordResetConfirmationDTO resetDriverPassword(String email, String newPassword) {
+        Driver driver = driverRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Driver not found with email: " + email));
+
+        // Basic password validation:
+        // - At least 8 characters
+        // - At least one uppercase letter
+        // - At least one lowercase letter
+        // - At least one digit
+        // - At least one special character
+        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$";
+        if (!Pattern.matches(passwordRegex, newPassword)) {
+            throw new RuntimeException("New password does not meet complexity requirements. It must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+        }
+
+        // Encode the new password
+        driver.setPassword(passwordEncoder.encode(newPassword));
+        driver.setUpdatedAt(LocalDateTime.now()); // Update the timestamp
+        driverRepository.save(driver); // Persist the updated password
+
+        return new PasswordResetConfirmationDTO("Password for driver with email " + email + " has been successfully reset.", email);
     }
 
     // Helper method to convert Driver entity to DriverResponseDTO

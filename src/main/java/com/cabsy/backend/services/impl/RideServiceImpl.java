@@ -1,26 +1,26 @@
 // src/main/java/com/cabsy/backend/services/impl/RideServiceImpl.java
 package com.cabsy.backend.services.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.cabsy.backend.dtos.RideRequestDTO;
 import com.cabsy.backend.dtos.RideResponseDTO;
-import com.cabsy.backend.models.Cab;
-import com.cabsy.backend.models.CabStatus;
 import com.cabsy.backend.models.Driver;
 import com.cabsy.backend.models.DriverStatus;
 import com.cabsy.backend.models.Ride;
 import com.cabsy.backend.models.RideStatus;
 import com.cabsy.backend.models.User;
-import com.cabsy.backend.repositories.CabRepository;
 import com.cabsy.backend.repositories.DriverRepository;
 import com.cabsy.backend.repositories.RideRepository;
 import com.cabsy.backend.repositories.UserRepository;
 import com.cabsy.backend.services.RideService;
-import org.springframework.stereotype.Service;
+
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RideServiceImpl implements RideService {
@@ -28,14 +28,14 @@ public class RideServiceImpl implements RideService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
-    private final CabRepository cabRepository;
+    // private final CabRepository cabRepository; // Uncomment and inject if you implement Cab entity
 
     public RideServiceImpl(RideRepository rideRepository, UserRepository userRepository,
-                           DriverRepository driverRepository, CabRepository cabRepository) {
+                           DriverRepository driverRepository) {
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.driverRepository = driverRepository;
-        this.cabRepository = cabRepository;
+        // this.cabRepository = cabRepository;
     }
 
     @Override
@@ -46,22 +46,17 @@ public class RideServiceImpl implements RideService {
 
         Ride ride = new Ride();
         ride.setUser(user);
-        ride.setPickupLat(rideRequest.getPickupLat());
-        ride.setPickupLon(rideRequest.getPickupLon());
-        ride.setDestinationLat(rideRequest.getDestinationLat());
-        ride.setDestinationLon(rideRequest.getDestinationLon());
         ride.setPickupAddress(rideRequest.getPickupAddress());
         ride.setDestinationAddress(rideRequest.getDestinationAddress());
+        ride.setActualFare(rideRequest.getActualFare()); // Set actualFare from the request
+        ride.setDistance(rideRequest.getDistance()); // New: Set distance from the request
         ride.setStatus(RideStatus.REQUESTED);
-        ride.setEstimatedFare(calculateEstimatedFare(rideRequest.getPickupLat(), rideRequest.getPickupLon(),
-                                                    rideRequest.getDestinationLat(), rideRequest.getDestinationLon()));
         ride.setRequestTime(LocalDateTime.now());
 
         Ride savedRide = rideRepository.save(ride);
 
         // TODO: Implement logic to find and assign a driver here or in a separate "matching" service
-        // For now, we'll just return the requested ride.
-        // In a real app, this would trigger driver notification and assignment.
+        // For now, this just saves the request. In a real app, this would trigger driver notification and assignment.
 
         return mapToRideResponseDTO(savedRide);
     }
@@ -73,32 +68,32 @@ public class RideServiceImpl implements RideService {
                 .orElseThrow(() -> new RuntimeException("Ride not found with id: " + rideId));
         Driver driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new RuntimeException("Driver not found with id: " + driverId));
-        Cab cab = cabRepository.findById(cabId)
-                .orElseThrow(() -> new RuntimeException("Cab not found with id: " + cabId));
+        // Cab cab = cabRepository.findById(cabId)
+        //           .orElseThrow(() -> new RuntimeException("Cab not found with id: " + cabId));
 
         // Basic checks:
-        if (ride.getDriver() != null || ride.getCab() != null) {
-            throw new RuntimeException("Ride already has a driver/cab assigned.");
+        if (ride.getDriver() != null) { // More specific check: if a driver is already assigned
+             throw new RuntimeException("Ride already has a driver assigned.");
         }
         if (driver.getStatus() != DriverStatus.AVAILABLE) {
             throw new RuntimeException("Driver is not available for a ride.");
         }
-        if (cab.getStatus() != CabStatus.AVAILABLE) {
-            throw new RuntimeException("Cab is not available.");
-        }
-        if (!driver.getCab().getId().equals(cabId)) {
-             throw new RuntimeException("Assigned cab does not belong to the assigned driver.");
-        }
+        // if (cab.getStatus() != CabStatus.AVAILABLE) {
+        //      throw new RuntimeException("Cab is not available.");
+        // }
+        // if (!driver.getCab().getId().equals(cabId)) {
+        //      throw new RuntimeException("Assigned cab does not belong to the assigned driver.");
+        // }
 
 
         ride.setDriver(driver);
-        ride.setCab(cab);
+        // ride.setCab(cab);
         ride.setStatus(RideStatus.ACCEPTED);
         driver.setStatus(DriverStatus.OCCUPIED); // Driver is now occupied
-        cab.setStatus(CabStatus.ON_TRIP); // Cab is now on trip
+        // cab.setStatus(CabStatus.ON_TRIP); // Cab is now on trip
 
         driverRepository.save(driver); // Update driver status
-        cabRepository.save(cab);       // Update cab status
+        // cabRepository.save(cab);         // Update cab status
         Ride updatedRide = rideRepository.save(ride);
 
         return mapToRideResponseDTO(updatedRide);
@@ -106,40 +101,70 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
-    public RideResponseDTO updateRideStatus(Long rideId, RideStatus newStatus) {
+    public RideResponseDTO updateRideStatus(Long rideId, RideStatus newStatus, Long driverId) {
         return rideRepository.findById(rideId).map(ride -> {
             // Add state transition validation here if needed (e.g., cannot go from COMPLETED to REQUESTED)
+
+            // --- Logic to set driverId when status is COMPLETED or if not already set ---
+            // This prioritizes the 'assignDriverToRide' for initial assignment.
+            // This block handles cases where driverId might be passed during status update
+            // especially if the ride never went through the 'assignDriverToRide' flow,
+            // or if a driver wants to ensure their ID is recorded on completion.
+            if (driverId != null) {
+                // If ride doesn't have a driver assigned yet, assign this driver.
+                // Or, if the driver is already assigned, confirm it's the same driver.
+                if (ride.getDriver() == null) {
+                    Driver driver = driverRepository.findById(driverId)
+                            .orElseThrow(() -> new RuntimeException("Driver not found with id: " + driverId));
+                    ride.setDriver(driver);
+                    // Optionally, update driver status here if this is the point of assignment
+                    // e.g., if status is IN_PROGRESS, driver might become OCCUPIED
+                } else if (!ride.getDriver().getId().equals(driverId)) {
+                    // This is a crucial business rule decision:
+                    // If a driver is already assigned, and a *different* driverId is passed,
+                    // should it be allowed? Usually not for simple status updates.
+                    // For now, we'll throw an error. You might adjust this.
+                    // Or, you might allow it only if the current driver is "unassigned" first.
+                    throw new RuntimeException("Cannot change assigned driver via status update for ride ID: " + rideId);
+                }
+            }
+            // --- End of driverId setting logic ---
+
+
             ride.setStatus(newStatus);
 
             if (newStatus == RideStatus.IN_PROGRESS && ride.getStartTime() == null) {
                 ride.setStartTime(LocalDateTime.now());
-                // TODO: Update driver/cab status if not already ON_TRIP/OCCUPIED
-            } else if (newStatus == RideStatus.COMPLETED && ride.getEndTime() == null) {
-                ride.setEndTime(LocalDateTime.now());
-                // Calculate final fare based on actual time/distance (if different from estimated)
-                if (ride.getActualFare() == null) {
-                    // This is a placeholder; actual calculation based on route taken.
-                    ride.setActualFare(ride.getEstimatedFare() * 1.05); // Example: 5% more than estimated
+                // If a driver was assigned during this status update to IN_PROGRESS,
+                // ensure their status is set to OCCUPIED.
+                if (ride.getDriver() != null && ride.getDriver().getStatus() != DriverStatus.OCCUPIED) {
+                    ride.getDriver().setStatus(DriverStatus.OCCUPIED);
+                    driverRepository.save(ride.getDriver());
                 }
+            } else if (newStatus == RideStatus.COMPLETED && ride.getEndTime() == null) {
+                // This is the line that sets the end time when the ride is completed.
+                ride.setEndTime(LocalDateTime.now());
+                // actualFare is assumed to be set at the time of request, not here.
+
                 // Set driver and cab back to AVAILABLE
                 if (ride.getDriver() != null) {
                     ride.getDriver().setStatus(DriverStatus.AVAILABLE);
                     driverRepository.save(ride.getDriver());
                 }
-                if (ride.getCab() != null) {
-                    ride.getCab().setStatus(CabStatus.AVAILABLE);
-                    cabRepository.save(ride.getCab());
-                }
+                // if (ride.getCab() != null) {
+                //      ride.getCab().setStatus(CabStatus.AVAILABLE);
+                //      cabRepository.save(ride.getCab());
+                // }
             } else if (newStatus == RideStatus.CANCELLED) {
-                 // Handle cancellation logic (e.g., free up driver/cab if assigned)
-                 if (ride.getDriver() != null) {
+                // Handle cancellation logic (e.g., free up driver/cab if assigned)
+                if (ride.getDriver() != null) {
                     ride.getDriver().setStatus(DriverStatus.AVAILABLE);
                     driverRepository.save(ride.getDriver());
                 }
-                if (ride.getCab() != null) {
-                    ride.getCab().setStatus(CabStatus.AVAILABLE);
-                    cabRepository.save(ride.getCab());
-                }
+                // if (ride.getCab() != null) {
+                //      ride.getCab().setStatus(CabStatus.AVAILABLE);
+                //      cabRepository.save(ride.getCab());
+                // }
             }
 
             Ride updatedRide = rideRepository.save(ride);
@@ -166,42 +191,26 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList());
     }
 
-    // --- Helper methods ---
-
-    private Double calculateEstimatedFare(Double pickupLat, Double pickupLon, Double destLat, Double destLon) {
-        // TODO: Implement a more sophisticated fare calculation based on distance, time, traffic, etc.
-        // For now, a simple fixed rate per km (e.g., based on Haversine distance).
-        // This is a placeholder.
-        double distanceKm = calculateHaversineDistance(pickupLat, pickupLon, destLat, destLon);
-        return distanceKm * 10.0; // Example: 10 units per km
+    // --- New method: Get rides by status ---
+    @Override
+    public List<RideResponseDTO> getRidesByStatus(RideStatus status) {
+        return rideRepository.findByStatus(status).stream()
+                .map(this::mapToRideResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    private double calculateHaversineDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
-        final int R = 6371; // Radius of Earth in kilometers
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
+    // --- Helper method ---
 
     private RideResponseDTO mapToRideResponseDTO(Ride ride) {
         return new RideResponseDTO(
             ride.getId(),
             ride.getUser() != null ? ride.getUser().getId() : null,
             ride.getDriver() != null ? ride.getDriver().getId() : null,
-            ride.getCab() != null ? ride.getCab().getId() : null,
-            ride.getPickupLat(),
-            ride.getPickupLon(),
-            ride.getDestinationLat(),
-            ride.getDestinationLon(),
             ride.getPickupAddress(),
             ride.getDestinationAddress(),
             ride.getStatus(),
-            ride.getEstimatedFare(),
             ride.getActualFare(),
+            ride.getDistance(), // Include distance
             ride.getRequestTime(),
             ride.getStartTime(),
             ride.getEndTime()

@@ -25,22 +25,6 @@ public class Ride {
     @JoinColumn(name = "driver_id") // Can be null if not yet assigned
     private Driver driver;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cab_id") // Can be null if not yet assigned
-    private Cab cab;
-
-    @Column(nullable = false)
-    private Double pickupLat;
-
-    @Column(nullable = false)
-    private Double pickupLon;
-
-    @Column(nullable = false)
-    private Double destinationLat;
-
-    @Column(nullable = false)
-    private Double destinationLon;
-
     @Column(length = 255)
     private String pickupAddress; // Optional: Store formatted address
 
@@ -51,11 +35,11 @@ public class Ride {
     @Enumerated(EnumType.STRING)
     private RideStatus status;
 
-    @Column(nullable = false)
-    private Double estimatedFare;
+    @Column
+    private Double actualFare; // This is where the user-provided fare will be stored
 
     @Column
-    private Double actualFare; // Set after completion
+    private Double distance; // New: Distance of the ride
 
     @Column(nullable = false)
     private LocalDateTime requestTime;
@@ -73,7 +57,6 @@ public class Ride {
     // One-to-one relationship with Rating
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Rating rating;
-
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

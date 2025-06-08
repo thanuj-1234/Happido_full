@@ -4,6 +4,7 @@ package com.cabsy.backend.controllers;
 import com.cabsy.backend.dtos.ApiResponse;
 import com.cabsy.backend.dtos.RideRequestDTO;
 import com.cabsy.backend.dtos.RideResponseDTO;
+import com.cabsy.backend.dtos.RideStatusUpdateDTO; // This DTO will now carry 'status' and optionally 'driverId'
 import com.cabsy.backend.models.RideStatus;
 import com.cabsy.backend.services.RideService;
 import org.springframework.http.HttpStatus;
@@ -32,11 +33,12 @@ public class RideController {
     @PostMapping("/request/{userId}")
     public ResponseEntity<ApiResponse<RideResponseDTO>> requestRide(
             @PathVariable Long userId,
-            @Valid @RequestBody RideRequestDTO rideRequestDTO) {
+            @Valid @RequestBody RideRequestDTO rideRequestDTO) { // RideRequestDTO now contains actualFare
         try {
             RideResponseDTO newRide = rideService.requestRide(userId, rideRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Ride requested successfully", newRide));
         } catch (RuntimeException e) {
+            // Consider more specific exception handling and logging for production
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Failed to request ride", e.getMessage()));
         }
     }
@@ -57,9 +59,10 @@ public class RideController {
     @PutMapping("/{rideId}/status")
     public ResponseEntity<ApiResponse<RideResponseDTO>> updateRideStatus(
             @PathVariable Long rideId,
-            @RequestParam RideStatus status) {
+            @Valid @RequestBody RideStatusUpdateDTO updateDTO) { // RideStatusUpdateDTO now carries 'status' and optionally 'driverId'
         try {
-            RideResponseDTO updatedRide = rideService.updateRideStatus(rideId, status);
+            // Pass the status and driverId to the service.
+            RideResponseDTO updatedRide = rideService.updateRideStatus(rideId, updateDTO.getStatus(), updateDTO.getDriverId());
             return ResponseEntity.ok(ApiResponse.success("Ride status updated successfully", updatedRide));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Failed to update ride status", e.getMessage()));
@@ -83,5 +86,11 @@ public class RideController {
     public ResponseEntity<ApiResponse<List<RideResponseDTO>>> getRidesByDriverId(@PathVariable Long driverId) {
         List<RideResponseDTO> rides = rideService.getRidesByDriverId(driverId);
         return ResponseEntity.ok(ApiResponse.success("Rides for driver fetched successfully", rides));
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<ApiResponse<List<RideResponseDTO>>> getRidesByStatus(@PathVariable RideStatus status) {
+        List<RideResponseDTO> rides = rideService.getRidesByStatus(status);
+        return ResponseEntity.ok(ApiResponse.success("Rides with status " + status + " fetched successfully", rides));
     }
 }

@@ -1236,18 +1236,18 @@
                     <span class="material-icons dropdown-icon">expand_more</span>
                     <div class="dropdown-content">
                         <div class="dropdown-item">
-                            <span class="field-label">Name:</span>
-                            <span class="field-value" data-field-name="name"></span>
+                            <span class="field-label" >Name:</span>
+                            <span class="field-value" data-field-name="name" id="userName"></span>
                             <span class="material-icons edit-field-icon" data-target-field="name">edit</span>
                         </div>
                         <div class="dropdown-item">
-                            <span class="field-label">Age:</span>
-                            <span class="field-value" data-field-name="age">30</span>
+                            <span class="field-label">Email:</span>
+                            <span class="field-value" data-field-name="age" id="email"></span>
                             <span class="material-icons edit-field-icon" data-target-field="age">edit</span>
                         </div>
                         <div class="dropdown-item">
-                            <span class="field-label">Phone:</span>
-                            <span class="field-value" data-field-name="phone">+91 98765 43210</span>
+                            <span class="field-label" >Phone:</span>
+                            <span class="field-value" data-field-name="phone"  id="phoneNumber"></span>
                             <span class="material-icons edit-field-icon" data-target-field="phone">edit</span>
                         </div>
                     </div>
@@ -1267,25 +1267,17 @@
 
                 <div class="profile-section" data-field="documents">
                     <span class="section-label">
-                        <span class="material-icons">description</span> Documents (RC, DL, PAN)
+                        <span class="material-icons">description</span> Driving Licence
                     </span>
                     <span class="material-icons dropdown-icon">expand_more</span>
                     <div class="dropdown-content">
-                        <div class="dropdown-item">
-                            <span class="field-label">RC:</span>
-                            <span class="field-value" data-document-type="rc"></span>
-                            <span class="material-icons upload-icon" data-target-document="rc">upload</span>
-                        </div>
+                        
                         <div class="dropdown-item">
                             <span class="field-label">DL:</span>
-                            <span class="field-value" data-document-type="dl"></span>
-                            <span class="material-icons upload-icon" data-target-document="dl">upload</span>
+                            <span class="field-value" data-document-type="dl" id="dl"></span>
+                            
                         </div>
-                        <div class="dropdown-item">
-                            <span class="field-label">PAN:</span>
-                            <span class="field-value" data-document-type="pan"></span>
-                            <span class="material-icons upload-icon" data-target-document="pan">upload</span>
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -1453,14 +1445,17 @@
         const profileInfoNameField = document.querySelector('.dropdown-item [data-field-name="name"]');
         const profilePanelName = document.getElementById('profilePanelName');
 
+        const storedProfileData = localStorage.getItem('captainProfileData');
+        const profile = JSON.parse(storedProfileData);
+        console.log(profile);
         // Initial values for profile fields (can be fetched from a backend)
         let profileData = {
-            name: "Thanuj Tenka",
-            age: 30,
-            phone: "+91 98765 43210",
-            rc: "Not Uploaded",
-            dl: "Not Uploaded",
-            pan: "Not Uploaded"
+            name: profile.name,
+            age: profile.email,
+            phone: profile.phoneNumber,
+           
+            dl: profile.licenseNumber
+            
         };
 
         // Function to update profile fields
@@ -1469,9 +1464,11 @@
             profilePanelName.textContent = profileData.name;
             document.querySelector('.dropdown-item [data-field-name="age"]').textContent = profileData.age;
             document.querySelector('.dropdown-item [data-field-name="phone"]').textContent = profileData.phone;
-            document.querySelector('.dropdown-item [data-document-type="rc"]').textContent = profileData.rc;
+            // document.querySelector('.dropdown-item [data-document-type="rc"]').textContent = profileData.rc;
             document.querySelector('.dropdown-item [data-document-type="dl"]').textContent = profileData.dl;
-            document.querySelector('.dropdown-item [data-document-type="pan"]').textContent = profileData.pan;
+
+            
+            // document.querySelector('.dropdown-item [data-document-type="pan"]').textContent = profileData.pan;
         }
 
         // Call initially to populate data
@@ -1596,7 +1593,9 @@
                 saveButton.addEventListener('click', () => {
                     profileData[fieldName] = input.value;
                     updateProfileFields(); // Update all displayed fields
+                    
                     removeEditControls();
+                    updateUser();
                     alert(`Updated ${fieldName} to: ${input.value}`);
                 });
 
@@ -1621,9 +1620,13 @@
                 };
             });
         });
-        const storedProfileData = localStorage.getItem('captainProfileData');
-        const profile = JSON.parse(storedProfileData);
-        console.log(profile);
+        // const name = document.getElementById() 
+        // const email
+        // const phoneNumber
+        // const dl
+        // const storedProfileData = localStorage.getItem('captainProfileData');
+        // const profile = JSON.parse(storedProfileData);
+        // console.log(profile);
 
         // Handle document uploads
         document.querySelectorAll('.upload-icon').forEach(icon => {
@@ -1638,6 +1641,7 @@
                     const file = event.target.files[0];
                     if (file) {
                         profileData[documentType] = file.name; // Store file name
+                        updateUser();
                         updateProfileFields();
                         alert(`Uploaded ${file.name} for ${documentType.toUpperCase()}`);
                     }
@@ -1694,7 +1698,7 @@
         }
 
         openPasswordResetModalBtn.addEventListener('click', () => {
-            window.location.href="forgot_password_captain.html";
+            window.location.href="change_password_captain.html";
         });
 
         closeResetModal.addEventListener('click', () => {
@@ -1787,7 +1791,7 @@
         });
 
         // --- End Password Reset Modal Logic ---
-
+       
 
         // Navbar Status Toggle (On Duty/Off Duty)
         const navbarStatusToggle = document.getElementById('navbarStatusToggle');
@@ -1802,6 +1806,7 @@
                 navbarToggleContainer.classList.add('on-duty-border');
                 offDutyContent.style.display = 'none';
                 onDutyContent.style.display = 'block';
+                setRise();
                 renderRideRequests(); // Render rides when going on duty
             } else {
                 navbarStatusLabel.textContent = 'Off Duty';
@@ -1813,9 +1818,13 @@
                 thankYouScreen.style.display = 'none'; // Hide thank you screen
                 acceptedRide = null; // Clear accepted ride state
                 noRidesMessage.style.display = 'none'; // Ensure message is hidden when off duty
+                
+                setRise();
+
             }
         });
-
+    
+        
 
         // Ride Request Functionality
         const rideRequestsContainer = document.getElementById('rideRequestsContainer');
@@ -1824,39 +1833,18 @@
         const finalPaymentAmount = document.getElementById('finalPaymentAmount');
         const completePaymentBtn = document.getElementById('completePaymentBtn');
         const thankYouScreen = document.getElementById('thankYouScreen');
+         
+      
 
-        let availableRides = [
-            {
-                id: 'ride1',
-                pickup: '123 Main St, Anytown',
-                drop: '456 Oak Ave, Anytown',
-                distance: '5.2 km',
-                amount: '₹120',
-                status: 'pending'
-            },
-            {
-                id: 'ride2',
-                pickup: '789 Pine Ln, Othercity',
-                drop: '101 Elm Blvd, Othercity',
-                distance: '10.5 km',
-                amount: '₹250',
-                status: 'pending'
-            },
-            {
-                id: 'ride3',
-                pickup: '222 Birch St, Anytown',
-                drop: '333 Willow Rd, Anytown',
-                distance: '2.1 km',
-                amount: '₹75',
-                status: 'pending'
-            }
-        ];
+
+
+        let availableRides;
 
         let acceptedRide = null; // To store the single accepted ride
 
         function createRideCard(ride) {
             let actionsHtml = '';
-            if (ride.status === 'pending') {
+            if (ride.status === 'REQUESTED') {
                 actionsHtml = `
                     <button class="cancel-btn" data-ride-id="${ride.id}">Cancel</button>
                     <button class="accept-btn" data-ride-id="${ride.id}">Accept</button>
@@ -1871,15 +1859,15 @@
                 <div class="ride-card" data-ride-id="${ride.id}">
                     <div class="ride-card-header">
                         <span class="ride-card-title">${ride.status === 'accepted' ? 'Accepted Ride' : 'New Ride Request'}</span>
-                        <span class="ride-amount">${ride.amount}</span>
+                        <span class="ride-amount">${ride.actualFare}</span>
                     </div>
                     <div class="ride-info-row">
                         <span class="material-icons">location_on</span>
-                        <span>Pickup: ${ride.pickup}</span>
+                        <span>Pickup: ${ride.pickupAddress}</span>
                     </div>
                     <div class="ride-info-row">
                         <span class="material-icons">flag</span>
-                        <span>Drop: ${ride.drop}</span>
+                        <span>Drop: ${ride.destinationAddress}</span>
                     </div>
                     <div class="ride-info-row">
                         <span class="material-icons">route</span>
@@ -1896,7 +1884,7 @@
             rideRequestsContainer.innerHTML = ''; // Clear existing rides
             paymentScreen.style.display = 'none'; // Hide payment screen
             thankYouScreen.style.display = 'none'; // Hide thank you screen
-
+            console.log("thanuj"," ",acceptedRide);
             if (acceptedRide) {
                 // If a ride is accepted, only display that one
                 rideRequestsContainer.insertAdjacentHTML('beforeend', createRideCard(acceptedRide));
@@ -1904,7 +1892,9 @@
                 noRidesMessage.style.display = 'none'; // Hide no rides message
             } else {
                 // If no ride is accepted, display all pending rides
-                const pendingRides = availableRides.filter(ride => ride.status === 'pending');
+               
+                const pendingRides = availableRides.filter(ride => ride.status == 'REQUESTED');
+                
                 if (pendingRides.length > 0) {
                     pendingRides.forEach(ride => {
                         rideRequestsContainer.insertAdjacentHTML('beforeend', createRideCard(ride));
@@ -1924,52 +1914,120 @@
         function handleRideAction(event) {
             const target = event.target;
             const rideId = target.dataset.rideId;
-
+           console.log(rideId," ",event);
             if (!rideId) return; // Not a ride action button
 
             if (target.classList.contains('accept-btn')) {
                 // Accept button clicked
-                const accepted = availableRides.find(ride => ride.id === rideId);
+                console.log("ans");
+                
+                const accepted = availableRides.find(ride => ride.id == rideId);
+                rideStatusUpdate(accepted.id);
+                console.log(accepted);
                 if (accepted) {
                     accepted.status = 'accepted';
                     acceptedRide = accepted; // Set the accepted ride globally
+                    rideStatus("OCCUPIED");
                     renderRideRequests(); // Immediately render the accepted ride with the new 'Complete' button
                 }
             } else if (target.classList.contains('cancel-btn')) {
                 // Cancel button clicked
-                const index = availableRides.findIndex(ride => ride.id === rideId);
+                const index = availableRides.findIndex(ride => ride.id == rideId);
                 if (index > -1) {
                     availableRides.splice(index, 1); // Remove the ride from available rides
                     alert(`Ride ${rideId} cancelled.`);
                 }
                 renderRideRequests(); // Re-render to update the display
             } else if (target.classList.contains('complete-ride-btn')) { // NEW LOGIC FOR COMPLETE BUTTON
-                if (acceptedRide && acceptedRide.id === rideId) {
+                if (acceptedRide && acceptedRide.id == rideId) {
                     rideRequestsContainer.style.display = 'none'; // Hide the accepted ride card
                     finalPaymentAmount.textContent = acceptedRide.amount;
                     paymentScreen.style.display = 'flex'; // Show payment screen
                 }
             }
         }
+    async function rideStatusUpdate(id) {
+        const addrs =
+            {
+     status: "IN_PROGRESS",
+    driverId: profile.id // Include if you want to set/confirm driver, otherwise omit
+}
+    //  console.log(addrs);    
+        try {
+        const response = await fetch(`/api/rides/${id}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
 
+            body: JSON.stringify(addrs),
+        });
+
+
+        const apiResponse = await response.json();
+        console.log(apiResponse.data);
+        availableRides = apiResponse.data;
+        renderRideRequests();
+       // console.log(availableRides);
+    } catch (error) {
+        console.error(`Error fetching rides with status ${status}:`, error.message);
+        throw error; // Re-throw to allow further handling by the caller
+    }
+        
+        
+    }
+
+
+    async function rideStatusCompleted(id) {
+        const addrs =
+            {
+     status: "COMPLETED",
+    driverId: profile.id // Include if you want to set/confirm driver, otherwise omit
+}
+        
+        try {
+        const response = await fetch(`/api/rides/${id}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(addrs),
+        });
+
+
+        const apiResponse = await response.json();
+        console.log(apiResponse.data);
+       
+       // console.log(availableRides);
+    } catch (error) {
+        console.error(`Error fetching rides with status ${status}:`, error.message);
+        throw error; // Re-throw to allow further handling by the caller
+    }
+        
+        
+    }
         completePaymentBtn.addEventListener('click', () => {
             paymentScreen.style.display = 'none'; // Hide payment screen
             thankYouScreen.style.display = 'flex'; // Show thank you screen
-
-            const completedRideId = acceptedRide ? acceptedRide.id : null; // Get ID of the ride just completed
-            acceptedRide = null; // Reset accepted ride state *before* filtering
-
+            rideStatusCompleted(acceptedRide.id);
+            acceptedRide = null;
+             // Reset accepted ride state *before* filtering
+               
             // After a delay, go back to main dashboard state
             setTimeout(() => {
                 thankYouScreen.style.display = 'none';
-
+                 
                 // Filter out the completed ride from availableRides
-                if (completedRideId) {
-                    availableRides = availableRides.filter(ride => ride.id !== completedRideId);
-                }
+               
+                   
+                      
 
                 if (navbarStatusToggle.checked) {
-                    renderRideRequests(); // Go back to showing new ride requests or 'no rides' message
+                    
+                     
+                    rideStatus("On Duty");// Go back to showing new ride requests or 'no rides' message
+                    // renderRideRequests();
                 } else {
                     offDutyContent.style.display = 'flex'; // Show off duty content
                 }
@@ -2015,8 +2073,181 @@
     {
         openPageInSameTab("payment.html");
     });
-
     
+    function setRise()
+    {
+        const status = document.getElementById('navbarStatusLabel');
+        const ans = status.textContent;
+        rideStatus(ans);
+    }
+    
+    async function getRides() {
+        try {
+        const response = await fetch(`/api/rides/status/REQUESTED`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            
+        });
+
+
+        const apiResponse = await response.json();
+        console.log(apiResponse.data);
+        availableRides = apiResponse.data;
+        console.log(availableRides);
+        renderRideRequests();
+       // console.log(availableRides);
+    } catch (error) {
+        console.error(`Error fetching rides with status ${status}:`, error.message);
+        throw error; // Re-throw to allow further handling by the caller
+    }
+        
+    }
+    document.addEventListener('DOMContentLoaded',getRides);
+    async function rideStatus(ans) {
+        
+        
+        console.log(ans);
+        if(ans === "Off Duty")
+        newStatus = "OFFLINE";
+         if(ans === "On Duty")
+         newStatus = "AVAILABLE"; 
+        if(ans === "OCCUPIED")
+        newStatus = "OCCUPIED"; 
+
+
+    // Basic client-side validation: Ensure the status is one of the valid enum values
+    
+    try {
+        // Construct the URL with the status as a query parameter
+        const url = `api/drivers/${profile.id}/status?status=${newStatus}`;
+
+        const response = await fetch(url, {
+            method: 'PUT', // Specify the HTTP method as PUT
+            // IMPORTANT: No 'Content-Type' header or 'body' is needed here,
+            // because the status is sent as a query parameter, not in the request body.
+        });
+
+        const apiResponse = await response.json(); // Always attempt to parse the JSON response
+
+        
+        if(newStatus === "AVAILABLE")
+         getRides();
+    } catch (error) {
+        // Catch network errors or other unexpected issues
+        console.error('Network or unexpected error during status update:', error);
+        displayMessage(`Network error updating driver status: ${error.message}`, 'error');
+        return null;
+    }
+}
+
+
+
+
+
+   
+
+    async function updateUser() {
+    // Correctly get references to the input fields and their values
+    // Using .value for input elements
+    const updateNameInput = document.getElementById('userName');
+    const updateEmailInput = document.getElementById('email'); // Corrected ID mapping
+    const updatePhoneNumberInput = document.getElementById('phoneNumber'); // Corrected ID mapping
+    console.log(updateNameInput,updateEmailInput,updatePhoneNumberInput);
+    // Assuming 'profile.id' holds the ID of the user to update
+    const userId = profile.id; 
+
+    // --- Input Validation and Data Extraction ---
+    // Basic check to ensure all required input elements exist
+   
+
+    // Get the current values from the input fields
+    const name = updateNameInput.textContent; // Use .value and .trim()
+    const email = updateEmailInput.textContent; // Use .value and .trim()
+    const phoneNumber = updatePhoneNumberInput.textContent; // Use .value and .trim()
+
+    // Log extracted values for debugging
+    // console.log('User ID:', userId);
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Phone Number:', phoneNumber);
+
+
+    // Validate that a User ID is provided for the update operation
+    if (!userId) {
+        displayMessage('User ID not found. Cannot update profile.', 'error');
+        return;
+    }
+
+    // Build the updates object, only including fields that have non-empty values entered
+    const updates = {};
+    if (name) { // Check if name is not empty
+        updates.name = name;
+    }
+    if (email) { // Check if email is not empty
+        // Basic email format validation (optional, but good practice)
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            displayMessage('Please enter a valid email address.', 'error');
+            return;
+        }
+        updates.email = email;
+    }
+    if (phoneNumber) { // Check if phoneNumber is not empty
+        // Basic phone number validation (optional) - adjust regex as needed
+        if (!/^\d{10,}$/.test(phoneNumber.replace(/\D/g, ''))) { // Remove non-digits for validation
+             displayMessage('Please enter a valid phone number (at least 10 digits).', 'error');
+             return;
+        }
+        updates.phoneNumber = phoneNumber;
+    }
+
+    // Ensure at least one field is provided for the update
+    if (Object.keys(updates).length === 0) {
+        displayMessage('Please provide at least one field (Name, Email, or Phone Number) to update.', 'warning');
+        return;
+    }
+
+    console.log('Sending updates:', updates);
+
+    // --- API Call ---
+    try {
+        const response = await fetch(`/api/drivers/${userId}`, {
+            method: 'PUT', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            },
+            body: JSON.stringify(updates), // Convert the updates object to a JSON string
+        });
+
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+
+            profile.name = name;
+            profile.email = email,
+             profile.phoneNumber = phoneNumber;
+                        
+        const apiResponse = await response.json(); 
+        console.log('API Response:', apiResponse);
+       const profileDat= apiResponse.data; 
+         console.log(profileDat);
+         profileInfoNameField.textContent = profileDat.name;
+         profilePanelName.textContent = profileDat.name;
+        document.querySelector('.dropdown-item [data-field-name="age"]').textContent = profileDat.email;
+            document.querySelector('.dropdown-item [data-field-name="phone"]').textContent = profileDat.phoneNumber;
+            // document.querySelector('.dropdown-item [data-document-type="rc"]').textContent = profileData.rc;
+            document.querySelector('.dropdown-item [data-document-type="dl"]').textContent = profileDat.licenseNumber;
+            localStorage.setItem('captainProfileData', profileDat);
+
+            
+
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
+}
+
     </script>
 </body>
 </html>

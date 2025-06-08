@@ -9,14 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping; // Make sure this is imported
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cabsy.backend.dtos.ApiResponse;
-import com.cabsy.backend.dtos.UserRegistrationDTO; // Assuming this is your DTO for registration
+import com.cabsy.backend.dtos.UserRegistrationDTO;
 import com.cabsy.backend.dtos.UserResponseDTO;
+import com.cabsy.backend.dtos.UserResetPasswordRequestDTO; // NEW
+import com.cabsy.backend.dtos.UserPasswordResetConfirmationDTO; // NEW
 import com.cabsy.backend.services.UserService;
 
 import jakarta.validation.Valid;
@@ -50,7 +52,6 @@ public class UserController {
             UserResponseDTO registeredUser = userService.registerUser(registrationDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("User registered successfully", registeredUser));
         } catch (RuntimeException e) {
-            // Catch specific exceptions for better error messages
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Registration failed", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("An unexpected error occurred", e.getMessage()));
@@ -63,7 +64,6 @@ public class UserController {
             UserResponseDTO updatedUser = userService.updateUser(id, updates);
             return ResponseEntity.ok(ApiResponse.success("User updated successfully", updatedUser));
         } catch (RuntimeException e) {
-            // Catch specific exceptions like UserNotFoundException, IllegalArgumentException (for email/phone conflict)
             if (e.getMessage().contains("User not found")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Update failed", e.getMessage()));
             } else if (e.getMessage().contains("already taken")) {
@@ -72,6 +72,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Update failed", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("An unexpected error occurred during update", e.getMessage()));
+        }
+    }
+
+    // NEW: Endpoint for initiating password reset
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<UserPasswordResetConfirmationDTO>> forgotPassword(@Valid @RequestBody UserResetPasswordRequestDTO resetRequest) {
+        try {
+            // In a production environment, this would typically trigger an email with a reset token.
+            // For this example, we'll directly call the service to reset the password.
+            UserPasswordResetConfirmationDTO confirmation = userService.resetUserPassword(resetRequest.getEmail(), resetRequest.getNewPassword());
+            return ResponseEntity.ok(ApiResponse.success("Password reset request initiated. Check your email for further instructions (if tokens were implemented).", confirmation));
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("User not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("Password reset failed", e.getMessage()));
+            } else if (e.getMessage().contains("Weak password") || e.getMessage().contains("New password does not meet complexity requirements")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Password reset failed", e.getMessage()));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("An unexpected error occurred during password reset", e.getMessage()));
         }
     }
 
