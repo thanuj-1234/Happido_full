@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Your Ride</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FFC107;
+            --gray-100: #F3F4F6;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --border-color: #D1D5DB;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--gray-100);
+            margin: 0;
+        }
+
+        #ratingSection {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-driver-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        #ratingDriverAvatar {
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+            border: 2px solid var(--border-color);
+        }
+
+        .driver-name {
+            font-weight: bold;
+            color: var(--gray-700);
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            flex-direction: row-reverse; /* For CSS trick to make stars fill correctly */
+            margin-bottom: 1.5rem;
+        }
+
+        .stars input[type="radio"] {
+            display: none;
+        }
+
+        .stars label {
+            font-size: 2.5rem;
+            color: var(--border-color);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .stars label:hover,
+        .stars label:hover ~ label,
+        .stars input[type="radio"]:checked ~ label {
+            color: var(--secondary-color);
+        }
+
+        .feedback-textarea {
+            width: calc(100% - 1rem); /* Adjust for padding */
+            min-height: 80px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
+            resize: vertical;
+            font-size: 1rem;
+        }
+
+        .rating-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+            flex: 1; /* Make buttons take equal width */
+        }
+
+        .submit-rating-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .submit-rating-button:hover {
+            background-color: #45a049;
+        }
+
+        .skip-rating-button {
+            background-color: var(--gray-500);
+            color: white;
+        }
+
+        .skip-rating-button:hover {
+            background-color: var(--gray-700);
+        }
+
+        #ratingConfirmation {
+            display: none; /* Hidden by default */
+            margin-top: 1.5rem;
+        }
+
+        #ratingConfirmation p {
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        .stars-display {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feedback-summary {
+            font-style: italic;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div id="ratingSection">
+        <h2>Rate Your Ride</h2>
+        <div id="ratingFormContent">
+            <div class="rating-driver-info">
+                <img src="https://via.placeholder.com/64/4B5563/FFFFFF?text=DR" alt="Driver Avatar" id="ratingDriverAvatar">
+                <div class="driver-name" id="ratingDriverName">Driver Name</div>
+            </div>
+            <div class="stars">
+                <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
+                <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
+            </div>
+            <textarea id="feedbackTextarea" class="feedback-textarea" placeholder="Share your feedback (optional)"></textarea>
+            <div class="rating-buttons">
+                <button class="button submit-rating-button" id="submitRatingButton">Submit Rating</button>
+                <button class="button skip-rating-button" id="skipRatingButton">Skip</button>
+            </div>
+        </div>
+        <div id="ratingConfirmation">
+            <p>Thank you for your feedback!</p>
+            <div class="stars-display" id="submittedStars"></div>
+            <p id="submittedFeedback" class="feedback-summary"></p>
+            <p style="margin-top: 1rem; font-size: 0.9em; color: var(--gray-500);">Returning to main screen...</p>
+        </div>
+    </div>
+
+    <script>
+        const ratingFormContent = document.getElementById('ratingFormContent');
+        const ratingConfirmation = document.getElementById('ratingConfirmation');
+        const submitRatingButton = document.getElementById('submitRatingButton');
+        const skipRatingButton = document.getElementById('skipRatingButton');
+        const feedbackTextarea = document.getElementById('feedbackTextarea');
+        const submittedStars = document.getElementById('submittedStars');
+        const submittedFeedback = document.getElementById('submittedFeedback');
+        const ratingDriverName = document.getElementById('ratingDriverName');
+        const starInputs = document.querySelectorAll('.stars input[type="radio"]');
+
+        // --- Data Storage ---
+        // For demonstration, we'll store feedback in an array.
+        // In a real application, you'd send this to a server/database.
+        let allFeedback = [];
+
+        // Function to update driver info (e.g., after a ride ends)
+        function updateDriverInfo(driverName, driverAvatarUrl) {
+            ratingDriverName.textContent = driverName;
+            document.getElementById('ratingDriverAvatar').src = driverAvatarUrl || "https://via.placeholder.com/64/4B5563/FFFFFF?text=DR";
+        }
+
+        // Example: Update driver info when the page loads (or after a ride completes)
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDriverInfo('Jane Doe', 'https://via.placeholder.com/64/4B5563/FFFFFF?text=JD');
+        });
+
+
+        submitRatingButton.addEventListener('click', () => {
+            const selectedRating = document.querySelector('input[name="rating"]:checked');
+            const feedback = feedbackTextarea.value.trim();
+
+            if (!selectedRating) {
+                alert('Please select a star rating before submitting.');
+                return;
+            }
+
+            const ratingValue = selectedRating.value;
+
+            // Store the feedback
+            const feedbackEntry = {
+                driverName: ratingDriverName.textContent,
+                rating: ratingValue,
+                feedback: feedback,
+                timestamp: new Date().toISOString()
+            };
+            allFeedback.push(feedbackEntry);
+            console.log('All Stored Feedback:', allFeedback); // Log to console for demonstration
+
+            // Display confirmation
+            ratingFormContent.style.display = 'none';
+            ratingConfirmation.style.display = 'block';
+
+            // Show submitted stars
+            let starsHtml = '';
+            for (let i = 0; i < ratingValue; i++) {
+                starsHtml += '★';
+            }
+            submittedStars.textContent = starsHtml;
+
+            // Show submitted feedback
+            submittedFeedback.textContent = feedback ? `"${feedback}"` : 'No additional feedback provided.';
+
+            // Optionally, clear form and reset after a delay
+            setTimeout(() => {
+                resetFeedbackForm();
+            }, 3000); // Hide confirmation and show form again after 3 seconds
+        });
+
+        skipRatingButton.addEventListener('click', () => {
+            // Simply hide the form and show the confirmation or navigate away
+            ratingFormContent.style.display = 'none';
+            ratingConfirmation.style.display = 'block';
+            submittedStars.textContent = ''; // No stars if skipped
+            submittedFeedback.textContent = 'Feedback skipped.';
+
+            setTimeout(() => {
+                resetFeedbackForm();
+            }, 2000); // Reset after 2 seconds
+        });
+
+        function resetFeedbackForm() {
+            ratingFormContent.style.display = 'block';
+            ratingConfirmation.style.display = 'none';
+            feedbackTextarea.value = '';
+            // Uncheck all radio buttons
+            starInputs.forEach(input => input.checked = false);
+        }
+
+        // Function to retrieve all stored feedback (for demonstration)
+        function getAllStoredFeedback() {
+            return allFeedback;
+        }
+    </script>
+</body>
+</html>

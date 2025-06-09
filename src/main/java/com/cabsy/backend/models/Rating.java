@@ -1,4 +1,3 @@
-// src/main/java/com/cabsy/backend/models/Rating.java
 package com.cabsy.backend.models;
 
 import jakarta.persistence.*;

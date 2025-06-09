@@ -2366,25 +2366,57 @@
             ratingConfirmation.style.display = 'none'; // Hide confirmation message
         }
 
-        function submitRating() {
+        document.getElementById('submitRatingButtons').addEventListener('click',async function() {
             const selectedRating = document.querySelector('.stars input[name="rating"]:checked');
             const ratingValue = selectedRating ? selectedRating.value : '0'; // Default to 0 if no rating
             const feedback = feedbackTextarea.value.trim();
 
             console.log(`[RATING SUBMITTED] Driver: ${currentRideDetails.driverName}, Rating: ${ratingValue} stars, Feedback: "${feedback}"`);
+            const neutralFeedback = {
+    rideId: ride.id,      // Replace with another actual valid ride ID
+    userId: ride.userId,    // Replace with another actual valid user ID
+    driverId: ridd.driverId,  // Replace with another actual valid driver ID
+    stars: parseInt(ratingValue),
+    comment :feedback
+    // No comment provided
+};
+try {
+        const response = await fetch(`/api/ratings`, {
+            method: 'POST', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            },
+            body: JSON.stringify(neutralFeedback), // Convert the updates object to a JSON string
+        });
 
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+        const apiResponse = await response.json(); 
+        console.log('API Response:', apiResponse);
+        
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
+
+console.log(neutralFeedback);
             // Hide the rating form content
             ratingFormContent.style.display = 'none';
 
             // Display the confirmation message
             submittedStars.innerHTML = '★'.repeat(parseInt(ratingValue));
             submittedFeedback.textContent = feedback ? `"${feedback}"` : "No feedback provided.";
-            ratingConfirmation.style.display = 'block';
-           alert("helo");
+            openInNewTab("user_profile.html");
+           console.log("helo");
+           
             // After a delay, hide the rating section and return to main screen
-            setTimeout(() => {
-                hideRideConfirmedScreen(); // Return to main screen
-            }, 3000); // 3 seconds delay for user to read confirmation
+            
+                // window.location.href="user_profile.html"; // Return to main screen
+            
+        });
+        function submitRating() {
+             // 3 seconds delay for user to read confirmation
         }
 
         function skipRating() {
@@ -2585,12 +2617,7 @@ console.log(rideRequestData);
         // document.getElementById("callDriver").addEventListener('click', submitRating);
         chooseComfortElectricButton.addEventListener('click', bookRide);
         cancelRideButton.addEventListener('click', cancelRide);
-        const callDriverButt = document.getElementById('submitRatingButtons');
-
-// Add an event listener to the button
-// When the button is clicked, the callDriver function will be executed.
-callDriverButt.addEventListener('click', submitRating);
-        // Rating Page Buttons
+        
         // submitRatingButton.addEventListener('click', submitRating);
         skipRatingButton.addEventListener('click', skipRating);
 

@@ -1,4 +1,3 @@
-// src/main/java/com/cabsy/backend/repositories/RatingRepository.java
 package com.cabsy.backend.repositories;
 
 import com.cabsy.backend.models.Rating;

@@ -1,6 +1,6 @@
-// src/main/java/com/cabsy/backend/services/impl/RatingServiceImpl.java
 package com.cabsy.backend.services.impl;
 
+import com.cabsy.backend.dtos.RatingResponseDTO; // Import the new DTO
 import com.cabsy.backend.models.Driver;
 import com.cabsy.backend.models.Rating;
 import com.cabsy.backend.models.Ride;
@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -34,19 +35,17 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public Rating addRating(Long rideId, Long userId, Long driverId, Integer stars, String comment) {
+    public RatingResponseDTO addRating(Long rideId, Long userId, Long driverId, Integer stars, String comment) {
         Ride ride = rideRepository.findById(rideId)
-                .orElseThrow(() -> new RuntimeException("Ride not found with id: " + rideId)); // TODO: Custom exception
+                .orElseThrow(() -> new RuntimeException("Ride not found with id: " + rideId));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         Driver driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new RuntimeException("Driver not found with id: " + driverId));
 
-        // Check if rating for this ride already exists
         if (ratingRepository.findByRideId(rideId).isPresent()) {
-            throw new RuntimeException("Rating for this ride already exists."); // TODO: Custom exception
+            throw new RuntimeException("Rating for this ride already exists.");
         }
-        // Basic validation for stars
         if (stars < 1 || stars > 5) {
             throw new IllegalArgumentException("Stars must be between 1 and 5.");
         }
@@ -59,24 +58,45 @@ public class RatingServiceImpl implements RatingService {
         rating.setComment(comment);
         rating.setRatingTime(LocalDateTime.now());
 
+        Rating savedRating = ratingRepository.save(rating);
+
         // TODO: Update the average rating of the driver/user based on this new rating
         // This would involve fetching the driver/user, recalculating their average rating, and saving them.
 
-        return ratingRepository.save(rating);
+        return convertToDTO(savedRating);
     }
 
     @Override
-    public Optional<Rating> getRatingById(Long ratingId) {
-        return ratingRepository.findById(ratingId);
+    public Optional<RatingResponseDTO> getRatingById(Long ratingId) {
+        return ratingRepository.findById(ratingId).map(this::convertToDTO);
     }
 
     @Override
-    public List<Rating> getRatingsByUserId(Long userId) {
-        return ratingRepository.findByUserId(userId);
+    public List<RatingResponseDTO> getRatingsByUserId(Long userId) {
+        return ratingRepository.findByUserId(userId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Rating> getRatingsByDriverId(Long driverId) {
-        return ratingRepository.findByDriverId(driverId);
+    public List<RatingResponseDTO> getRatingsByDriverId(Long driverId) {
+        return ratingRepository.findByDriverId(driverId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private RatingResponseDTO convertToDTO(Rating rating) {
+        if (rating == null) {
+            return null;
+        }
+        return new RatingResponseDTO(
+                rating.getId(),
+                rating.getRide().getId(),
+                rating.getUser().getId(),
+                rating.getDriver().getId(),
+                rating.getStars(),
+                rating.getComment(),
+                rating.getRatingTime()
+        );
     }
 }
