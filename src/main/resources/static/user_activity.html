@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Activity Dashboard</title>
+    <title>Driver Activity Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,55 +19,21 @@
             text-align: center;
             font-size: 28px;
             font-weight: bold;
-            color:  #f97316; /* Changed color to green for user activity */
+            color: #f97316;
             margin-bottom: 25px;
         }
 
         .nav-container {
-            display: flex;
-            justify-content: space-between;
+            display: flex; /* Kept for general layout, but display: none; below hides it */
+            justify-content: center;
             align-items: center;
             background: #ffffff;
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             margin-bottom: 25px;
-        }
-
-        .nav-bar {
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-button {
-            text-align: center;
-            padding: 12px 15px;
-            color: #666;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: color 0.3s ease, background-color 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .nav-button.active {
-            color:  #f97316; /* Active button color */
-        }
-
-        .nav-button:hover:not(.active) {
-            background-color: #f7f7f7;
-            color:  #f97316; /* Hover color */
-        }
-
-        .calendar-icon {
-            font-size: 22px;
-            color: #f97316; /* Calendar icon color */
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .calendar-icon:hover {
-            color:  #f97316; /* Darker green on hover */
+            /* Added to hide the nav-bar completely since it's just one static button */
+            display: none;
         }
 
         .swiper-container {
@@ -83,12 +47,8 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            display: none;
+            display: flex; /* Always display the daily slide */
             flex-direction: column;
-        }
-
-        .swiper-slide.active {
-            display: flex;
         }
 
         table {
@@ -96,6 +56,7 @@
             border-collapse: collapse;
             background-color: #fff;
             border-radius: 8px;
+            overflow: hidden; /* Ensures rounded corners apply to table content */
         }
 
         th, td {
@@ -106,430 +67,182 @@
         }
 
         th {
-            background: #f97316; /* Table header background color */
+            background: #f97316;
             color: white;
         }
 
-        tfoot tr.total-row {
-            font-weight: bold;
-            background-color: #e8f5e9; /* Light green background for totals */
+        /* Added new style for clickable rows */
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
-        tfoot tr.total-row td {
-            border-top: 2px solid  #f97316;
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">User Activity</div>
+    <div class="header">Activity</div>
 
     <div class="nav-container">
-        <div class="nav-bar">
-            <div class="nav-button active" data-target="daily">Daily</div>
-            <div class="nav-button" data-target="weekly">Weekly</div>
-            <div class="nav-button" data-target="monthly">Monthly</div>
-        </div>
-        <i class="fas fa-calendar-alt calendar-icon" id="calendarTrigger"></i>
     </div>
 
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <div class="swiper-slide active" id="daily-slide">
-                <h2 id="daily-activities-title">Daily User Activity for <span id="selected-date"></span></h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Usage (Min)</th>
-                            <th>Actions</th>
-                            <th>Revenue (INR)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="daily-details">
-                        </tbody>
-                    <tfoot id="daily-totals">
-                        </tfoot>
-                </table>
-            </div>
-
-            <div class="swiper-slide" id="weekly-slide">
-                <h2>Weekly Summary</h2>
+                <h2 id="daily-activities-title">Daily Activities for <span id="selected-date"></span></h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Day</th>
-                            <th>Total Usage (Min)</th>
-                            <th>Total Actions</th>
-                            <th>Avg. Session (Min)</th>
-                            <th>Total Revenue (INR)</th>
+                            <th>Time</th>
+                            <th>Source</th>
+                            <th>Destination</th>
+                            <th>Distance (km)</th>
+                            <th>Status</th>
+                            <th>Earnings (INR)</th>
                         </tr>
                     </thead>
-                    <tbody id="weekly-details">
-                        </tbody>
-                    <tfoot id="weekly-totals">
-                        </tfoot>
-                </table>
-            </div>
-
-            <div class="swiper-slide" id="monthly-slide">
-                <h2>Monthly Summary</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Month</th>
-                            <th>Total Usage (Min)</th>
-                            <th>Total Actions</th>
-                            <th>Avg. Daily Usage (Min)</th>
-                            <th>Total Revenue (INR)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="monthly-details">
-                        </tbody>
-                    <tfoot id="monthly-totals">
-                        </tfoot>
+                    <tbody id="daily-details">
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // --- Global Data Cache ---
-        let userActivityCache = {}; // Stores generated data to avoid re-generating for same day
-
-        const dailyDetailsBody = document.getElementById('daily-details');
-        const dailyTotalsFooter = document.getElementById('daily-totals');
-        const selectedDateSpan = document.getElementById('selected-date');
-        const navButtons = document.querySelectorAll('.nav-button');
-        const swiperSlides = document.querySelectorAll('.swiper-slide');
-        const calendarTrigger = document.getElementById('calendarTrigger');
-
-        let currentView = 'daily'; // Default view
-
-        // --- Helper Functions for Random Data Generation ---
-
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+        // Sample activities data (will be populated from API)
+        let activities;
+       
+        // Function to format time from ISO string to HH:MM
+        function formatTime(isoString) {
+            if (!isoString) return 'N/A';
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         }
 
-        function getRandomFloat(min, max, decimals = 2) {
-            const str = (Math.random() * (max - min) + min).toFixed(decimals);
-            return parseFloat(str);
+        // Function to format date from ISO string to DD MonYYYY
+        function formatDate(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
-        function generateRandomDailyUserActivities(dateStr) {
-            if (userActivityCache[dateStr]) {
-                return userActivityCache[dateStr];
-            }
-
-            const activities = [];
-            const userActionTypes = [
-                "Browse", "Searching", "Booking", "Messaging",
-                "Profile Update", "Payment", "Rating"
-            ];
-
-            // Increased probability for a "Day Off" or very low activity day
-            if (Math.random() < 0.65) { // ~65% chance of being an inactive/very low activity day
-                activities.push({ time: "All Day", usageMinutes: 0, actions: 0, activityType: "Inactive/Logged Out", revenue: 0 });
-            } else { // ~35% chance of being an active day
-                const numSessions = getRandomInt(1, 3); // 1 to 3 distinct activity sessions per day
-
-                for (let i = 0; i < numSessions; i++) {
-                    const startHour = getRandomInt(8, 20); // Activity can start between 8 AM and 8 PM
-                    const startMinute = getRandomInt(0, 59);
-                    let startTimeInMinutes = startHour * 60 + startMinute;
-
-                    let activityDuration = getRandomInt(3, 20); // Session length 3 to 20 minutes
-                    let endTimeInMinutes = startTimeInMinutes + activityDuration;
-
-                    // Ensure end time doesn't go past 10 PM
-                    if (endTimeInMinutes > 22 * 60) {
-                        endTimeInMinutes = 22 * 60;
-                        const potentialDuration = endTimeInMinutes - startTimeInMinutes;
-                        if (potentialDuration <= 0) continue; // Skip if duration becomes zero or negative
-                        activityDuration = potentialDuration; // Update actual duration
-                    }
-
-                    const startTimeFormatted = `${String(Math.floor(startTimeInMinutes / 60)).padStart(2, '0')}:${String(startTimeInMinutes % 60).padStart(2, '0')}`;
-                    const endTimeFormatted = `${String(Math.floor(endTimeInMinutes / 60)).padStart(2, '0')}:${String(endTimeInMinutes % 60).padStart(2, '0')}`;
-
-                    const activityType = userActionTypes[getRandomInt(0, userActionTypes.length - 1)];
-                    let numActions = 0;
-                    let revenue = 0;
-
-                    if (activityType === "Searching" || activityType === "Browse") {
-                        numActions = getRandomInt(1, 8); // Fewer actions per session
-                    } else if (activityType === "Booking" || activityType === "Payment") {
-                        numActions = 1; // A single action often leads to booking/payment
-                        revenue = getRandomFloat(150, 2500, 2); // Higher revenue for transactional actions
-                    } else if (activityType === "Messaging" || activityType === "Rating") {
-                        numActions = getRandomInt(1, 3);
-                    } else if (activityType === "Profile Update") {
-                        numActions = 1;
-                    }
-
-                    activities.push({
-                        time: `${startTimeFormatted} - ${endTimeFormatted}`,
-                        usageMinutes: activityDuration,
-                        actions: numActions,
-                        activityType: activityType, // Keep activityType in data for weekly/monthly summaries
-                        revenue: revenue
-                    });
-
-                    // Add a random break between sessions
-                    startTimeInMinutes = endTimeInMinutes + getRandomInt(30, 180); // 30 mins to 3 hours break
-                }
-            }
-
-            userActivityCache[dateStr] = activities;
-            return activities;
+        /**
+         * Opens a new page with activity details.
+         * In a real application, you might pass an ID to a details page
+         * and fetch the full activity data there.
+         * For this example, we'll simulate passing data via query parameters
+         * or a more robust client-side routing if you were using a framework.
+         *
+         * @param {object} activity - The activity object to display details for.
+         */
+        function viewActivityDetails(activity) {
+            // Encode the activity details to pass them as a URL parameter
+            // This is a simple approach for demonstration.
+            // For complex objects or many details, consider:
+            // 1. Storing the activity in localStorage/sessionStorage and retrieving it on the details page.
+            // 2. Using a dedicated details page that fetches data by an ID.
+            console.log(activity);
+            const jsonString = JSON.stringify(activity);
+             localStorage.setItem('currentSessionId', jsonString);
+             const sessionId = localStorage.getItem('currentSessionId');
+            console.log(JSON.parse(sessionId));
+            // const activityString = encodeURIComponent(JSON.stringify(activity));
+             window.location.href="user_profile.html";
+            // window.open(`activity-details.html?data=${activityString}`, '_blank');
         }
 
-        // --- Core Rendering Functions ---
+        // Function to render daily activities and calculate totals
+        function renderDailyActivities(activitiesData) {
+            const dailyDetailsBody = document.getElementById('daily-details');
+            const selectedDateSpan = document.getElementById('selected-date');
 
-        function renderDailyActivities(dateStr) {
-            const activities = generateRandomDailyUserActivities(dateStr); // Get or generate data
-
+            // Clear previous content
             dailyDetailsBody.innerHTML = '';
-            dailyTotalsFooter.innerHTML = '';
-            selectedDateSpan.textContent = dateStr;
 
-            let totalUsageMinutes = 0;
-            let totalActions = 0;
-            let totalRevenue = 0;
-            let activeSessionsCount = 0; // To count meaningful sessions for average
-
-            if (activities.length === 0 || (activities.length === 1 && activities[0].activityType === "Inactive/Logged Out")) {
-                dailyDetailsBody.innerHTML = '<tr><td colspan="4">No significant activity recorded for this date.</td></tr>'; // colspan is 4 now
-                const totalRow = dailyTotalsFooter.insertRow();
-                totalRow.classList.add('total-row');
-                totalRow.insertCell().textContent = 'TOTALS';
-                totalRow.insertCell().textContent = `0 Min`;
-                totalRow.insertCell().textContent = `0`;
-                totalRow.insertCell().textContent = `INR 0.00`;
-                return;
+            // Set the selected date in the title based on the first activity's date (which will be the latest after sorting)
+            if (activitiesData.length > 0) {
+                selectedDateSpan.textContent = formatDate(activitiesData[0].requestTime);
+            } else {
+                selectedDateSpan.textContent = 'No Activities Found';
             }
 
-            activities.forEach(activity => {
+            activitiesData.forEach(activity => {
                 const row = dailyDetailsBody.insertRow();
-                row.insertCell().textContent = activity.time;
-                row.insertCell().textContent = `${activity.usageMinutes} Min`;
-                row.insertCell().textContent = activity.actions > 0 ? `${activity.actions}` : '-';
-                row.insertCell().textContent = activity.revenue > 0 ? `INR ${activity.revenue.toFixed(2)}` : '-';
+                // Add the onclick event listener to the row
+                row.onclick = () => viewActivityDetails(activity);
 
-                totalUsageMinutes += activity.usageMinutes;
-                totalActions += activity.actions;
-                totalRevenue += activity.revenue;
-                if (activity.usageMinutes > 0) { // Count only sessions with actual usage
-                    activeSessionsCount++;
-                }
+                // Date
+                const dateCell = row.insertCell();
+                dateCell.textContent = formatDate(activity.requestTime);
+
+                // Time (using requestTime)
+                const timeCell = row.insertCell();
+                timeCell.textContent = formatTime(activity.requestTime);
+
+                // Source
+                const sourceCell = row.insertCell();
+                sourceCell.textContent = activity.pickupAddress || 'N/A';
+
+                // Destination
+                const destinationCell = row.insertCell();
+                destinationCell.textContent = activity.destinationAddress || 'N/A';
+
+                // Distance (km)
+                const distanceCell = row.insertCell();
+                distanceCell.textContent = activity.distance.toFixed(1);
+
+                // Status
+                const statusCell = row.insertCell();
+                statusCell.textContent = activity.status.replace(/_/g, ' '); // Replace underscores for readability
+
+                // Earnings (INR) - Only count if COMPLETED
+                const earnings = activity.status === 'COMPLETED' ? activity.actualFare : 0;
+                const earningsCell = row.insertCell();
+                earningsCell.textContent = `₹ ${earnings.toFixed(2)}`;
             });
-
-            // Add totals row
-            const totalRow = dailyTotalsFooter.insertRow();
-            totalRow.classList.add('total-row');
-            totalRow.insertCell().textContent = 'TOTALS';
-            totalRow.insertCell().textContent = `${totalUsageMinutes} Min`;
-            totalRow.insertCell().textContent = `${totalActions}`;
-            totalRow.insertCell().textContent = `INR ${totalRevenue.toFixed(2)}`;
         }
 
-        function renderWeeklySummary(selectedDate) {
-            const weeklyDetailsBody = document.getElementById('weekly-details');
-            const weeklyTotalsFooter = document.getElementById('weekly-totals');
-            weeklyDetailsBody.innerHTML = '';
-            weeklyTotalsFooter.innerHTML = '';
+        // Call the function to render activities when the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Mocking localStorage for demonstration purposes. In a real app, ensure `profile.id` is available.
+            const storedProfileData = localStorage.getItem('ProfileData');
+            const profile = JSON.parse(storedProfileData);
+            console.log(profile);
+           
 
-            const date = new Date(selectedDate);
-            const dayOfWeek = (date.getDay() === 0) ? 6 : date.getDay() - 1; // Make Monday = 0, Sunday = 6
-            const startOfWeek = new Date(date);
-            startOfWeek.setDate(date.getDate() - dayOfWeek);
-            startOfWeek.setHours(0, 0, 0, 0);
-
-            let weekTotalUsageMinutes = 0;
-            let weekTotalActions = 0;
-            let weekTotalRevenue = 0;
-            let weekTotalSessions = 0; // For weekly average session calculation
-            let hasActivityInWeek = false; // Flag to check if any day had activity
-
-            // Iterate through all 7 days of the week
-            for (let i = 0; i < 7; i++) {
-                const currentDay = new Date(startOfWeek);
-                currentDay.setDate(startOfWeek.getDate() + i);
-                const dayStr = currentDay.toISOString().split('T')[0];
-
-                const dailyActivities = generateRandomDailyUserActivities(dayStr); // Get or generate data
-
-                let dayUsageMinutes = 0;
-                let dayActions = 0;
-                let dayRevenue = 0;
-                let dayActiveSessions = 0;
-
-                // Check if it's an "Inactive" day
-                const isInactiveDay = (dailyActivities.length === 1 && dailyActivities[0].activityType === "Inactive/Logged Out");
-
-                if (!isInactiveDay) { // Only process and display if the day is NOT inactive
-                    hasActivityInWeek = true; // Mark that at least one day had activity
-                    dailyActivities.forEach(activity => {
-                        dayUsageMinutes += activity.usageMinutes;
-                        dayActions += activity.actions;
-                        dayRevenue += activity.revenue;
-                        if (activity.usageMinutes > 0) {
-                            dayActiveSessions++;
-                        }
-                    });
-
-                    const dayAvgSession = dayActiveSessions > 0 ? (dayUsageMinutes / dayActiveSessions) : 0;
-
-                    const row = weeklyDetailsBody.insertRow();
-                    row.insertCell().textContent = dayStr;
-                    row.insertCell().textContent = currentDay.toLocaleDateString('en-IN', { weekday: 'long' });
-                    row.insertCell().textContent = `${dayUsageMinutes} Min`; // No need for ternary, only active days shown
-                    row.insertCell().textContent = `${dayActions}`;
-                    row.insertCell().textContent = `${dayAvgSession.toFixed(1)} Min`;
-                    row.insertCell().textContent = `INR ${dayRevenue.toFixed(2)}`;
-
-                    weekTotalUsageMinutes += dayUsageMinutes;
-                    weekTotalActions += dayActions;
-                    weekTotalRevenue += dayRevenue;
-                    weekTotalSessions += dayActiveSessions; // Sum up active sessions for week
-                }
-            }
-
-            // If no activity was found for the entire week, display a "No records" message
-            if (!hasActivityInWeek) {
-                weeklyDetailsBody.innerHTML = '<tr><td colspan="6">No activity recorded for any day this week.</td></tr>';
-            }
-
-            // Calculate overall weekly average session
-            const weekAvgSession = weekTotalSessions > 0 ? (weekTotalUsageMinutes / weekTotalSessions) : 0;
-
-            // Add weekly totals row
-            const totalRow = weeklyTotalsFooter.insertRow();
-            totalRow.classList.add('total-row');
-            totalRow.insertCell().textContent = 'TOTALS';
-            totalRow.insertCell().textContent = ''; // Empty cell for Day
-            totalRow.insertCell().textContent = `${weekTotalUsageMinutes} Min`;
-            totalRow.insertCell().textContent = `${weekTotalActions}`;
-            totalRow.insertCell().textContent = `Avg. ${weekAvgSession.toFixed(1)} Min`;
-            totalRow.insertCell().textContent = `INR ${weekTotalRevenue.toFixed(2)}`;
-        }
-
-
-        function renderMonthlySummary(selectedDate) {
-            const monthlyDetailsBody = document.getElementById('monthly-details');
-            const monthlyTotalsFooter = document.getElementById('monthly-totals');
-            monthlyDetailsBody.innerHTML = '';
-            monthlyTotalsFooter.innerHTML = '';
-
-            const month = selectedDate.getMonth();
-            const year = selectedDate.getFullYear();
-            const monthName = selectedDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'long' });
-
-            let monthTotalUsageMinutes = 0;
-            let monthTotalActions = 0;
-            let monthTotalRevenue = 0;
-            let daysWithActivity = 0; // To count days with at least one activity
-
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            // Aggregate data for the entire month
-            for (let i = 1; i <= daysInMonth; i++) {
-                const currentDay = new Date(year, month, i);
-                const dayStr = currentDay.toISOString().split('T')[0];
-
-                const dailyActivities = generateRandomDailyUserActivities(dayStr); // Get or generate data
-
-                let dayHasActivity = false;
-                if (!(dailyActivities.length === 1 && dailyActivities[0].activityType === "Inactive/Logged Out")) {
-                    dayHasActivity = true;
-                    dailyActivities.forEach(activity => {
-                        monthTotalUsageMinutes += activity.usageMinutes;
-                        monthTotalActions += activity.actions;
-                        monthTotalRevenue += activity.revenue;
-                    });
-                }
-                if (dayHasActivity) {
-                    daysWithActivity++;
-                }
-            }
-
-            // Calculate average daily usage over active days
-            const avgDailyUsage = daysWithActivity > 0 ? (monthTotalUsageMinutes / daysWithActivity) : 0;
-
-            const row = monthlyDetailsBody.insertRow();
-            row.insertCell().textContent = monthName;
-            row.insertCell().textContent = `${monthTotalUsageMinutes} Min`;
-            row.insertCell().textContent = monthTotalActions;
-            row.insertCell().textContent = `${avgDailyUsage.toFixed(1)} Min`;
-            row.insertCell().textContent = `INR ${monthTotalRevenue.toFixed(2)}`;
-
-            const totalRow = monthlyTotalsFooter.insertRow();
-            totalRow.classList.add('total-row');
-            totalRow.insertCell().textContent = `TOTAL FOR ${monthName.toUpperCase()}`;
-            totalRow.insertCell().textContent = `${monthTotalUsageMinutes} Min`;
-            totalRow.insertCell().textContent = monthTotalActions;
-            totalRow.insertCell().textContent = `${avgDailyUsage.toFixed(1)} Min`;
-            totalRow.insertCell().textContent = `INR ${monthTotalRevenue.toFixed(2)}`;
-        }
-
-
-        // --- Event Listeners and Initial Load ---
-
-        // Navigation button logic
-        navButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-
-                const targetId = this.dataset.target + '-slide';
-                swiperSlides.forEach(slide => {
-                    slide.classList.remove('active');
-                    if (slide.id === targetId) {
-                        slide.classList.add('active');
-                        currentView = this.dataset.target;
-
-                        const selectedDate = flatpickrInstance.selectedDates[0] || new Date();
-
-                        if (currentView === 'daily') {
-                            renderDailyActivities(selectedDate.toISOString().split('T')[0]);
-                        } else if (currentView === 'weekly') {
-                            renderWeeklySummary(selectedDate);
-                        } else if (currentView === 'monthly') {
-                            renderMonthlySummary(selectedDate);
-                        }
+            try {
+                // Fetch activities data from the API
+                const response = await fetch(`api/rides/user/${profile.id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
                 });
-            });
-        });
 
-        // Initialize Flatpickr for the calendar
-        const flatpickrInstance = flatpickr("#calendarTrigger", {
-            dateFormat: "Y-m-d",
-            defaultDate: "today",
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length > 0) {
-                    const selectedDate = selectedDates[0];
-                    if (currentView === 'daily') {
-                        renderDailyActivities(dateStr);
-                    } else if (currentView === 'weekly') {
-                        renderWeeklySummary(selectedDate);
-                    } else if (currentView === 'monthly') {
-                        renderMonthlySummary(selectedDate);
-                    }
-                }
+               
+
+                const apiResponse = await response.json();
+                
+                // Assign fetched data to activities
+                activities = apiResponse.data;
+                console.log(activities);
+                // Sort activities by requestTime in descending order (latest first)
+                activities.sort((a, b) => new Date(b.requestTime) - new Date(a.requestTime));
+                
+                // Render the sorted daily activities
+                renderDailyActivities(activities);
+
+            } catch (error) {
+                console.error(`Error fetching rides for driver ${profile.id}:`, error.message);
+                const selectedDateSpan = document.getElementById('selected-date');
+                const dailyDetailsBody = document.getElementById('daily-details');
+                selectedDateSpan.textContent = 'Error loading activities.';
+                dailyDetailsBody.innerHTML = '<tr><td colspan="7">Failed to load activities. Please try again later.</td></tr>';
             }
-        });
-
-        // Initial setup on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-
-            renderDailyActivities(todayStr); // Render daily for today
-            renderWeeklySummary(today); // Render weekly for current week
-            renderMonthlySummary(today); // Render monthly for current month
         });
     </script>
 </body>

@@ -21,6 +21,7 @@ public class PaymentMapper {
         dto.setPaymentTime(payment.getPaymentTime());
         dto.setCreatedAt(payment.getCreatedAt());
         dto.setUpdatedAt(payment.getUpdatedAt());
+        dto.setDriverId(payment.getDriverId()); // New mapping
         return dto;
     }
 }

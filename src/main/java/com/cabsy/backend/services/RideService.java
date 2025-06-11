@@ -18,4 +18,6 @@ public interface RideService {
     List<RideResponseDTO> getRidesByUserId(Long userId);
     List<RideResponseDTO> getRidesByDriverId(Long driverId);
     List<RideResponseDTO> getRidesByStatus(RideStatus status);
+    // New method to fetch rides by both user ID and driver ID
+    List<RideResponseDTO> getRidesByUserIdAndDriverId(Long userId, Long driverId);
 }

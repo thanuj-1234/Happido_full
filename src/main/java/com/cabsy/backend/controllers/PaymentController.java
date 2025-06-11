@@ -30,7 +30,7 @@ public class PaymentController {
      * Endpoint for drivers to record a payment after a ride is completed.
      * This method will create a new payment record or update an existing PENDING one.
      *
-     * @param paymentRequestDTO DTO containing rideId, amount, paymentMethod, and optionally transactionId
+     * @param paymentRequestDTO DTO containing rideId, amount, paymentMethod, driverId and optionally transactionId
      * @return ResponseEntity with ApiResponse indicating success or failure
      */
     @PostMapping("/record")
@@ -48,13 +48,15 @@ public class PaymentController {
                         paymentRequestDTO.getTransactionId()
                 );
                 payment.setPaymentMethod(paymentRequestDTO.getPaymentMethod()); // Update method if needed
+                payment.setDriverId(paymentRequestDTO.getDriverId()); // Update driver ID if needed (though usually set on creation)
                 payment = paymentService.savePayment(payment); // Save the updated payment
             } else {
                 // Otherwise, create a new payment record (for cash payments, etc.)
                 payment = paymentService.createPayment(
                         paymentRequestDTO.getRideId(),
                         paymentRequestDTO.getAmount(),
-                        paymentRequestDTO.getPaymentMethod()
+                        paymentRequestDTO.getPaymentMethod(),
+                        paymentRequestDTO.getDriverId() // Pass the driver ID
                 );
                 // Mark as completed immediately if driver is recording it directly
                 payment.setStatus(PaymentStatus.COMPLETED);

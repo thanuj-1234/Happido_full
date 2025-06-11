@@ -1144,6 +1144,9 @@
                 </div>
 
                 <a href="captain_activity.html" class="navbar-link">Activities</a>
+                <!-- <a href="user_Help.html" class="navbar-link">Help</a>
+                <a href="payment.html" class="navbar-link">Wallet</a> -->
+
                 <!-- <a href="#" class="navbar-link" >Support</a>
             <a href="#" class="navbar-link" >About</a> -->
                 
@@ -1211,22 +1214,7 @@
                 </div>
             </div>
 
-            <div class="action-buttons-grid">
-                <button class="action-button"  id="help">
-                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0a1.5 1.5 0 10-2.121 2.121m2.121-2.121L12 10.59l-1.591 1.591A1.5 1.5 0 018 12.001v.001h.01m-.01-.001h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
-                    <span>Help</span>
-                </button>
-            
-        
-                <button class="action-button" id="wallet">
-                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                    <span>Wallet</span>
-                </button>
-                <button class="action-button" id="activity">
-                    <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    <span>Activity</span>
-                </button>
-            </div>
+           
 
             <div class="profile-sections-list">
                 <div class="profile-section" data-field="profile-info">
@@ -2013,10 +2001,11 @@
     amount: 250.75,
     paymentMethod: "Cash",
     actualFare :"",
-       status: "COMPLETED"
+       status: "COMPLETED",
+       driverId: Id.driverId
 }
      
-   
+ console.log(payment);  
 try {
         const response = await fetch(`/api/payments/record`, {
             method: 'POST',

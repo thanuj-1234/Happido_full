@@ -2,9 +2,9 @@ package com.cabsy.backend.services.impl;
 
 import com.cabsy.backend.models.Payment;
 import com.cabsy.backend.models.PaymentStatus;
-import com.cabsy.backend.models.Ride; // Assuming Ride model exists
+import com.cabsy.backend.models.Ride;
 import com.cabsy.backend.repositories.PaymentRepository;
-import com.cabsy.backend.repositories.RideRepository; // Assuming RideRepository exists
+import com.cabsy.backend.repositories.RideRepository;
 import com.cabsy.backend.services.PaymentService;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final RideRepository rideRepository; // Inject RideRepository
+    private final RideRepository rideRepository;
 
     public PaymentServiceImpl(PaymentRepository paymentRepository, RideRepository rideRepository) {
         this.paymentRepository = paymentRepository;
@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public Payment createPayment(Long rideId, Double amount, String method) {
+    public Payment createPayment(Long rideId, Double amount, String method, Long driverId) { // Updated method signature
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found with id: " + rideId)); // TODO: Custom exception
 
@@ -39,6 +39,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentMethod(method);
         payment.setStatus(PaymentStatus.PENDING); // Default status
         payment.setPaymentTime(LocalDateTime.now()); // Set initial payment time, can be updated later
+        payment.setDriverId(driverId); // Set the driver ID
 
         return paymentRepository.save(payment);
     }
@@ -72,8 +73,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public Payment savePayment(Payment payment) {
-        // This method is useful for updating fields on an existing Payment object
-        // that are not covered by updatePaymentStatus, like payment method.
         return paymentRepository.save(payment);
     }
 }

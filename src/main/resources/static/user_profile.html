@@ -39,26 +39,28 @@
 /*button hide*/
 .hiddens {
             display: none;
+            align-items: center;
+            margin-left: 35%;
         }
 
         
 
         /* Button styling */
-        .btns {
-            background-color: #4f46e5; /* Indigo 600 */
-            color: white;
-            font-weight: 600; /* Equivalent to font-semibold */
-            padding: 0.75rem 1.5rem; /* Equivalent to py-3 px-6 */
-            border-radius: 0.75rem; /* Equivalent to rounded-xl */
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-            border: none;
-            display: inline-block; /* Ensures padding works correctly */
-            font-size: 1.125rem; /* text-lg */
+        .btn {
+            background-color: #f97316; /* Orange color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    font-size: 1rem;
+    margin-top: 15px; /* Space between buttons and other elements */
+    transition: background-color 0.3s ease;
         }
 
-       .btns:hover {
-            background-color: #4338ca; /* Indigo 700 */
+       .btn:hover {
+              background-color: #ea580c; /* Indigo 700 */
         }
 
         /* Styling for the custom message box */
@@ -945,7 +947,7 @@
             width: 7%;
         }
 
-        .ride-status-display,
+        .ride-status-display,.ride-status-displays,
         .driver-location-display,
         .eta-display,
         .notification-area {
@@ -958,6 +960,9 @@
             font-size: 1.1rem;
             text-align: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .ride-status-display{
+            background-color: var(--orange-500);
         }
         .ride-status-display {
             background-color: var(--green-500); /* Status is usually good news */
@@ -1424,6 +1429,9 @@
 
         <div class="navbar-right">
             <a href="user_activity.html" class="navbar-link">Activities</a>
+            <!-- <a href="user_Help.html" class="navbar-link">Help</a>
+            <a href="payment.html" class="navbar-link">Wallet</a> -->
+            <!-- <a href="user_activity.html" class="navbar-link"></a> -->
             <!-- <a href="#" class="navbar-link" >Support</a>
             <a href="#" class="navbar-link" >About</a> -->
             <button id="openProfilePanel" class="profile-btn">
@@ -1520,7 +1528,8 @@
                 </div>
             </div>
             <div id="rideStatusDisplay" class="ride-status-display"></div>
-                <button class="button call-driver-button" id="callDriver">Ride Complete</button>
+            <div id="callDriver" class="ride-status-displays">Ride Complete</div>
+                <!-- <button class="button call-driver-button" id="callDriver"></button> -->
                 <!-- <button class="button cancel-ride-button" id="cancelRideButton">Cancel Ride</button> -->
             </div>
         </div>
@@ -1616,6 +1625,8 @@
     <div id="waitingPage" class="hiddens">
         <h1 class="text-3xl font-bold text-gray-800 mb-8">Your Ride is Coming!</h1>
         <p class="text-gray-600 mb-8 text-lg">Please wait while we find a driver for you.</p>
+        <p class="text-gray-600 mb-8 text-lg">please click waiting..</p>
+        
         <button id="waitingBtn" class="btn">
             Waiting...
         </button>
@@ -1687,20 +1698,7 @@
             </div>
         </div>
 
-        <div class="action-buttons-grid">
-            <button class="action-button" id="help">
-                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0a1.5 1.5 0 10-2.121 2.121m2.121-2.121L12 10.59l-1.591 1.591A1.5 1.5 0 018 12.001v.001h.01m-.01-.001h.01M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
-                <span>Help</span>
-            </button>
-            <button class="action-button" id="wallet">
-                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                <span>Wallet</span>
-            </button>
-            <button class="action-button" id="activity">
-                <svg class="icon-size" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                <span>Activity</span>
-            </button>
-        </div>
+        
 
         <div class="uber-cash-section">
             <span class="uber-cash-label">Happido Cash</span>
@@ -1863,6 +1861,9 @@
         const Email = document.getElementById('userEmail');
         const storedProfileData = localStorage.getItem('ProfileData');
         const profile = JSON.parse(storedProfileData);
+
+
+
         console.log('from user profile',profile);
         const profileName = document.getElementById('profileName');
         profileName.textContent = profile.name;
@@ -1997,6 +1998,28 @@
                 }
             }, 5000); // Update every 5 seconds (simulating 1 min real-time)
         }
+        let prof;
+        function initializePage() {
+            const sessionId = localStorage.getItem('currentSessionId');
+            
+            prof = JSON.parse(sessionId);
+            if(prof.status == "REQUESTED"){
+                ride = prof;
+                console.log(ride);
+            rideBook();
+            }
+            else if(prof.status == "IN_PROGRESS")
+            {
+                ride = prof;
+                getRiderData();
+            }
+            else
+            localStorage.removeItem("currentSessionId");
+            
+            
+        }
+
+        document.addEventListener('DOMContentLoaded', initializePage);
 
          console.log(profile);
          async function updateUser() {
@@ -2351,7 +2374,34 @@
             }
         }
 
-        function showRatingPage() {
+       async function showRatingPage() {
+
+        const addrs =
+            {
+     status: "COMPLETED",
+    // driverId: profile.id // Include if you want to set/confirm driver, otherwise omit
+}
+        
+        try {
+        const response = await fetch(`/api/rides/${ride.id}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(addrs),
+        });
+
+
+        const apiResponse = await response.json();
+        console.log(apiResponse.data);
+       
+       // console.log(availableRides);
+    } catch (error) {
+        console.error(`Error fetching rides with status ${status}:`, error.message);
+        throw error; // Re-throw to allow further handling by the caller
+    }
+
             rideConfirmedSection.style.display = 'none';
             ratingSection.style.display = 'block';
 
@@ -2399,6 +2449,8 @@ try {
         console.error('Error updating user profile:', error);
         displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
     }
+
+    localStorage.removeItem("currentSessionId");
 
 console.log(neutralFeedback);
             // Hide the rating form content
@@ -2685,19 +2737,20 @@ console.log(rideRequestData);
         console.error("Invalid URL provided to openPageInSameTab.");
                 alert("Error: Invalid URL. Please provide a valid web address.");
                 return;
-     }
+     }   console.log("hellow");
         window.location.href=url;
      }
-     document.getElementById("help").addEventListener('click',function(){
+     document.getElementById("help").addEventListener('click', function(){
+     console.log("thanuj");
         openInNewTab("user_Help.html");
-     })
-     document.getElementById("wallet").addEventListener('click',function()
+     });
+     document.getElementById("wallet").addEventListener('click', function()
     {
         openInNewTab("payment.html");
-    })
-          document.getElementById("activity").addEventListener('click',function(){
+    });
+          document.getElementById("activity").addEventListener('click', function(){
         openInNewTab("user_activity.html");
-     })
+     });
         // Initial setup
         calculateDistance();
         updateRideStatusUI(RIDE_STATUSES.IDLE);

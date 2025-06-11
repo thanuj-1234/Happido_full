@@ -1,7 +1,8 @@
 package com.cabsy.backend.dtos;
 
-import com.cabsy.backend.models.PaymentStatus;
 import java.time.LocalDateTime;
+
+import com.cabsy.backend.models.PaymentStatus;
 
 public class PaymentResponseDTO {
     private Long id;

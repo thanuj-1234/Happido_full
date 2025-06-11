@@ -1,15 +1,11 @@
 // src/main/java/com/cabsy/backend/controllers/RideController.java
 package com.cabsy.backend.controllers;
 
-import com.cabsy.backend.dtos.ApiResponse;
-import com.cabsy.backend.dtos.RideRequestDTO;
-import com.cabsy.backend.dtos.RideResponseDTO;
-import com.cabsy.backend.dtos.RideStatusUpdateDTO; // This DTO will now carry 'status' and optionally 'driverId'
-import com.cabsy.backend.models.RideStatus;
-import com.cabsy.backend.services.RideService;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.GetMapping; // This DTO will now carry 'status' and optionally 'driverId'
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,8 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.cabsy.backend.dtos.ApiResponse;
+import com.cabsy.backend.dtos.RideRequestDTO;
+import com.cabsy.backend.dtos.RideResponseDTO;
+import com.cabsy.backend.dtos.RideStatusUpdateDTO;
+import com.cabsy.backend.models.RideStatus;
+import com.cabsy.backend.services.RideService;
+
 import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/rides")
@@ -92,5 +95,14 @@ public class RideController {
     public ResponseEntity<ApiResponse<List<RideResponseDTO>>> getRidesByStatus(@PathVariable RideStatus status) {
         List<RideResponseDTO> rides = rideService.getRidesByStatus(status);
         return ResponseEntity.ok(ApiResponse.success("Rides with status " + status + " fetched successfully", rides));
+    }
+
+    // New API endpoint to fetch rides by both userId and driverId
+    @GetMapping("/user/{userId}/driver/{driverId}")
+    public ResponseEntity<ApiResponse<List<RideResponseDTO>>> getRidesByUserIdAndDriverId(
+            @PathVariable Long userId,
+            @PathVariable Long driverId) {
+        List<RideResponseDTO> rides = rideService.getRidesByUserIdAndDriverId(userId, driverId);
+        return ResponseEntity.ok(ApiResponse.success("Rides for user and driver fetched successfully", rides));
     }
 }

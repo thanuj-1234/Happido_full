@@ -18,8 +18,8 @@ import com.cabsy.backend.models.User;
 import com.cabsy.backend.repositories.DriverRepository;
 import com.cabsy.backend.repositories.RideRepository;
 import com.cabsy.backend.repositories.UserRepository;
-import com.cabsy.backend.services.RideService;
-import com.cabsy.backend.services.PaymentService; // Import PaymentService
+import com.cabsy.backend.services.PaymentService;
+import com.cabsy.backend.services.RideService; // Import PaymentService
 
 import jakarta.transaction.Transactional;
 
@@ -80,10 +80,10 @@ public class RideServiceImpl implements RideService {
             throw new RuntimeException("Driver is not available for a ride.");
         }
         // if (cab.getStatus() != CabStatus.AVAILABLE) {
-        //  throw new RuntimeException("Cab is not available.");
+        //   throw new RuntimeException("Cab is not available.");
         // }
         // if (!driver.getCab().getId().equals(cabId)) {
-        //  throw new RuntimeException("Assigned cab does not belong to the assigned driver.");
+        //   throw new RuntimeException("Assigned cab does not belong to the assigned driver.");
         // }
 
 
@@ -148,7 +148,7 @@ public class RideServiceImpl implements RideService {
                 // actualFare is assumed to be set at the time of request, not here.
 
                 // Create Payment record
-                paymentService.createPayment(rideId, ride.getActualFare(), "Cash"); // Or get payment method from driver input
+                paymentService.createPayment(rideId, ride.getActualFare(), "Cash", driverId); // Or get payment method from driver input
 
                 // Set driver and cab back to AVAILABLE
                 if (ride.getDriver() != null) {
@@ -156,8 +156,8 @@ public class RideServiceImpl implements RideService {
                     driverRepository.save(ride.getDriver());
                 }
                 // if (ride.getCab() != null) {
-                //  ride.getCab().setStatus(CabStatus.AVAILABLE);
-                //  cabRepository.save(ride.getCab());
+                //   ride.getCab().setStatus(CabStatus.AVAILABLE);
+                //   cabRepository.save(ride.getCab());
                 // }
             } else if (newStatus == RideStatus.CANCELLED) {
                 // Handle cancellation logic (e.g., free up driver/cab if assigned)
@@ -166,8 +166,8 @@ public class RideServiceImpl implements RideService {
                     driverRepository.save(ride.getDriver());
                 }
                 // if (ride.getCab() != null) {
-                //  ride.getCab().setStatus(CabStatus.AVAILABLE);
-                //  cabRepository.save(ride.getCab());
+                //   ride.getCab().setStatus(CabStatus.AVAILABLE);
+                //   cabRepository.save(ride.getCab());
                 // }
             }
 
@@ -199,6 +199,13 @@ public class RideServiceImpl implements RideService {
     @Override
     public List<RideResponseDTO> getRidesByStatus(RideStatus status) {
         return rideRepository.findByStatus(status).stream()
+                .map(this::mapToRideResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RideResponseDTO> getRidesByUserIdAndDriverId(Long userId, Long driverId) {
+        return rideRepository.findByUserIdAndDriverId(userId, driverId).stream()
                 .map(this::mapToRideResponseDTO)
                 .collect(Collectors.toList());
     }
