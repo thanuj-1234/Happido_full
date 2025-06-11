@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User_Registration & Login</title>
+    <title>User Registration & Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +14,7 @@
             align-items: center;
             background-color: #f4f4f4;
             text-align: center;
-            background-image: url('Media.jpg');
+            background-image: url('Media.jpg'); /* Ensure this image path is correct */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -23,77 +23,69 @@
             background-attachment: fixed;
             overflow: hidden; /* Prevent body scroll */
         }
-
+ 
         .container {
             width: 90%;
             max-width: 600px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0);
+            background: rgba(255, 255, 255, 0); /* Transparent background */
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             min-height: 350px;
-            backdrop-filter: blur(10px) brightness(0.8) contrast(1.2);
-            background-color: rgba(0, 0, 0, 0.4);
-            display: flex; /* Use flexbox for container content */
-            flex-direction: column; /* Stack children vertically */
-            position: relative; /* Needed for absolute positioning of forms if used for fixed height */
-            height: 80vh; /* Set a fixed height for the container, adjust as needed */
+            backdrop-filter: blur(10px) brightness(0.8) contrast(1.2); /* Frosted glass effect */
+            background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 80vh; /* Set a fixed height for the container */
             max-height: 700px; /* Optional: Set a max height */
         }
-
-        #registrationSection {
-            flex-grow: 1; /* Allow registration section to take available space */
+ 
+        #registrationSection, #loginSection {
+            flex-grow: 1; /* Allow sections to take available space */
             overflow-y: auto; /* Enable vertical scrolling */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;
-            padding-right: 15px; /* Add padding to prevent content from touching the imaginary scrollbar area */
+            -ms-overflow-style: none;  /* IE and Edge hide scrollbar */
+            scrollbar-width: none; /* Firefox hide scrollbar */
+            padding-right: 15px; /* Add padding to prevent content from touching the scrollbar area */
             box-sizing: border-box; /* Include padding in the element's total width and height */
         }
-
-        #registrationSection::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Adjustments for login section if it also might need scrolling in the future */
-        #loginSection {
-            flex-grow: 1;
-            overflow-y: auto;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            padding-right: 15px;
-            box-sizing: border-box;
-        }
-
+ 
+        #registrationSection::-webkit-scrollbar,
         #loginSection::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome, Safari, Opera hide scrollbar */
         }
-
-
+ 
         label {
             display: block;
             margin-bottom: 10px;
             width: 100%;
             text-align: left;
             font-weight: bold;
-            color: #fff;
+            color: #fff; /* White text for labels */
+            position: relative; /* Needed for password eye icon positioning */
         }
-
+ 
         label input[type="text"],
         label input[type="tel"],
         label input[type="email"],
         label input[type="password"],
-        label input[type="number"] { /* Added input type number */
+        label input[type="number"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             display: block;
             width: 60%;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent input background */
             box-sizing: border-box;
             color: #333;
         }
-
+ 
+        /* Specific padding for password fields to make space for the icon */
+        label input[type="password"] {
+            padding-right: 40px;
+        }
+ 
         button[type="submit"] {
             display: block;
             width: 60%;
@@ -101,7 +93,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color:rgb(234, 136, 56);
+            background-color: rgb(234, 136, 56); /* Orange button */
             color: black;
             cursor: pointer;
             font-size: 16px;
@@ -109,19 +101,19 @@
             border: none;
             font-weight: bold;
         }
-
+ 
         button[type="submit"]:hover {
             background-color: rgb(240, 240, 240);
         }
-
+ 
         .hidden {
             display: none;
         }
-
+ 
         .verified {
             border: 2px solid green !important;
         }
-
+ 
         .button-container {
             display: flex;
             justify-content: center;
@@ -129,11 +121,11 @@
             margin-bottom: 25px;
             padding-bottom: 5px;
         }
-
+ 
         .button-container button {
             background: none;
             border: none;
-            color: #f0f0f0;
+            color: #f0f0f0; /* Light grey for inactive tabs */
             font-size: 1.5em;
             font-weight: bold;
             padding: 10px 0;
@@ -142,17 +134,17 @@
             transition: color 0.3s ease, transform 0.2s ease;
             outline: none;
         }
-
+ 
         .button-container button:hover {
-            color: #ffffff;
+            color: #ffffff; /* White on hover */
             transform: translateY(-2px);
         }
-
+ 
         .button-container button.active {
-            color: #ffffff;
+            color: #ffffff; /* White for active tab */
             transform: translateY(0);
         }
-
+ 
         .button-container button.active::after {
             content: '';
             position: absolute;
@@ -162,11 +154,11 @@
             width: calc(100% - 20px);
             max-width: 120px;
             height: 3px;
-            background-color: #007bff;
+            background-color: #007bff; /* Blue underline */
             border-radius: 2px;
             animation: expandUnderline 0.3s forwards;
         }
-
+ 
         @keyframes expandUnderline {
             from {
                 width: 0;
@@ -175,16 +167,16 @@
                 width: calc(100% - 20px);
             }
         }
-
+ 
         h2, h3 {
             color: #ffffff;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
         }
-
+ 
         .error-message {
-            color: #ff4d4d;
+            color: #ff4d4d; /* Red for errors */
             font-size: 0.85em;
             width: 60%;
             margin: -5px auto 5px auto;
@@ -192,7 +184,7 @@
             box-sizing: border-box;
             text-align: left;
         }
-
+ 
         .forgot-password {
             display: block;
             text-align: right;
@@ -207,12 +199,12 @@
             margin: 0 auto 10px auto;
             box-sizing: border-box;
         }
-
+ 
         .forgot-password:hover {
             text-decoration: underline;
             color: #ddd;
         }
-
+ 
         #emailLabel {
             display: flex;
             align-items: center;
@@ -238,7 +230,7 @@
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
-            background-color:rgb(234, 136, 56);
+            background-color: rgb(234, 136, 56);
             color: black;
             cursor: pointer;
             font-size: 16px;
@@ -248,7 +240,7 @@
         #emailLabel button:hover {
             background-color: rgb(240, 240, 240);
         }
-
+ 
         .verification-input-container {
             display: flex;
             align-items: center;
@@ -274,7 +266,7 @@
             flex-shrink: 0;
             border: none;
             border-radius: 5px;
-            background-color:rgb(234, 136, 56);
+            background-color: rgb(234, 136, 56);
             color: black;
             cursor: pointer;
             font-size: 16px;
@@ -284,33 +276,71 @@
         .verification-input-container button:hover {
             background-color: rgb(240, 240, 240);
         }
-
-        #emailError {
+ 
+        /* Specific error message width, as it's often linked to the input above */
+        #emailError, #loginEmailError, #loginPasswordError,
+        #usernameError, #phoneError, #ageError,
+        #passwordError, #confirmPasswordError, #verificationCodeError {
             width: 60%;
-            margin: -5px auto 5px auto;
+            margin: -5px auto 5px auto; /* Adjust margin to align with inputs */
         }
-
+ 
+ 
+        /* Styles for the eye icon */
+        .password-toggle-icon {
+            position: absolute;
+            right: 25%; /* Adjust this based on your label's padding and desired position */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888; /* Icon color */
+            font-size: 1.2em;
+            background: none;
+            border: none;
+            padding: 0;
+            z-index: 2; /* Ensure it's above the input */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Make it easier to click */
+        }
+        .password-toggle-icon:hover {
+            color: #333;
+        }
+ 
+        /* Hide number input arrows (spinners) */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+ 
+ 
+        /* Adjustments for responsive design */
         @media (max-width: 768px) {
             .container {
                 width: 95%;
                 padding: 15px;
             }
-
+ 
             .button-container {
                 gap: 20px;
                 margin-bottom: 20px;
             }
-
+ 
             .button-container button {
                 font-size: 1.3em;
                 padding: 8px 0;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
             label input[type="password"],
-            label input[type="number"], /* Added input type number */
+            label input[type="number"],
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
@@ -318,57 +348,64 @@
             .forgot-password {
                 width: 75%;
             }
-
+ 
+            label input[type="password"] {
+                padding-right: 40px;
+            }
+ 
             #emailLabel button,
             .verification-input-container button {
                 padding: 8px 12px;
                 font-size: 14px;
             }
-
+ 
             h2 {
                 font-size: 2em;
             }
+            .password-toggle-icon {
+                right: 15%; /* Adjust for smaller screens */
+            }
         }
-
+ 
         @media (max-width: 480px) {
             body {
                 padding: 10px;
             }
-
+ 
             .container {
                 width: 100%;
                 padding: 10px;
                 min-height: auto;
             }
-
+ 
             h2 {
                 font-size: 1.8em;
                 margin-bottom: 15px;
             }
-
+ 
             .button-container {
                 flex-direction: column;
                 gap: 15px;
                 margin-bottom: 15px;
             }
-
+ 
             .button-container button {
                 font-size: 1.2em;
                 padding: 10px 0;
                 width: 80%;
                 margin: 0 auto;
             }
-
+ 
             .button-container button.active::after {
                 width: calc(100% - 40px);
                 max-width: 100px;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
             label input[type="password"],
-            label input[type="number"], /* Added input type number */
+            label input[type="number"],
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
@@ -377,33 +414,40 @@
                 width: 90%;
                 font-size: 14px;
             }
-
+ 
+            label input[type="password"] {
+                padding-right: 40px;
+            }
+ 
             label {
                 margin-bottom: 8px;
             }
-
+ 
             #emailLabel button,
             .verification-input-container button {
                 padding: 8px 10px;
                 font-size: 12px;
             }
-
+ 
             .forgot-password {
                 font-size: 0.8em;
                 margin-bottom: 8px;
             }
+            .password-toggle-icon {
+                right: 8%; /* Adjust for smaller screens */
+            }
         }
-
+ 
         @media (max-width: 320px) {
             .button-container button {
                 font-size: 1.1em;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
             label input[type="password"],
-            label input[type="number"], /* Added input type number */
+            label input[type="number"],
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
@@ -411,92 +455,109 @@
             .forgot-password {
                 width: 95%;
             }
-
+ 
+            label input[type="password"] {
+                padding-right: 40px;
+            }
+ 
             #emailLabel button,
             .verification-input-container button {
                 font-size: 11px;
                 padding: 7px 8px;
+            }
+            .password-toggle-icon {
+                right: 5%; /* Adjust for very small screens */
             }
         }
     </style>
 </head>
 <body>
     <h2>Welcome User</h2>
-
+ 
     <div class="container">
-
+ 
         <div class="button-container">
             <button id="signInBtn">SIGN IN</button>
             <button id="signUpBtn">SIGN UP</button>
         </div>
-
+ 
         <div id="loginSection" class="hidden">
             <form id="loginForm" novalidate>
                 <label>
                     <input type="email" id="loginEmail" name="email" placeholder="Email" required autocomplete="email">
                 </label>
+                <span class="error-message" id="loginEmailError"></span>
                 <label>
                     <input type="password" id="loginPassword" name="password" placeholder="Password" required autocomplete="current-password">
+                    <button type="button" class="password-toggle-icon" onclick="togglePasswordVisibility('loginPassword')">
+                        👁 </button>
                 </label>
+                <span class="error-message" id="loginPasswordError"></span>
                 <a href="forgot_password.html" class="forgot-password" >Forgot Password?</a>
                 <button type="submit">Sign in</button>
             </form>
         </div>
-
+ 
         <div id="registrationSection" class="hidden">
             <form id="registrationForm" novalidate>
                 <label>
                     <input type="text" id="username" name="username" placeholder="User Name" required>
                 </label>
                 <span class="error-message" id="usernameError"></span>
-
+ 
                 <label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" required pattern="[0-9]{10}" inputmode="numeric">
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" required pattern="[0-9]{10}" inputmode="numeric" maxlength="10">
                 </label>
                 <span class="error-message" id="phoneError"></span>
-
+ 
                 <label>
-                    <input type="number" id="age" name="age" placeholder="Age" required min="18">
+                    <input type="number" id="age" name="age" placeholder="Age" required min="18" max="120">
                 </label>
                 <span class="error-message" id="ageError"></span>
-
+ 
                 <label id="emailLabel">
                     <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
                     <button type="button" id="verifyButton" onclick="sendVerificationCode()">Send Code</button>
                 </label>
                 <span class="error-message" id="emailError"></span>
-
+ 
                 <div id="verificationCodeSection" class="hidden verification-input-container">
                     <input type="text" id="verificationCodeInput" name="verificationCode" placeholder="Enter verification code" autocomplete="off">
-                    <button type="button" onclick="confirmVerificationCode()">Confirm Code</button>
+                    <button type="button" id="confirmCodeButton" onclick="confirmVerificationCode()">Confirm Code</button>
                 </div>
                 <span class="error-message" id="verificationCodeError"></span>
-
+ 
+ 
                 <label>
                     <input type="password" id="password" name="password" placeholder="Create Password" required autocomplete="new-password">
+                    <button type="button" class="password-toggle-icon" onclick="togglePasswordVisibility('password')">
+                        👁 </button>
                 </label>
                 <span class="error-message" id="passwordError"></span>
-
+ 
                 <label>
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required autocomplete="new-password">
+                    <button type="button" class="password-toggle-icon" onclick="togglePasswordVisibility('confirmPassword')">
+                        👁 </button>
                 </label>
                 <span class="error-message" id="confirmPasswordError"></span>
-
+ 
                 <button type="submit">Register</button>
             </form>
         </div>
     </div>
-
+ 
     <script>
         let generatedCode;
         let emailVerified = false;
-
+ 
         document.addEventListener('DOMContentLoaded', (event) => {
+            // Set SIGN IN as active on page load
             document.getElementById('signInBtn').classList.add('active');
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('registrationSection').classList.add('hidden');
         });
-
+ 
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
             if (errorElement) {
@@ -504,7 +565,7 @@
                 errorElement.style.display = 'block';
             }
         }
-
+ 
         function clearError(elementId) {
             const errorElement = document.getElementById(elementId);
             if (errorElement) {
@@ -512,17 +573,26 @@
                 errorElement.style.display = 'none';
             }
         }
-
+ 
+        // Function to clear all error messages
+        function clearAllErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+        }
+ 
         function sendVerificationCode() {
             const emailInput = document.getElementById("email");
             const email = emailInput.value.trim();
             const verifyButton = document.getElementById("verifyButton");
             const verificationCodeSection = document.getElementById("verificationCodeSection");
             const verificationCodeInput = document.getElementById("verificationCodeInput");
-
+ 
             clearError("emailError");
             clearError("verificationCodeError");
-
+ 
             if (email === "") {
                 showError("emailError", "Email cannot be empty.");
                 return;
@@ -531,34 +601,36 @@
                 showError("emailError", "Email must end with @gmail.com");
                 return;
             }
-
+ 
             generatedCode = Math.floor(100000 + Math.random() * 900000);
             // IMPORTANT: In a real application, you would send this code via email, not an alert.
             alert("Your verification code: " + generatedCode);
-
+ 
             verificationCodeSection.classList.remove("hidden");
             verifyButton.disabled = true;
+            verifyButton.textContent = "Code Sent";
             emailInput.disabled = true;
+            verificationCodeInput.value = "";
             verificationCodeInput.focus();
         }
-
+ 
         function confirmVerificationCode() {
             const verificationCodeInput = document.getElementById("verificationCodeInput");
             const userCode = verificationCodeInput.value.trim();
             const emailInput = document.getElementById("email");
-            const verifyButton = document.getElementById("verifyButton");
-
+            const verifyButton = document.getElementById("verifyButton"); // The "Send Code" / "Resend Code" button
+ 
             clearError("verificationCodeError");
-
+ 
             if (userCode === "") {
                 showError("verificationCodeError", "Please enter the verification code.");
                 return;
             }
-
+ 
             if (userCode == generatedCode) {
                 alert("Email verified successfully!");
                 emailInput.classList.add("verified");
-                emailInput.disabled = false; // Re-enable email input after verification if needed, or keep disabled if it's considered final for registration
+                emailInput.disabled = false; // Re-enable email input for form submission
                 verifyButton.innerText = "Verified ✔";
                 verifyButton.disabled = true;
                 document.getElementById("verificationCodeSection").classList.add("hidden");
@@ -566,95 +638,117 @@
             } else {
                 showError("verificationCodeError", "Incorrect verification code. Please try again.");
                 emailVerified = false;
+ 
+                // Change the "Send Code" button's text to "Resend Code"
+                verifyButton.textContent = "Resend Code";
+                // Re-enable the button so the user can click it to resend
+                verifyButton.disabled = false;
+                // Ensure the onclick still triggers sendVerificationCode
+                verifyButton.onclick = function() { sendVerificationCode(); };
+               
+                // Clear the incorrect code
+                verificationCodeInput.value = "";
+                verificationCodeInput.focus();
             }
         }
-
+ 
+        // Function to toggle password visibility
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            // Assuming the toggle button is the next sibling of the input field
+            const toggleButton = passwordField.nextElementSibling;
+ 
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.innerHTML = "🕳️"; // Changed to a "closed eye" or similar symbol
+            } else {
+                passwordField.type = "password";
+                toggleButton.innerHTML = "👁"; // Changed to an "open eye" or similar symbol
+            }
+        }
+ 
         function showRegistration() {
             document.getElementById("registrationSection").classList.remove("hidden");
             document.getElementById("loginSection").classList.add("hidden");
-
+ 
             document.getElementById('signUpBtn').classList.add('active');
             document.getElementById('signInBtn').classList.remove('active');
-
+ 
             clearAllErrors();
-            // Reset email verification state when switching to registration
+            // Reset email verification state and button appearance when switching to registration
             emailVerified = false;
             document.getElementById("email").classList.remove("verified");
             document.getElementById("email").disabled = false;
-            document.getElementById("verifyButton").innerText = "Send Code";
-            document.getElementById("verifyButton").disabled = false;
+            document.getElementById("verifyButton").innerText = "Send Code"; // Reset to "Send Code"
+            document.getElementById("verifyButton").disabled = false; // Re-enable
+            document.getElementById("verifyButton").onclick = function() { sendVerificationCode(); }; // Ensure onclick is correct
             document.getElementById("verificationCodeSection").classList.add("hidden");
             document.getElementById("verificationCodeInput").value = "";
+ 
             document.getElementById("registrationForm").reset(); // Clear form fields
         }
-
+ 
         function showLogin() {
             document.getElementById("loginSection").classList.remove("hidden");
             document.getElementById("registrationSection").classList.add("hidden");
-
+ 
             document.getElementById('signInBtn').classList.add('active');
             document.getElementById('signUpBtn').classList.remove('active');
-
+ 
             clearAllErrors();
             document.getElementById("loginForm").reset(); // Clear login form fields
         }
-
+ 
         document.getElementById('signInBtn').addEventListener('click', showLogin);
         document.getElementById('signUpBtn').addEventListener('click', showRegistration);
-
-
+ 
+ 
         document.getElementById("registrationForm").addEventListener("submit",async function(event) {
             // Prevent default submission initially to run all validations
-            event.preventDefault(); 
+            event.preventDefault();
             let isValid = true;
             clearAllErrors(); // Clear errors at the start of validation
-
+ 
             const usernameInput = document.getElementById("username");
             const phoneNumberInput = document.getElementById("phoneNumber");
             const ageInput = document.getElementById("age");
             const emailInput = document.getElementById("email");
             const passwordInput = document.getElementById("password");
             const confirmPasswordInput = document.getElementById("confirmPassword");
-            // const addressInput = document.getElementById("address"); // Uncomment if you add address back
-            // const drivingLicenseInput = document.getElementById("drivingLicense"); // Uncomment if you add file inputs back
-            // const aadhaarCardInput = document.getElementById("aadhaarCard"); // Uncomment if you add file inputs back
-
-
+ 
             if (usernameInput.value.trim() === "") {
                 showError("usernameError", "User Name cannot be empty.");
                 isValid = false;
+            } else if (!/^[A-Za-z\s]+$/.test(usernameInput.value.trim())) { // Added more robust check
+                showError("usernameError", "User Name can only contain alphabets and spaces.");
+                isValid = false;
             }
-
+ 
+ 
             if (phoneNumberInput.value.trim() === "") {
                 showError("phoneError", "Phone Number cannot be empty.");
                 isValid = false;
             } else {
                 const phoneNumber = phoneNumberInput.value.trim();
                 // Check if it contains only digits and has exactly 10 digits
-                if (!/^\d{10}$/.test(phoneNumber)) { // Using regex for better robustness
+                if (!/^\d{10}$/.test(phoneNumber)) {
                     showError("phoneError", "Phone number must contain exactly 10 digits.");
                     isValid = false;
                 }
             }
-
-            // Age validation
+ 
+            // Age validation with max limit
             if (ageInput.value.trim() === "") {
                 showError("ageError", "Age cannot be empty.");
                 isValid = false;
             } else {
                 const age = parseInt(ageInput.value.trim());
-                if (isNaN(age) || age < 18) {
-                    showError("ageError", "Age must be 18 or older.");
+                if (isNaN(age) || age < 18 || age > 120) { // Age must be between 18 and 120 (inclusive)
+                    showError("ageError", "Age must be between 18 and 120.");
                     isValid = false;
                 }
             }
-
-            // If you bring back the address field, uncomment this
-            // if (addressInput.value.trim() === "") {
-            //     showError("addressError", "Address cannot be empty.");
-            //     isValid = false;
-            // }
-
+ 
             if (emailInput.value.trim() === "") {
                 showError("emailError", "Email cannot be empty.");
                 isValid = false;
@@ -665,38 +759,21 @@
                 showError("emailError", "Please verify your email before proceeding.");
                 isValid = false;
             }
-
-            // If you bring back file inputs, uncomment these
-            // if (drivingLicenseInput && drivingLicenseInput.files.length === 0) {
-            //     showError("drivingLicenseError", "Driving License cannot be empty.");
-            //     isValid = false;
-            // } else if (drivingLicenseInput && drivingLicenseInput.files.length > 0 && !drivingLicenseInput.files[0].type.startsWith("image/")) {
-            //     showError("drivingLicenseError", "Please upload an image file for Driving License.");
-            //     drivingLicenseInput.value = "";
-            //     isValid = false;
-            // }
-
-            // if (aadhaarCardInput && aadhaarCardInput.files.length === 0) {
-            //     showError("aadhaarCardError", "Aadhaar Card cannot be empty.");
-            //     isValid = false;
-            // } else if (aadhaarCardInput && aadhaarCardInput.files.length > 0 && !aadhaarCardInput.files[0].type.startsWith("image/")) {
-            //     showError("aadhaarCardError", "Please upload an image file for Aadhaar Card.");
-            //     aadhaarCardInput.value = "";
-            //     isValid = false;
-            // }
-
+ 
             let password = passwordInput.value.trim();
             let confirmPassword = confirmPasswordInput.value.trim();
-            let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-
+            // Updated password pattern for stronger validation
+            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+ 
+ 
             if (password === "") {
                 showError("passwordError", "Password cannot be empty.");
                 isValid = false;
             } else if (!passwordPattern.test(password)) {
-                showError("passwordError", "Password must contain at least 8 characters, including letters, numbers, and symbols.");
+                showError("passwordError", "Password must be at least 8 characters long and include uppercase, lowercase, number, and a special character.");
                 isValid = false;
             }
-
+ 
             if (confirmPassword === "") {
                 showError("confirmPasswordError", "Confirm Password cannot be empty.");
                 isValid = false;
@@ -706,111 +783,112 @@
                 confirmPasswordInput.value = "";
                 isValid = false;
             }
-
+ 
             if (isValid) {
                 const registrationData = {
-        name: usernameInput.value.trim(),
-        phoneNumber: phoneNumberInput.value.trim(),
-        
-        email: emailInput.value.trim(),
-        password: passwordInput.value.trim(),
-        
-    };
-
-    try {
-        // 2. Make the POST request using fetch
-        const response = await fetch('/api/auth/user/register', { // <--- The URL of your backend endpoint
-            method: 'POST', // <--- Specifies the HTTP method as POST
-            headers: {
-                'Content-Type': 'application/json' // <--- Tells the server the body is JSON
-            },
-            body: JSON.stringify(registrationData) // <--- The data, converted to a JSON string
-        });
-
-    //     // 3. Process the response from the backend
-        const result = await response.json(); // Parses the JSON response from the server
-
-         
-        if(result.success == true){
-             localStorage.setItem("user_profile",JSON.stringify(result.data))
-        window.location.href="./user_profile.html";
-        }
-        else{
-            alert("Please enter both email and password."); 
-        }
-        // if (response.ok) { // Checks if the HTTP status code is in the 200-299 range
-        //     displayMessage(result.message || "Registration successful!", false);
-        //     // Further actions on success, e.g., redirect or update UI
-        // } else {
-        //     displayMessage(result.message || "Registration failed. Please try again.", true);
-        //     // Handle specific error messages from the backend
-        // }
-    } catch (error) {
-        console.error('Error during registration:', error);
-        // displayMessage("An error occurred during registration. Please try again later.", true);
-    }
-    
-    //             window.location.href="./captain_profile.html";
-             }// Changed to user_profile.html
-            
-        });
-
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent default submission initially to run all validations
-            
-            const loginEmail = document.getElementById("loginEmail").value.trim();
-            const loginPassword = document.getElementById("loginPassword").value.trim();
-
-            if (loginEmail === "" || loginPassword === "") {
-                alert("Please enter both email and password.");
-                return; // Stop function execution if validation fails
+                    name: usernameInput.value.trim(),
+                    phoneNumber: phoneNumberInput.value.trim(),
+                    age: ageInput.value.trim(), // Include age in registration data
+                    email: emailInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                };
+ 
+                // This is a placeholder for your actual backend API call
+                try {
+                    const response = await fetch('/api/auth/user/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(registrationData)
+                    });
+ 
+                    const result = await response.json();
+ 
+                    if(response.ok && result.success === true){ // Check response.ok for successful HTTP status
+                        alert("Registration successful! Please sign in with your new account.");
+                        showLogin(); // Switch to the login section
+                        document.getElementById('loginEmail').value = registrationData.email; // Pre-fill email
+                        document.getElementById('loginPassword').value = ''; // Clear password field
+                        document.getElementById('loginPassword').focus(); // Focus on password for immediate login
+ 
+                        // You might want to remove this if user_profile.html is not needed after registration
+                        // localStorage.setItem('ProfileData', JSON.stringify(result.data));
+                        // window.location.href="./user_profile.html"; // Redirect to user profile page
+                    } else {
+                        // Display error message from backend
+                        alert(result.message || "Registration failed. Please try again.");
+                    }
+                } catch (error) {
+                    console.error('Error during registration:', error);
+                    alert("An error occurred during registration. Please try again later.");
+                }
             }
-            const loginData = {
-        email: loginEmail,
-        password: loginPassword
-    };
-    // console.log(loginData);
-    //   console.log("hi");
-    try {
-        // 2. Make the POST request using fetch
-        const response = await fetch('/api/auth/user/login', { // <--- The URL of your backend endpoint
-            method: 'POST', // <--- Specifies the HTTP method as POST
-            headers: {
-                'Content-Type': 'application/json' // <--- Tells the server the body is JSON
-            },
-            body: JSON.stringify(loginData) // <--- The data, converted to a JSON string
         });
-        
-        // 3. Process the response from the backend
-        // Parses the JSON response from the server
-        const result = await response.json(); 
-        console.log(result);
-        if(result.success == true){
-            localStorage.setItem('ProfileData', JSON.stringify(result.data)); 
-            console.log(result.data);
-        window.location.href="./user_profile.html";
-        }
-        else
-        {
-            alert("Please enter both email and password."); 
-        }
-    } catch (error) {
-        console.error('Error during registration:', error);
-        // displayMessage("An error occurred during registration. Please try again later.", true);
-    }
-            // In a real application, you would send this data to a server for authentication.
-            // For now, we'll simulate success.
-            // Changed to user_profile.html
+ 
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent default submission initially
+ 
+            const loginEmailInput = document.getElementById("loginEmail");
+            const loginPasswordInput = document.getElementById("loginPassword");
+ 
+            clearError("loginEmailError");
+            clearError("loginPasswordError");
+ 
+            const loginEmail = loginEmailInput.value.trim();
+            const loginPassword = loginPasswordInput.value.trim();
+ 
+            let isValidLogin = true;
+ 
+            if (loginEmail === "") {
+                showError("loginEmailError", "Email cannot be empty.");
+                isValidLogin = false;
+            } else if (!loginEmail.endsWith("@gmail.com")) {
+                 showError("loginEmailError", "Email must be a valid @gmail.com address.");
+                 isValidLogin = false;
+            }
+ 
+            if (loginPassword === "") {
+                showError("loginPasswordError", "Password cannot be empty.");
+                isValidLogin = false;
+            }
+ 
+            if (isValidLogin) {
+                const loginData = {
+                    email: loginEmail,
+                    password: loginPassword
+                };
+ 
+                // This is a placeholder for your actual backend API call
+                try {
+                    const response = await fetch('/api/auth/user/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+ 
+                    const result = await response.json();
+ 
+                    if(response.ok && result.success === true){ // Check response.ok for successful HTTP status
+                        // Assuming your backend sends success: true and data for profile
+                        localStorage.setItem('ProfileData', JSON.stringify(result.data));
+                        window.location.href="./user_profile.html"; // Redirect to user profile page
+                    } else {
+                        // Display error message from backend
+                        showError("loginPasswordError", result.message || "Login failed. Invalid credentials."); // Show error under password input
+                        // Clear password field for security
+                        loginPasswordInput.value = "";
+                        loginPasswordInput.focus();
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    alert("An error occurred during login. Please try again later.");
+                }
+            }
         });
-
-        function clearAllErrors() {
-            const errorElements = document.querySelectorAll('.error-message');
-            errorElements.forEach(element => {
-                element.textContent = '';
-                element.style.display = 'none';
-            });
-        }
-
+ 
         // Add event listener for username input to restrict to alphabets and spaces only
         document.getElementById('username').addEventListener('input', function () {
             const originalValue = this.value;
@@ -818,45 +896,96 @@
             if (originalValue !== filteredValue) {
                 this.value = filteredValue;
             }
-            // Clear username error immediately if valid characters are typed
             if (this.value.trim() !== "" && /^[A-Za-z\s]*$/.test(this.value)) {
                 clearError("usernameError");
             }
         });
-
-        // Add event listener for phone number input to restrict to numbers only
+ 
+        // Add event listener for phone number input to restrict to numbers only and limit length
         document.getElementById('phoneNumber').addEventListener('input', function () {
             const originalValue = this.value;
-            const filteredValue = originalValue.replace(/[^0-9]/g, ''); // Allow only digits
+            let filteredValue = originalValue.replace(/[^0-9]/g, ''); // Allow only digits
+ 
+            // Limit to 10 digits
+            if (filteredValue.length > 10) {
+                filteredValue = filteredValue.substring(0, 10);
+            }
+ 
             if (originalValue !== filteredValue) {
                 this.value = filteredValue;
             }
-            // Clear phone number error immediately if valid characters are typed and length is correct
+ 
             if (this.value.trim().length === 10 && /^\d{10}$/.test(this.value)) {
                 clearError("phoneError");
             }
         });
-        
-        // Add event listener for age input to clear error on valid input
+ 
+        // MODIFIED: Add event listener for age input to clear error on valid input AND enforce max
         document.getElementById('age').addEventListener('input', function () {
-            const age = parseInt(this.value.trim());
-            if (!isNaN(age) && age >= 18) {
+            let age = parseInt(this.value.trim());
+ 
+            // If the typed value exceeds 120, cap it at 120 immediately
+            if (!isNaN(age) && age > 120) {
+                this.value = 120; // Set the input value to 120
+                age = 120; // Update age variable for consistent logic
+            }
+            // Clear error if within valid range (after potential capping)
+            if (!isNaN(age) && age >= 18 && age <= 120) {
                 clearError("ageError");
             }
         });
-
-        // Add event listener for email input to clear error on valid input
+ 
+        // Add event listener for email input to clear error on valid input AND reset verification state
         document.getElementById('email').addEventListener('input', function () {
             const email = this.value.trim();
+            // Clear email error if it looks valid
             if (email !== "" && email.endsWith("@gmail.com")) {
                 clearError("emailError");
             }
+ 
+            // If email was previously verified AND its value has changed, reset verification state
+            // Check if emailVerified is true and if the current email input value is different from the one that was verified
+            // For a robust solution, you might store the *verified* email somewhere
+            // For now, if it was verified and the content changes, assume it needs re-verification
+            const emailInput = document.getElementById("email");
+            const verifyButton = document.getElementById("verifyButton");
+            const verificationCodeSection = document.getElementById("verificationCodeSection");
+            const verificationCodeInput = document.getElementById("verificationCodeInput");
+ 
+            // Only reset if it *was* verified and the text has actually changed from its last verified state
+            // A simple check like emailInput.classList.contains("verified") is enough for this scenario
+            if (emailInput.classList.contains("verified") && emailInput.value !== emailInput.dataset.verifiedEmail) {
+                emailVerified = false; // Reset verification status
+                emailInput.classList.remove("verified"); // Remove verified styling
+                // emailInput.disabled = false; // Keep it enabled so user can re-enter/correct
+                verifyButton.innerText = "Send Code"; // Change button text back to "Send Code"
+                verifyButton.disabled = false; // Re-enable send code button
+                verifyButton.onclick = function() { sendVerificationCode(); }; // Ensure onclick is correct
+                verificationCodeSection.classList.add("hidden"); // Hide verification section
+                verificationCodeInput.value = ""; // Clear entered code
+                clearError("verificationCodeError"); // Clear any OTP errors
+            } else if (!emailInput.classList.contains("verified")) {
+                // If it was never verified or verification failed, make sure state is correct
+                emailVerified = false;
+                emailInput.classList.remove("verified");
+                verifyButton.innerText = "Send Code";
+                verifyButton.disabled = false;
+                verifyButton.onclick = function() { sendVerificationCode(); };
+                verificationCodeSection.classList.add("hidden");
+                verificationCodeInput.value = "";
+                clearError("verificationCodeError");
+            }
+            // Store the current email value for comparison if it was verified successfully
+            if (emailVerified && emailInput.classList.contains("verified")) {
+                emailInput.dataset.verifiedEmail = emailInput.value;
+            }
         });
-
+ 
         // Add event listener for password input to clear error on valid input
         document.getElementById('password').addEventListener('input', function () {
             const password = this.value.trim();
-            let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            // Updated password pattern for stronger validation
+            let passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
             if (passwordPattern.test(password)) {
                 clearError("passwordError");
             }
@@ -866,7 +995,7 @@
                 clearError("confirmPasswordError");
             }
         });
-
+ 
         // Add event listener for confirm password input to clear error on valid input
         document.getElementById('confirmPassword').addEventListener('input', function () {
             const password = document.getElementById("password").value.trim();
@@ -875,7 +1004,6 @@
                 clearError("confirmPasswordError");
             }
         });
-
     </script>
 </body>
 </html>

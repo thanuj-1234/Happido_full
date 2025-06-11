@@ -1,4 +1,3 @@
-// src/main/java/com/cabsy/backend/controllers/DriverController.java
 package com.cabsy.backend.controllers;
 
 import java.util.List;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cabsy.backend.dtos.ApiResponse;
 import com.cabsy.backend.dtos.DriverRegistrationDTO;
 import com.cabsy.backend.dtos.DriverResponseDTO;
-import com.cabsy.backend.dtos.ResetPasswordRequestDTO; // NEW
-import com.cabsy.backend.dtos.PasswordResetConfirmationDTO; // NEW
+import com.cabsy.backend.dtos.ResetPasswordRequestDTO;
+import com.cabsy.backend.dtos.PasswordResetConfirmationDTO;
 import com.cabsy.backend.models.DriverStatus;
 import com.cabsy.backend.services.DriverService;
 
@@ -99,7 +98,6 @@ public class DriverController {
         }
     }
 
-   
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<PasswordResetConfirmationDTO>> forgotPassword(@Valid @RequestBody ResetPasswordRequestDTO resetRequest) {
         try {
@@ -114,6 +112,17 @@ public class DriverController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Password reset failed", e.getMessage()));
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("An unexpected error occurred during password reset", e.getMessage()));
+        }
+    }
+
+    // NEW ENDPOINT: Check if email exists
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailExists(@RequestParam String email) {
+        boolean exists = driverService.checkEmailExists(email);
+        if (exists) {
+            return ResponseEntity.ok(ApiResponse.success("Email found", true));
+        } else {
+            return ResponseEntity.ok(ApiResponse.success("Email not found", false));
         }
     }
 }

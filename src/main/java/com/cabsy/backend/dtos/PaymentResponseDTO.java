@@ -7,6 +7,7 @@ import com.cabsy.backend.models.PaymentStatus;
 public class PaymentResponseDTO {
     private Long id;
     private Long rideId;
+    private Long driverId;
     private Double amount;
     private String paymentMethod;
     private PaymentStatus status;
@@ -87,4 +88,22 @@ public class PaymentResponseDTO {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public void setDriverId(Long driverId) {
+     
+       this.driverId = driverId;
+    }
+
+    public Long getDriverId()
+    {
+        return driverId;
+    }
+
+   
+
+ 
+
+   
+
+   
 }

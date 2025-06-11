@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam; // NEW: Import for @RequestParam
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cabsy.backend.dtos.ApiResponse;
 import com.cabsy.backend.dtos.UserRegistrationDTO;
 import com.cabsy.backend.dtos.UserResponseDTO;
-import com.cabsy.backend.dtos.UserResetPasswordRequestDTO; // NEW
-import com.cabsy.backend.dtos.UserPasswordResetConfirmationDTO; // NEW
+import com.cabsy.backend.dtos.UserResetPasswordRequestDTO;
+import com.cabsy.backend.dtos.UserPasswordResetConfirmationDTO;
 import com.cabsy.backend.services.UserService;
 
 import jakarta.validation.Valid;
@@ -75,12 +76,9 @@ public class UserController {
         }
     }
 
-    // NEW: Endpoint for initiating password reset
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<UserPasswordResetConfirmationDTO>> forgotPassword(@Valid @RequestBody UserResetPasswordRequestDTO resetRequest) {
         try {
-            // In a production environment, this would typically trigger an email with a reset token.
-            // For this example, we'll directly call the service to reset the password.
             UserPasswordResetConfirmationDTO confirmation = userService.resetUserPassword(resetRequest.getEmail(), resetRequest.getNewPassword());
             return ResponseEntity.ok(ApiResponse.success("Password reset request initiated. Check your email for further instructions (if tokens were implemented).", confirmation));
         } catch (RuntimeException e) {
@@ -90,6 +88,17 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Password reset failed", e.getMessage()));
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("An unexpected error occurred during password reset", e.getMessage()));
+        }
+    }
+
+    // NEW: Endpoint to check if email exists
+    @GetMapping("/check-email")
+    public ResponseEntity<ApiResponse<Boolean>> checkEmailExists(@RequestParam String email) {
+        boolean exists = userService.isEmailRegistered(email);
+        if (exists) {
+            return ResponseEntity.ok(ApiResponse.success("Email is already registered", true));
+        } else {
+            return ResponseEntity.ok(ApiResponse.success("Email is available", false));
         }
     }
 

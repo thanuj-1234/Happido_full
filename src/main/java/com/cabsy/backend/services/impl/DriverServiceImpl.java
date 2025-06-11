@@ -1,4 +1,3 @@
-// src/main/java/com/cabsy/backend/services/impl/DriverServiceImpl.java
 package com.cabsy.backend.services.impl;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cabsy.backend.dtos.DriverRegistrationDTO;
 import com.cabsy.backend.dtos.DriverResponseDTO;
-import com.cabsy.backend.dtos.PasswordResetConfirmationDTO; // NEW import
+import com.cabsy.backend.dtos.PasswordResetConfirmationDTO;
 import com.cabsy.backend.models.Driver;
 import com.cabsy.backend.models.DriverStatus;
 import com.cabsy.backend.repositories.DriverRepository;
@@ -154,7 +153,6 @@ public class DriverServiceImpl implements DriverService {
                 .map(Driver::getStatus); // Directly map to the status enum
     }
 
-   
     @Override
     @Transactional
     public PasswordResetConfirmationDTO resetDriverPassword(String email, String newPassword) {
@@ -178,6 +176,11 @@ public class DriverServiceImpl implements DriverService {
         driverRepository.save(driver); // Persist the updated password
 
         return new PasswordResetConfirmationDTO("Password for driver with email " + email + " has been successfully reset.", email);
+    }
+
+    @Override
+    public boolean checkEmailExists(String email) {
+        return driverRepository.findByEmail(email).isPresent();
     }
 
     // Helper method to convert Driver entity to DriverResponseDTO

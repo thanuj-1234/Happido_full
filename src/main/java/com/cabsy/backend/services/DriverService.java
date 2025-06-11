@@ -1,4 +1,3 @@
-// src/main/java/com/cabsy/backend/services/DriverService.java
 package com.cabsy.backend.services;
 
 import java.util.List;
@@ -37,4 +36,11 @@ public interface DriverService {
      * @throws RuntimeException if the driver is not found or if the new password does not meet criteria.
      */
     PasswordResetConfirmationDTO resetDriverPassword(String email, String newPassword);
+
+    /**
+     * Checks if a driver with the given email address exists in the database.
+     * @param email The email address to check.
+     * @return true if an driver with the email exists, false otherwise.
+     */
+    boolean checkEmailExists(String email); // NEW method
 }

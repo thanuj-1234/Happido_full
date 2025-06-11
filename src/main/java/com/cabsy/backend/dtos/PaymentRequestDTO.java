@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Positive;
 public class PaymentRequestDTO {
     @NotNull(message = "Ride ID cannot be null")
     private Long rideId;
-
+     
+    @NotNull(message = "Driver ID cannot be null")
+    private Long driverId;
     @NotNull(message = "Amount cannot be null")
     @Positive(message = "Amount must be positive")
     private Double amount;
@@ -48,5 +50,12 @@ public class PaymentRequestDTO {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+   public void setDriverId(Long driverId)
+   {
+            this.driverId = driverId;
+   }
+    public Long getDriverId() {
+        return driverId;
     }
 }
