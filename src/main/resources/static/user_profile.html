@@ -87,25 +87,30 @@
 
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--gray-100);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden; /* Prevent horizontal scroll when panel slides in */
-            margin: 0;
-        }
+    font-family: 'Inter', sans-serif;
+    background-color: var(--gray-100);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    margin: 0;
+    padding-top: 5rem; /* Adds space at the top, equal to the navbar's height */
+}
 
         /* Navigation Bar */
         .navbar {
-            background-color: rgb(254, 253, 252);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
+    background-color: rgb(254, 253, 252);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: fixed; /* Makes the navbar fixed relative to the viewport */
+    top: 0;          /* Positions the navbar at the top of the viewport */
+    width: 100%;     /* Ensures the navbar spans the full width of the viewport */
+    z-index: 999;    /* Keeps the navbar above other content when scrolling */
+}
 
         .navbar-left {
             display: flex;
@@ -1999,7 +2004,7 @@
             }, 5000); // Update every 5 seconds (simulating 1 min real-time)
         }
 
-        
+
         let prof;
         function initializePage() {
             const sessionId = localStorage.getItem('currentSessionId');
