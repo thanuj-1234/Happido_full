@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Captain_Registration & Login</title>
     <style>
+        /* CSS Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -14,7 +15,7 @@
             align-items: center;
             background-color: #f4f4f4;
             text-align: center;
-            background-image: url('Media.jpg');
+            background-image: url('Media.jpg'); /* Make sure 'Media.jpg' is in the same directory or provide correct path */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -23,7 +24,9 @@
             background-attachment: fixed;
             overflow: hidden; /* Prevent body scroll */
         }
-
+        ::-ms-reveal{
+    display: none;
+}
         .container {
             width: 90%;
             max-width: 600px;
@@ -40,7 +43,7 @@
             height: 80vh; /* Set a fixed height for the container, adjust as needed */
             max-height: 700px; /* Optional: Set a max height */
         }
-
+ 
         #registrationSection {
             flex-grow: 1; /* Allow registration section to take available space */
             overflow-y: auto; /* Enable vertical scrolling */
@@ -49,11 +52,11 @@
             padding-right: 15px; /* Add padding to prevent content from touching the imaginary scrollbar area */
             box-sizing: border-box; /* Include padding in the element's total width and height */
         }
-
+ 
         #registrationSection::-webkit-scrollbar {
             display: none;
         }
-
+ 
         /* Adjustments for login section if it also might need scrolling in the future */
         #loginSection {
             flex-grow: 1;
@@ -63,12 +66,11 @@
             padding-right: 15px;
             box-sizing: border-box;
         }
-
+ 
         #loginSection::-webkit-scrollbar {
             display: none;
         }
-
-
+ 
         label {
             display: block;
             margin-bottom: 10px;
@@ -77,13 +79,11 @@
             font-weight: bold;
             color: #fff;
         }
-
+ 
         label input[type="text"],
         label input[type="tel"],
         label input[type="email"],
-        label input[type="password"],
-        label input[type="file"],
-        label input[type="number"] { /* Added input type number */
+        label input[type="file"] {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -94,7 +94,27 @@
             box-sizing: border-box;
             color: #333;
         }
-
+ 
+        /* Styles for age input to remove arrows */
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: block;
+            width: 60%;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-sizing: border-box;
+            color: #333;
+            -moz-appearance: textfield; /* Firefox */
+        }
+ 
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none; /* Chrome, Safari, Edge */
+            margin: 0; /* Important to hide arrows */
+        }
+ 
         button[type="submit"] {
             display: block;
             width: 60%;
@@ -110,19 +130,19 @@
             border: none;
             font-weight: bold;
         }
-
+ 
         button[type="submit"]:hover {
             background-color: rgb(240, 240, 240);
         }
-
+ 
         .hidden {
             display: none;
         }
-
+ 
         .verified {
             border: 2px solid green !important;
         }
-
+ 
         .button-container {
             display: flex;
             justify-content: center;
@@ -130,7 +150,7 @@
             margin-bottom: 25px;
             padding-bottom: 5px;
         }
-
+ 
         .button-container button {
             background: none;
             border: none;
@@ -143,17 +163,17 @@
             transition: color 0.3s ease, transform 0.2s ease;
             outline: none;
         }
-
+ 
         .button-container button:hover {
             color: #ffffff;
             transform: translateY(-2px);
         }
-
+ 
         .button-container button.active {
             color: #ffffff;
             transform: translateY(0);
         }
-
+ 
         .button-container button.active::after {
             content: '';
             position: absolute;
@@ -167,7 +187,7 @@
             border-radius: 2px;
             animation: expandUnderline 0.3s forwards;
         }
-
+ 
         @keyframes expandUnderline {
             from {
                 width: 0;
@@ -176,14 +196,14 @@
                 width: calc(100% - 20px);
             }
         }
-
+ 
         h2, h3 {
             color: #ffffff;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
         }
-
+ 
         .error-message {
             color: #ff4d4d;
             font-size: 0.85em;
@@ -193,7 +213,7 @@
             box-sizing: border-box;
             text-align: left;
         }
-
+ 
         .forgot-password {
             display: block;
             text-align: right;
@@ -208,12 +228,12 @@
             margin: 0 auto 10px auto;
             box-sizing: border-box;
         }
-
+ 
         .forgot-password:hover {
             text-decoration: underline;
             color: #ddd;
         }
-
+ 
         #emailLabel {
             display: flex;
             align-items: center;
@@ -249,7 +269,7 @@
         #emailLabel button:hover {
             background-color: rgb(240, 240, 240);
         }
-
+ 
         .verification-input-container {
             display: flex;
             align-items: center;
@@ -285,291 +305,278 @@
         .verification-input-container button:hover {
             background-color: rgb(240, 240, 240);
         }
-
+ 
         #emailError {
             width: 60%;
             margin: -5px auto 5px auto;
         }
-
-        /* Styles for side-by-side file inputs */
-        .file-inputs-container {
-            display: flex;
-            gap: 20px; /* Space between the two file inputs */
-            width: 60%;
+ 
+        /* New styles for input with icon */
+        .input-with-icon {
+            position: relative; /* Container for absolute positioning */
+            width: 60%; /* Same width as other inputs */
             margin: 0 auto 10px auto;
             box-sizing: border-box;
-            justify-content: space-between; /* Distribute space evenly */
         }
-
-        .file-input-wrapper {
-            flex: 1; /* Each wrapper takes equal space */
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Align label and input to the left */
+        .input-with-icon input[type="password"],
+        .input-with-icon input[type="text"] { /* Apply to both password and text when toggled */
+            width: 100%;
+            padding-right: 40px; /* Make space for the icon */
+            box-sizing: border-box;
+            display: block; /* Ensure it behaves like a block element */
+            margin: 0; /* Remove default margin */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
         }
-
-        .file-input-wrapper label {
-            margin-bottom: 5px; /* Adjust space between label and input */
-            width: auto; /* Allow label to take its natural width */
-            text-align: left;
-            color: #fff;
-            font-weight: bold;
+        .password-toggle {
+            position: absolute;
+            right: 10px; /* Position from the right */
+            top: 50%; /* Center vertically */
+            transform: translateY(-50%); /* Adjust for exact vertical centering */
+            cursor: pointer;
+            color: #555; /* Icon color */
+            font-size: 1.2em; /* Icon size */
+            /* Prioritize emoji fonts that support the combination.
+                If the combined emoji doesn't render well, try different fonts. */
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+            z-index: 10; /* Ensure it's above the input field */
         }
-
-        .file-input-wrapper input[type="file"] {
-            width: 100%; /* Make input take full width of its wrapper */
-            margin: 0; /* Remove auto margin */
-            padding: 8px; /* Adjust padding for file input */
-            font-size: 14px; /* Adjust font size for file input */
+        .password-toggle:hover {
+            color: #333;
         }
-        /* End of new styles for file inputs */
-
-
+ 
+        /* Responsive Styles */
         @media (max-width: 768px) {
             .container {
                 width: 95%;
                 padding: 15px;
             }
-
+ 
             .button-container {
                 gap: 20px;
                 margin-bottom: 20px;
             }
-
+ 
             .button-container button {
                 font-size: 1.3em;
                 padding: 8px 0;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
-            label input[type="password"],
             label input[type="file"],
-            label input[type="number"], /* Added input type number */
+            input[type="number"], /* Adjusted for number type */
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
             .error-message,
-            .forgot-password {
+            .forgot-password,
+            .input-with-icon { /* Adjusted for new class */
                 width: 75%;
             }
-
+ 
             #emailLabel button,
             .verification-input-container button {
                 padding: 8px 12px;
                 font-size: 14px;
             }
-
+ 
             h2 {
                 font-size: 2em;
             }
-
-            .file-inputs-container {
-                width: 75%; /* Adjust width for smaller screens */
-                flex-direction: column; /* Stack vertically on smaller screens */
-                gap: 15px; /* Adjust gap when stacked */
-            }
-
-            .file-input-wrapper {
-                width: 100%;
-            }
         }
-
+ 
         @media (max-width: 480px) {
             body {
                 padding: 10px;
             }
-
+ 
             .container {
                 width: 100%;
                 padding: 10px;
                 min-height: auto;
             }
-
+ 
             h2 {
                 font-size: 1.8em;
                 margin-bottom: 15px;
             }
-
+ 
             .button-container {
                 flex-direction: column;
                 gap: 15px;
                 margin-bottom: 15px;
             }
-
+ 
             .button-container button {
                 font-size: 1.2em;
                 padding: 10px 0;
                 width: 80%;
                 margin: 0 auto;
             }
-
+ 
             .button-container button.active::after {
                 width: calc(100% - 40px);
                 max-width: 100px;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
-            label input[type="password"],
             label input[type="file"],
-            label input[type="number"], /* Added input type number */
+            input[type="number"], /* Adjusted for number type */
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
             .error-message,
-            .forgot-password {
+            .forgot-password,
+            .input-with-icon { /* Adjusted for new class */
                 width: 90%;
                 font-size: 14px;
             }
-
+ 
             label {
                 margin-bottom: 8px;
             }
-
+ 
             label input[type="file"] {
                 padding: 8px;
             }
-
+ 
             #emailLabel button,
             .verification-input-container button {
                 padding: 8px 10px;
                 font-size: 12px;
             }
-
+ 
             .forgot-password {
                 font-size: 0.8em;
                 margin-bottom: 8px;
             }
-
-            .file-inputs-container {
-                width: 90%; /* Adjust width for smaller screens */
-            }
         }
-
+ 
         @media (max-width: 320px) {
             .button-container button {
                 font-size: 1.1em;
             }
-
+ 
             label input[type="text"],
             label input[type="tel"],
             label input[type="email"],
-            label input[type="password"],
             label input[type="file"],
-            label input[type="number"], /* Added input type number */
+            input[type="number"], /* Adjusted for number type */
             button[type="submit"],
             #emailLabel,
             .verification-input-container,
             .error-message,
-            .forgot-password {
+            .forgot-password,
+            .input-with-icon { /* Adjusted for new class */
                 width: 95%;
             }
-
+ 
             #emailLabel button,
             .verification-input-container button {
                 font-size: 11px;
                 padding: 7px 8px;
-            }
-
-            .file-inputs-container {
-                width: 95%; /* Adjust width for smaller screens */
             }
         }
     </style>
 </head>
 <body>
     <h2>Welcome Captain</h2>
-
+ 
     <div class="container">
-
+ 
         <div class="button-container">
             <button id="signInBtn">SIGN IN</button>
             <button id="signUpBtn">SIGN UP</button>
         </div>
-
+ 
         <div id="loginSection" class="hidden">
-            <form id="loginForm" >
+            <form id="loginForm">
                 <label>
                     <input type="email" id="loginEmail" name="email" placeholder="Email" required>
                 </label>
                 <label>
-                    <input type="password" id="loginPassword" name="password" placeholder="Password" required>
+                    <div class="input-with-icon">
+                        <input type="password" id="loginPassword" name="password" placeholder="Password" required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility('loginPassword')">&#128065;&#xFE0F;</span> </div>
                 </label>
                 <a href="forgot_password_captain.html" class="forgot-password">Forgot Password?</a>
-                <button type="submit" >Sign in</button>
+                <button type="submit">Sign in</button>
             </form>
         </div>
-
+ 
         <div id="registrationSection" class="hidden">
-            <form id="registrationForm" >
+            <form id="registrationForm">
                 <label>
                     <input type="text" id="username" name="username" placeholder="Captain Name" required>
                 </label>
                 <span class="error-message" id="usernameError"></span>
-
+ 
                 <label>
-                    <input type="tel" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" required pattern="[0-9]{10}" inputmode="numeric">
+                    <input type="tel" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" required pattern="[0-9]{10}" inputmode="numeric" maxlength="10">
                 </label>
                 <span class="error-message" id="phoneError"></span>
-
+ 
                 <label>
-                    <input type="number" id="age" placeholder="Age" name="age" required min="18">
+                    <input type="number" id="age" placeholder="Age (18-70)" name="age" required>
                 </label>
                 <span class="error-message" id="ageError"></span>
-
+ 
                 <label>
                     <input type="text" id="address" name="address" placeholder="Address" required>
                 </label>
                 <span class="error-message" id="addressError"></span>
-
+ 
                 <label id="emailLabel">
                     <input type="email" name="email" id="email" placeholder="Email" required>
                     <button type="button" id="verifyButton" onclick="sendVerificationCode()">Send Code</button>
                 </label>
                 <span class="error-message" id="emailError"></span>
-
+ 
                 <div id="verificationCodeSection" class="hidden verification-input-container">
                     <input type="text" id="verificationCodeInput" placeholder="Enter verification code" autocomplete="off">
-                    <button type="button" onclick="confirmVerificationCode()">Confirm Code</button>
+                    <button type="button" id="confirmCodeBtn" onclick="confirmVerificationCode()">Confirm Code</button>
                 </div>
                 <span class="error-message" id="verificationCodeError"></span>
-
-                       <label >
-                        <input type="text" id="drivingLicense" placeholder="Driving License"  required>
-                    </label>
-                        <span class="error-message" id="drivingLicenseError"></span>
-                    
-
-                    
-                        <label>
-                        <input type="text" id="aadhaarCard" placeholder="Aadhaar Card" required>
-                        </label>
-                        <span class="error-message" id="aadhaarCardError"></span>
-                    
-
+               
                 <label>
-                    <input type="password" id="password" name="password" placeholder="Create Password" required>
+                    <input type="text" id="drivingLicense" placeholder="Driving License" maxlength="16" required>
+                </label>
+                <span class="error-message" id="drivingLicenseError"></span>
+ 
+                <label>
+                    <input type="text" id="aadhaarCard" placeholder="Aadhaar Card (12 digits)" required pattern="[0-9]{12}" inputmode="numeric" maxlength="12">
+                </label>
+                <span class="error-message" id="aadhaarCardError"></span>
+ 
+                <label>
+                    <div class="input-with-icon">
+                        <input type="password" id="password" name="password" placeholder="Create Password" required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility('password')">&#128065;&#xFE0F;</span> </div>
                 </label>
                 <span class="error-message" id="passwordError"></span>
-
+ 
                 <label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                    <div class="input-with-icon">
+                        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">&#128065;&#xFE0F;</span> </div>
                 </label>
                 <span class="error-message" id="confirmPasswordError"></span>
-
+ 
                 <button type="submit">Register</button>
             </form>
         </div>
     </div>
-    
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md mx-auto border border-gray-200">
+   
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md mx-auto border border-gray-200" style="display: none;">
         <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Change Password</h2>
-
         <div id="message-container" class="mb-6 p-3 rounded-lg text-sm text-center hidden" role="alert"></div>
-
         <div id="step-email" class="">
             <div class="mb-6">
                 <label for="forgotEmail" class="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
@@ -588,7 +595,6 @@
                 Send OTP
             </button>
         </div>
-
         <div id="step-otp" class="hidden">
             <div class="mb-6">
                 <label for="otp" class="block text-gray-700 text-sm font-semibold mb-2">Enter OTP</label>
@@ -607,7 +613,6 @@
                 Verify OTP
             </button>
         </div>
-
         <div id="step-new-password" class="hidden">
             <div class="mb-6">
                 <label for="new-password" class="block text-gray-700 text-sm font-semibold mb-2">New Password</label>
@@ -635,17 +640,19 @@
             </button>
         </div>
     </div>
-
+ 
     <script>
+        // JavaScript Code
         let generatedCode;
         let emailVerified = false;
-
+ 
         document.addEventListener('DOMContentLoaded', (event) => {
+            // Set "Sign In" as active by default on page load
             document.getElementById('signInBtn').classList.add('active');
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('registrationSection').classList.add('hidden');
         });
-
+ 
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
             if (errorElement) {
@@ -653,7 +660,7 @@
                 errorElement.style.display = 'block';
             }
         }
-
+ 
         function clearError(elementId) {
             const errorElement = document.getElementById(elementId);
             if (errorElement) {
@@ -661,17 +668,18 @@
                 errorElement.style.display = 'none';
             }
         }
-
+ 
         function sendVerificationCode() {
             const emailInput = document.getElementById("email");
             const email = emailInput.value.trim();
             const verifyButton = document.getElementById("verifyButton");
             const verificationCodeSection = document.getElementById("verificationCodeSection");
             const verificationCodeInput = document.getElementById("verificationCodeInput");
-
+            const confirmCodeBtn = document.getElementById("confirmCodeBtn");
+ 
             clearError("emailError");
             clearError("verificationCodeError");
-
+           
             if (email === "") {
                 showError("emailError", "Email cannot be empty.");
                 return;
@@ -680,86 +688,120 @@
                 showError("emailError", "Email must end with @gmail.com");
                 return;
             }
-
-            generatedCode = Math.floor(100000 + Math.random() * 900000);
-            alert("Your verification code: " + generatedCode);
-
+ 
+            generatedCode = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit code
+            alert("Your verification code: " + generatedCode); // In a real app, this would be sent to the email
+ 
             verificationCodeSection.classList.remove("hidden");
-            verifyButton.disabled = true;
-            emailInput.disabled = true;
-            verificationCodeInput.focus();
+            verifyButton.disabled = true; // Disable "Send Code" / "Resend Code" button
+            emailInput.disabled = true; // Disable email input after sending code
+            verificationCodeInput.focus(); // Focus on the verification code input
+            confirmCodeBtn.disabled = false; // Enable confirm button
+            verificationCodeInput.value = ""; // Clear previous code
+ 
+            verifyButton.innerText = "Code Sent!"; // Change button text to indicate code was sent
         }
-
+ 
         function confirmVerificationCode() {
             const verificationCodeInput = document.getElementById("verificationCodeInput");
             const userCode = verificationCodeInput.value.trim();
             const emailInput = document.getElementById("email");
             const verifyButton = document.getElementById("verifyButton");
-
+            const confirmCodeBtn = document.getElementById("confirmCodeBtn");
+ 
             clearError("verificationCodeError");
-
+ 
             if (userCode === "") {
                 showError("verificationCodeError", "Please enter the verification code.");
                 return;
             }
-
-            if (userCode == generatedCode) {
+ 
+            if (userCode == generatedCode) { // Compare user input with generated code
                 alert("Email verified successfully!");
-                emailInput.classList.add("verified");
-                emailInput.disabled = false;
-                verifyButton.innerText = "Verified ✔";
-                verifyButton.disabled = true;
-                document.getElementById("verificationCodeSection").classList.add("hidden");
-                emailVerified = true;
+                emailInput.classList.add("verified"); // Add a class for visual feedback
+                emailInput.disabled = false; // Enable email input again (or keep disabled based on UX)
+                verifyButton.innerText = "Verified ✔"; // Change button text
+                verifyButton.disabled = true; // Keep verify button disabled
+                document.getElementById("verificationCodeSection").classList.add("hidden"); // Hide code input
+                emailVerified = true; // Set flag to true
             } else {
-                showError("verificationCodeError", "Incorrect verification code. Please try again.");
-                emailVerified = false;
+                showError("verificationCodeError", "Incorrect verification code. Please try again or click 'Resend Code'.");
+                emailVerified = false; // Set flag to false
+                verifyButton.innerText = "Resend Code"; // Change "Send Code" to "Resend Code"
+                verifyButton.disabled = false; // Enable "Resend Code" button
+                confirmCodeBtn.disabled = true; // Disable confirm button until new code is sent
             }
         }
-
+ 
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling; // The icon is the next sibling within the same div
+ 
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerHTML = '&#128065;&#xFE0F;&#8205;&#128488;&#xFE0F;'; // 👁️‍🗨️ Eye with speech bubble (for visible, if it renders as crossed out)
+            } else {
+                input.type = "password";
+                icon.innerHTML = '&#128065;&#xFE0F;'; // 👁️ Eye emoji for hidden
+            }
+        }
+ 
+ 
         function showRegistration() {
-            // event.preventDefault(); // This can cause issues if 'event' is not defined, removed to avoid strict mode errors
             document.getElementById("registrationSection").classList.remove("hidden");
             document.getElementById("loginSection").classList.add("hidden");
-
+ 
             document.getElementById('signUpBtn').classList.add('active');
             document.getElementById('signInBtn').classList.remove('active');
-
+ 
             clearAllErrors();
+            // Reset email verification state when switching to registration
             emailVerified = false;
             document.getElementById("email").classList.remove("verified");
             document.getElementById("email").disabled = false;
-            document.getElementById("verifyButton").innerText = "Send Code";
+            document.getElementById("verifyButton").innerText = "Send Code"; // Reset button text
             document.getElementById("verifyButton").disabled = false;
             document.getElementById("verificationCodeSection").classList.add("hidden");
             document.getElementById("verificationCodeInput").value = "";
         }
-
+ 
         function showLogin() {
             document.getElementById("loginSection").classList.remove("hidden");
             document.getElementById("registrationSection").classList.add("hidden");
-
+ 
             document.getElementById('signInBtn').classList.add('active');
             document.getElementById('signUpBtn').classList.remove('active');
-
+ 
             clearAllErrors();
         }
-
+ 
         document.getElementById('signInBtn').addEventListener('click', showLogin);
         document.getElementById('signUpBtn').addEventListener('click', showRegistration);
-
-        // This function is no longer needed if the redirection happens directly in the submit handler
-        // function openPageInSameTab(url) {
-        //     window.location.href = url;
-        // }
-
-        document.getElementById("registrationForm").addEventListener("submit",async function(event) {
-             // Prevent default form submission initially
-
-            clearAllErrors();
-
+ 
+        // Event listener for email input change to reset verification status
+        document.getElementById('email').addEventListener('input', function() {
+            // Check if email was previously verified AND if the current input value is different from the originally verified one
+            if (emailVerified) {
+                emailVerified = false;
+                this.classList.remove('verified');
+                document.getElementById("verifyButton").innerText = "Send Code"; // Change back to "Send Code"
+                document.getElementById("verifyButton").disabled = false; // Enable the button
+                document.getElementById("verificationCodeSection").classList.add("hidden"); // Hide code input
+                document.getElementById("verificationCodeInput").value = ""; // Clear code input
+                clearError("emailError"); // Clear any existing email verification error
+                document.getElementById("email").disabled = false; // Ensure email input is editable
+            }
+        });
+ 
+ 
+        document.getElementById("registrationForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // IMPORTANT: Prevent default form submission
+ 
+            clearAllErrors(); // Clear previous errors
+ 
             let isValid = true;
-
+ 
+            // Get input elements
             const usernameInput = document.getElementById("username");
             const phoneNumberInput = document.getElementById("phoneNumber");
             const ageInput = document.getElementById("age");
@@ -769,96 +811,104 @@
             const aadhaarCardInput = document.getElementById("aadhaarCard");
             const passwordInput = document.getElementById("password");
             const confirmPasswordInput = document.getElementById("confirmPassword");
-
+ 
+            // Username validation
             if (usernameInput.value.trim() === "") {
                 showError("usernameError", "Captain Name cannot be empty.");
                 isValid = false;
             }
-
+ 
+            // Phone Number validation (exactly 10 digits)
             if (phoneNumberInput.value.trim() === "") {
                 showError("phoneError", "Phone Number cannot be empty.");
                 isValid = false;
             } else {
                 const phoneNumber = phoneNumberInput.value.trim();
-                // Check if it contains only digits and has exactly 10 digits
-                if (!/^\d{10}$/.test(phoneNumber)) {
-                    showError("phoneError", "Phone number must contain exactly 10 digits.");
+                if (!/^\d{10}$/.test(phoneNumber)) { // Regex for exact 10 digits
+                    showError("phoneError", "Phone Number must be 10 digits.");
                     isValid = false;
                 }
             }
-
-            // Age validation
-            if (ageInput.value.trim() === "") {
-                showError("ageError", "Age cannot be empty.");
+ 
+            // Age validation (18-70)
+            const age = parseInt(ageInput.value.trim());
+            if (isNaN(age) || age < 18 || age > 70) {
+                showError("ageError", "Age must be between 18 and 70.");
                 isValid = false;
-            } else {
-                const age = parseInt(ageInput.value.trim());
-                if (isNaN(age) || age < 18) {
-                    showError("ageError", "Age must be 18 or older.");
-                    isValid = false;
-                }
             }
-
+ 
+            // Address validation
             if (addressInput.value.trim() === "") {
                 showError("addressError", "Address cannot be empty.");
                 isValid = false;
             }
+ 
+            // Email validation
             if (emailInput.value.trim() === "") {
                 showError("emailError", "Email cannot be empty.");
                 isValid = false;
-            } else if (!emailInput.value.endsWith("@gmail.com")) {
-                showError("emailError", "Email must end with @gmail.com");
+            } else if (!emailInput.value.trim().endsWith("@gmail.com")) {
+                showError("emailError", "Email must end with @gmail.com.");
                 isValid = false;
-            } else if (!emailVerified) {
-                showError("emailError", "Please verify your email before proceeding.");
+            } else if (!emailVerified) { // Check if email has been verified
+                showError("emailError", "Please verify your email address.");
                 isValid = false;
             }
-
-            if (drivingLicenseInput.length === 0) {
+ 
+            // Driving License validation (simple check for now, you might add more)
+            if (drivingLicenseInput.value.trim() === "") {
                 showError("drivingLicenseError", "Driving License cannot be empty.");
                 isValid = false;
-            } 
-
-            if (aadhaarCardInput.length === 0) {
+            } else if (drivingLicenseInput.value.trim().length !== 16) {
+                showError("drivingLicenseError", "Driving License must be 16 characters.");
+                isValid = false;
+            }
+ 
+ 
+            // Aadhaar Card validation (exactly 12 digits)
+            if (aadhaarCardInput.value.trim() === "") {
                 showError("aadhaarCardError", "Aadhaar Card cannot be empty.");
                 isValid = false;
+            } else {
+                const aadhaarNumber = aadhaarCardInput.value.trim();
+                if (!/^\d{12}$/.test(aadhaarNumber)) { // Regex for exact 12 digits
+                    showError("aadhaarCardError", "Aadhaar Card must be 12 digits.");
+                    isValid = false;
+                }
             }
-
-            let password = passwordInput.value.trim();
-            let confirmPassword = confirmPasswordInput.value.trim();
-            let passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-
-            if (password === "") {
-                showError("passwordError", "Password cannot be empty.");
-                isValid = false;
-            } else if (!passwordPattern.test(password)) {
-                showError("passwordError", "Password must contain at least 8 characters and should include a mix of uppercase and lowercase letters, numbers, and symbols.");
+ 
+            // Password validation (simple check for now, you might add complexity rules)
+            if (passwordInput.value.trim().length < 8) {
+                showError("passwordError", "Password must be at least 8 characters long.");
                 isValid = false;
             }
-
-            if (confirmPassword === "") {
+ 
+            // Confirm Password validation
+            if (confirmPasswordInput.value.trim() === "") {
                 showError("confirmPasswordError", "Confirm Password cannot be empty.");
                 isValid = false;
-            } else if (password !== confirmPassword) {
-                showError("confirmPasswordError", "Passwords do not match! Try again.");
-                passwordInput.value = "";
-                confirmPasswordInput.value = "";
+            } else if (passwordInput.value !== confirmPasswordInput.value) {
+                showError("confirmPasswordError", "Passwords do not match.");
                 isValid = false;
             }
-            
+ 
+            // If all validations pass, proceed with registration
             if (isValid) {
-                alert("Registration successful!");
-                console.log("hi");
+                console.log("Validation passed, attempting registration (simulated).");
+ 
                 const registrationData = {
-        name: usernameInput.value.trim(),
-        phoneNumber: phoneNumberInput.value.trim(),
-        age: parseInt(ageInput.value.trim()),
-        email: emailInput.value.trim(),
-        password: passwordInput.value.trim(),
-        licenseNumber: drivingLicenseInput.value.trim()
-    };
-
-    try {
+                    email: emailInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                    // Store other data if needed for display on profile page, but not for login check
+                    name: usernameInput.value.trim(),
+                    phoneNumber: phoneNumberInput.value.trim(),
+                    age: parseInt(ageInput.value.trim()),
+                    address: addressInput.value.trim(),
+                    licenseNumber: drivingLicenseInput.value.trim(),
+                    aadhaarCard: aadhaarCardInput.value.trim()
+                };
+ 
+                try {
         // 2. Make the POST request using fetch
         const response = await fetch('/api/auth/driver/register', { // <--- The URL of your backend endpoint
             method: 'POST', // <--- Specifies the HTTP method as POST
@@ -872,37 +922,36 @@
         const result = await response.json(); // Parses the JSON response from the server
      console.log(result);
         if(result.success == true)
-        window.location.href="./captain_profile.html";
+        window.location.href="./captain_registration.html";
         
     } catch (error) {
         console.error('Error during registration:', error);
         // displayMessage("An error occurred during registration. Please try again later.", true);
     }
-    
-    //             window.location.href="./captain_profile.html";
-             }
+}
         });
-
+ 
+        // Login form submission handler
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            const loginEmail = document.getElementById("loginEmail").value;
-            
-            const loginPassword = document.getElementById("loginPassword").value;
-
+            event.preventDefault(); // Prevent default form submission
+            const loginEmail = document.getElementById("loginEmail").value.trim();
+            const loginPassword = document.getElementById("loginPassword").value.trim();
+ 
             if (loginEmail === "" || loginPassword === "") {
                 alert("Please enter both email and password.");
                 return;
             }
-            
-            // In a real application, you would send this data to a server for authentication.
-            // For now, we'll simulate success.
            
-
+            // Retrieve registered user data from localStorage
+            // const storedUser = localStorage.getItem('registeredUser');
+            let registeredUserData = null;
+            
+ 
             const loginData = {
         email: loginEmail,
         password: loginPassword
     };
-    // console.log(loginData);
+     console.log(loginData);
     //   console.log("hi");
     try {
         // 2. Make the POST request using fetch
@@ -931,11 +980,8 @@
         console.error('Error during registration:', error);
         // displayMessage("An error occurred during registration. Please try again later.", true);
     }
-            
-            // window.location.href="./captain_profile.html";
-            
         });
-
+ 
         function clearAllErrors() {
             const errorElements = document.querySelectorAll('.error-message');
             errorElements.forEach(element => {
@@ -943,7 +989,8 @@
                 element.style.display = 'none';
             });
         }
-
+ 
+        // Input filtering for username (letters and spaces only)
         document.getElementById('username').addEventListener('input', function () {
             const originalValue = this.value;
             const filteredValue = originalValue.replace(/[^A-Za-z\s]/g, '');
@@ -951,15 +998,63 @@
                 this.value = filteredValue;
             }
         });
-
-        // Add event listener for phone number input to restrict to numbers only
+ 
+        // Input filtering for phone number (digits only, max 10 digits)
         document.getElementById('phoneNumber').addEventListener('input', function () {
-            const originalValue = this.value;
-            const filteredValue = originalValue.replace(/[^0-9]/g, ''); // Allow only digits
+            let originalValue = this.value;
+            // Remove non-digit characters
+            let filteredValue = originalValue.replace(/[^0-9]/g, '');
+            // Ensure it doesn't exceed 10 digits
+            if (filteredValue.length > 10) {
+                filteredValue = filteredValue.substring(0, 10);
+            }
             if (originalValue !== filteredValue) {
                 this.value = filteredValue;
+            }
+            clearError("phoneError"); // Clear error as user types valid input
+        });
+       
+        // Input filtering for Aadhaar card (digits only, max 12 digits)
+        document.getElementById('aadhaarCard').addEventListener('input', function () {
+            let originalValue = this.value;
+            let filteredValue = originalValue.replace(/[^0-9]/g, '');
+            if (filteredValue.length > 12) {
+                filteredValue = filteredValue.substring(0, 12);
+            }
+            if (originalValue !== filteredValue) {
+                this.value = filteredValue;
+            }
+            clearError("aadhaarCardError"); // Clear error as user types valid input
+        });
+ 
+        // Input filtering and clamping for Age (18-70)
+        document.getElementById('age').addEventListener('input', function () {
+            let value = this.value;
+            // Remove non-digit characters
+            let filteredValue = value.replace(/[^0-9]/g, '');
+            this.value = filteredValue; // Update input immediately
+ 
+            const age = parseInt(filteredValue);
+            const minAge = 18;
+            const maxAge = 70;
+ 
+            if (filteredValue === "") {
+                clearError("ageError");
+                return;
+            }
+ 
+            if (isNaN(age)) {
+                // If input is not a number after filtering, consider clearing or showing error
+                showError("ageError", "Please enter a valid age.");
+            } else if (age < minAge) {
+                showError("ageError", `Age cannot be less than ${minAge}.`);
+            } else if (age > maxAge) {
+                showError("ageError", `Age cannot be more than ${maxAge}.`);
+            } else {
+                clearError("ageError");
             }
         });
     </script>
 </body>
 </html>
+ 
