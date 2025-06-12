@@ -1604,13 +1604,6 @@
 
         <div class="payment-method-display" id="openPaymentOptionsBtn">
             <div class="payment-method-left" id="currentPaymentMethodText">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
-                    <path d="M2.5 13.5H21.5V10.5C21.5 6.35786 18.1421 3 14 3H10C5.85786 3 2.5 6.35786 2.5 10.5V13.5ZM2.5 13.5C2.5 17.6421 5.85786 21 10 21H14C18.1421 21 21.5 17.6421 21.5 13.5V13.5Z" fill="#1A1A1A"/>
-                    <rect x="5.5" y="10.5" width="13" height="3" fill="#FFFFFF"/>
-                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#205B88"/>
-                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
-                    <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
-                </svg>
                 <span>Cash</span>
             </div>
             <div class="payment-method-right">
@@ -1644,39 +1637,7 @@
             </button>
             <h3 style="font-size: 1.2rem; color: var(--gray-800); margin: 0 auto; margin-right: 2rem;">Choose Payment</h3>
         </div>
-        <ul class="payment-method-list">
-            <li class="payment-method-item" data-method="VISA •••• 1059">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
-                    <path d="M2.5 13.5H21.5V10.5C21.5 6.35786 18.1421 3 14 3H10C5.85786 3 2.5 6.35786 2.5 10.5V13.5ZM2.5 13.5C2.5 17.6421 5.85786 21 10 21H14C18.1421 21 21.5 17.6421 21.5 13.5V13.5Z" fill="#1A1A1A"/>
-                    <rect x="5.5" y="10.5" width="13" height="3" fill="#FFFFFF"/>
-                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#205B88"/>
-                    <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
-                    <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
-                </svg>
-                <span class="method-name">Card •••• 1059</span>
-                <span class="selected-indicator" id="cardSelected">&#10003;</span>
-            </li>
-            <li class="payment-method-item" data-method="Cash">
-                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
-                    <path d="M17 5H7a3 3 0 00-3 3v8a3 3 0 003 3h10a3 3 0 003-3V8a3 3 0 00-3-3zM7 7h10a1 1 0 011 1v2H6V8a1 1 0 011-1zm10 10H7a1 1 0 01-1-1v-2h12v2a1 1 0 01-1 1z"></path>
-                    <circle cx="12" cy="12" r="2"></circle>
-                </svg>
-                <span class="method-name">Cash</span>
-                <span class="selected-indicator" id="cashSelected" style="display: none;">&#10003;</span>
-            </li>
-            <li class="payment-method-item" data-method="Happido Cash">
-                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="32" height="24">
-                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 100-16 8 8 0 000 16zm-1-7h2V8h-2v5zm0 3h2v-2h-2v2z"></path>
-                </svg>
-                <span class="method-name">Happido Cash</span>
-                <span class="selected-indicator" id="happidoCashSelected" style="display: none;">&#10003;</span>
-            </li>
-            <li class="payment-method-item" data-method="UPI Cash">
-                <img src="upi_image.png" class="upi"/>
-                <span class="method-name">UPI</span>
-                <span class="selected-indicator" id="upiCashSelected" style="display: none;">&#10003;</span>
-            </li>
-        </ul>
+        
     </div>
     <div id="profilePanel">
         <div class="profile-panel-header">
@@ -1741,9 +1702,9 @@
            
         </ul>
 
-       <a href="index.html"> <button class="sign-out-btn">
+        <button class="sign-out-btn" id="SignOut">
             Sign out
-        </button></a>
+        </button>
     </div>
 
    <div class="contains">
@@ -2242,7 +2203,10 @@
                 return null;
             }
         }
-
+document.getElementById("SignOut").addEventListener('click',function(){
+    localStorage.removeItem("ProfileData");
+    window.location.href = "index.html";
+})
         function openRideOptionsPanel() {
             const distance = calculateDistance();
 

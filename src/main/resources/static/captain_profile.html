@@ -1315,7 +1315,7 @@
             </div>
 
             <div class="profile-bottom-actions">
-                <button class="logout-button">
+                <button class="logout-button" id="logout">
                     <span class="material-icons">logout</span> Logout
                 </button>
                 <div class="toggle-container">
@@ -2268,6 +2268,13 @@ try {
         displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
     }
 }
+
+
+document.getElementById("logout").addEventListener('click',function(){
+    localStorage.removeItem(captainProfileData);
+    window.location.href="index.html";
+})
+
 
     </script>
 </body>
