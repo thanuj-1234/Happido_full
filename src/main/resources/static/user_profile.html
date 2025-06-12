@@ -1320,9 +1320,7 @@
                 order: -1; /* Place it before the logo on small screens if desired, or remove to keep it where it is */
             }
 
-            .navbar-link {
-                display: none; /* Hide activities link on small screens for brevity */
-            }
+            
 
             .main-content {
                 padding: rem;
@@ -1425,12 +1423,12 @@
 
     <nav class="navbar">
         <div class="navbar-left">
-            <a href="#" class="navbar-logo">
-                <img src="shared image.png" alt="Happido Logo" width="50" height="50">
-            </a>
-            <a href="#" class="navbar-ride-btn">
+           
+                <img src="shared image.png"  class="navbar-logo" alt="Happido Logo" width="50" height="50">
+           
+            <h3 class="navbar-ride-btn" id="Happido">
                 Happido
-            </a>
+            </h3>
         </div>
 
         <div class="navbar-right">
@@ -1613,7 +1611,7 @@
                     <path d="M19.5 10.5H4.5V13.5H19.5V10.5Z" fill="#F79F1B"/>
                     <path d="M17.5 10.5H6.5V13.5H17.5V10.5Z" fill="#FFC900"/>
                 </svg>
-                <span>VISA •••• 1059</span>
+                <span>Cash</span>
             </div>
             <div class="payment-method-right">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -1825,7 +1823,12 @@
         const happidoCashSelectedIndicator = document.getElementById('happidoCashSelected');
         const upiCashSelectedIndicator = document.getElementById('upiCashSelected');
 
+        document.getElementById("Happido").addEventListener('click',function(){
+            console.log("thanuj");
 
+            localStorage.removeItem("currentSessionId");
+            window.location.href ="user_profile.html";
+        })
         // Ride Confirmed Section elements
         const rideConfirmedSection = document.getElementById('rideConfirmedSection');
         const rideOtp = document.getElementById('rideOtp');
@@ -2021,8 +2024,10 @@
                 ride = prof;
                 getRiderData();
             }
-            else
+            else{
             localStorage.removeItem("currentSessionId");
+            window.location.href="user_profile.html";
+            }
             
             
         }
@@ -2328,7 +2333,7 @@
             };
              
             // Populate the confirmed ride details
-            rideOtp.textContent = currentRideDetails.otp;
+            rideOtp.textContent = 1986;
             rideCarNumber.textContent = currentRideDetails.carNumber;
             rideAmount.textContent = `₹${currentRideDetails.amount}`;
             rideDistance.textContent = `${currentRideDetails.distance} KM`;
@@ -2499,8 +2504,8 @@ console.log(neutralFeedback);
         }
 
         function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
-            updatePaymentMethodDisplay(method);
+            selectedPaymentethod = method;
+           
             closePaymentOptions();
         }
 
@@ -2582,9 +2587,9 @@ console.log(neutralFeedback);
         openPaymentOptionsBtn.addEventListener('click', openPaymentOptions);
         closePaymentOptionsBtn.addEventListener('click', closePaymentOptions);
         paymentMethodItems.forEach(item => {
-            item.addEventListener('click', () => {
-                selectPaymentMethod(item.dataset.method);
-            });
+            // item.addEventListener('click', () => {
+            //     selectPaymentMethod(item.dataset.method);
+            // });
         });
         let ride;
         let rides;
@@ -2673,7 +2678,37 @@ console.log(rideRequestData);
 
         // Add an event listener to the button
         // When the button is clicked, the callDriver function will be executed.
-        callDriverButto.addEventListener('click', showRatingPage);
+
+        
+        callDriverButto.addEventListener('click', async function() {
+            let anss;
+
+            try {
+        const response = await fetch(`/api/rides/${ride.id}`, {
+            method: 'GET', // Specify the HTTP method as PUT
+            headers: {
+                'Content-Type': 'application/json', // Indicate that the body is JSON
+            }
+            // body: JSON.stringify(rideRequestData), // Convert the updates object to a JSON string
+        });
+
+        // --- Response Handling ---
+        // Always read the response body, even for errors, to get the APIResponse payload
+        const apiResponse = await response.json(); 
+        
+        if(apiResponse.data.status == "COMPLETED")
+            showRatingPage();
+        else 
+        alert("your ride is in progress");
+         
+    } catch (error) {
+        // Handle network errors (e.g., server unreachable) or issues during JSON parsing
+        console.error('Error updating user profile:', error);
+        displayMessage(`Network error or unexpected issue: ${error.message}`, 'error');
+    }
+
+            
+        } );
         // document.getElementById("callDriver").addEventListener('click', submitRating);
         chooseComfortElectricButton.addEventListener('click', bookRide);
         cancelRideButton.addEventListener('click', cancelRide);
