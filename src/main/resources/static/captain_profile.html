@@ -100,6 +100,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
+      justify-content: center;
     }
 
     .social-icons img {
@@ -112,18 +113,7 @@
       height: 35px; /* Reduced height */
     }
 
-    @media (max-width: 768px) {
-      .footer {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .footer-column {
-        max-width: 300px;
-      }
-    }
-
+   
         /* --- NAVBAR CSS (ORIGINAL AS REQUESTED) --- */
         .navbar {
             background-color: rgb(254, 253, 252);
@@ -1120,6 +1110,120 @@
             color: var(--gray-700);
             margin-bottom: 30px;
         }
+        /* Responsive adjustments */
+@media (max-width: 768px) {
+    /* Adjust profile panel for full height on mobile */
+    .profile-side-panel {
+        width: 100%; /* Full width on smaller screens */
+        right: -100%;
+        top: 0; /* FIXED: Changed from 80px to 0 to make it appear from the very top of the webpage */
+        height: 100%; /* Adjusted height to fill the entire viewport when starting from top: 0 */
+        /* If you want it to appear *just below* your navbar, you would set 'top' to your navbar's actual height,
+           e.g., top: 60px; and height: calc(100% - 60px);. But 'top: 0;' is for the absolute top. */
+    }
+    .profile-side-panel.open {
+        right: 0;
+    }
+
+    /* Your other mobile navbar and content styles */
+    .navbar {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .navbar-left {
+        margin-left: 0;
+    }
+
+    .navbar-left .home-button {
+        display: none;
+    }
+
+    .navbar-logo {
+        font-size: 1.2rem;
+        padding: 0.25rem;
+    }
+
+    .navbar-logo img {
+        width: 40px;
+        height: 40px;
+        margin-right: 0.25rem;
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 0;
+    }
+
+    .profile-btn img {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .navbar-link {
+        display: block;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        margin-right: 0.75rem;
+    }
+
+    .navbar-right .toggle-container label {
+        font-size: 12px;
+    }
+
+    .navbar-right .switch {
+        width: 40px;
+        height: 22px;
+    }
+
+    .navbar-right .slider:before {
+        height: 16px;
+        width: 16px;
+        left: 3px;
+        bottom: 3px;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(18px);
+        -ms-transform: translateX(18px);
+        transform: translateX(18px);
+    }
+}
+@media (max-width: 768px) {
+    .footer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .footer-column {
+        font-size: 0.75em;
+        max-width: none;
+        margin: 0;
+        text-align: center;
+    }
+
+    .footer-column:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .follow-us-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        justify-items: center;
+        align-items: center;
+        max-width: 250px;
+        margin: 10px auto 0 auto; /* This line is crucial for horizontal centering */
+    }
+}
 
     </style>
 </head>
@@ -1859,7 +1963,7 @@
                     </div>
                     <div class="ride-info-row">
                         <span class="material-icons">route</span>
-                        <span>Distance: ${ride.distance}</span>
+                        <span>Distance: ${ride.distance} km</span>
                     </div>
                     <div class="ride-actions">
                         ${actionsHtml}
