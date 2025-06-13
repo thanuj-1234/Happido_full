@@ -1315,7 +1315,7 @@
             </div>
 
             <div class="profile-bottom-actions">
-                <button class="logout-button">
+                <button class="logout-button" id="logout">
                     <span class="material-icons">logout</span> Logout
                 </button>
                 <div class="toggle-container">
@@ -1445,7 +1445,14 @@
             dl: profile.licenseNumber
             
         };
-
+           function getRequest(){
+            const status = document.getElementById('navbarStatusLabel');
+        const ans = status.textContent;
+        console.log(ans);
+        if(ans == "On Duty")
+        getRides();
+           }
+           const intervalId = setInterval(getRequest, 10000);
         // Function to update profile fields
         function updateProfileFields() {
             profileInfoNameField.textContent = profileData.name;
@@ -2125,7 +2132,8 @@ try {
     }
         
     }
-    document.addEventListener('DOMContentLoaded',getRides);
+    
+    // document.addEventListener('DOMContentLoaded',getRides);
     async function rideStatus(ans) {
         
         
@@ -2269,6 +2277,17 @@ try {
     }
 }
 
+
+document.getElementById("logout").addEventListener('click',function(){
+    localStorage.removeItem(captainProfileData);
+    window.location.href="index.html";
+})
+
+
+
+    
+    
+   
     </script>
 </body>
 </html>
